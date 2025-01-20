@@ -3,7 +3,7 @@
  <!-- > Your author list below should include links to all members GitHub (remove existing author). -->
  
  > Authors: [Rakshan Rajesh Jagadeesan](), [Suryateja Duvvuri](https://github.com/SuryatejaDuvvuri), 
- [Abraham Zambrano Gomez](), [David Frias-Sanchez](), [Rain Calabro]
+ [Abraham Zambrano Gomez](), [David Frias-Sanchez](), [Rain Calabro]()
 
 <!-- 
  > ## Expectations
