@@ -19,7 +19,7 @@
 
 
 #### General Description:
-This application starts off by gathering information about the user through built-in questions and resources like resume and linkedin. Once the user signs up, they will get a list of recommended projects to join based on their details or recommended people if they are looking for project members. Each project is shown through a flashcard that gives details like the name, expected deadline, and the amount of people they have or are looking for. If someone wants to join, they can click on that card and go through series of questions to apply. If someone wants to create, they can fill in the necessary information about the project and publish it. Before the project is finished, project members have to give feedback about improvements for the creators’ future projects.
+> This application starts off by gathering information about the user through built-in questions and resources like resume and linkedin. Once the user signs up, they will get a list of recommended projects to join based on their details or recommended people if they are looking for project members. Each project is shown through a flashcard that gives details like the name, expected deadline, and the amount of people they have or are looking for. If someone wants to join, they can click on that card and go through series of questions to apply. If someone wants to create, they can fill in the necessary information about the project and publish it. Before the project is finished, project members have to give feedback about improvements for the creators’ future projects.
 
 
 
