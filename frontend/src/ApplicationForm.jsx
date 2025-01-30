@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './ApplicationForm.css';
 
 const ApplicationForm = () => {
     const [formData, setFormData] = useState({
@@ -10,12 +11,12 @@ const ApplicationForm = () => {
     });
 
     return (
-        <div>
+        <div className="form-container">
             <form> 
-                <input placeholder="Name" /><br/>
-                <input placeholder="Email" /><br/>
-                <input placeholder="Phone" /><br/>
-                <input placeholder="Position" /><br/>
+                <input className="input-field" placeholder="Name" /><br/>
+                <input className="input-field" placeholder="Email" /><br/>
+                <input className="input-field" placeholder="Phone" /><br/>
+                <input className="input-field" placeholder="Position" /><br/>
                 <input type="file" /><br/>
                 <button type="submit">Submit</button>
             </form>

@@ -1,0 +1,26 @@
+.form-container {
+    width: 300px;
+    padding: 20px;
+    border: 1px solid black;
+    background-color: #f9f9f9;
+}
+
+.input-field {
+    width: 100%;
+    margin: 3px;
+    border: 1px solid #cbcbec;
+    border-radius: 2px;
+}
+
+button {
+    background-color: #377510;
+    color: white;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 30px;
+}
+
+button:hover {
+    background-color: #62b41f;
+}
