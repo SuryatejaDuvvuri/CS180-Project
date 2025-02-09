@@ -40,3 +40,8 @@ def check_authentication(request):
     if request.user.is_authenticated:
         return Response({"is_authenticated": True, "user": request.user.email})
     return Response({"is_authenticated": False})
+
+
+@api_view(['GET'])
+def test_firebase(request):
+    return Response({"message": "Firebase connection successful"}, status=status.HTTP_200_OK)
