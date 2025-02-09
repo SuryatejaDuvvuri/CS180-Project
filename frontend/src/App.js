@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 function App() {
   const [name, setName] = useState('');
+  const [emailSending, setEmailSending] = useState(false);
   const [desc, setDesc] = useState('');
   const [range, setRange] = useState([null, null]);
   const [startDate, endDate] = range;
@@ -16,7 +17,36 @@ function App() {
   const [image, setImage] = useState(null);
   const [color, setColor] = useState(null);
   const colorOptions = ['red','orange','yellow','green','blue','purple'];
- 
+  const sendEmail = async () => {
+    try {
+      const response = await fetch('https://localhost:8000/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: 'recipient@gmail.com',
+          name: 'John Doe',
+          subject: 'New Project Submission',
+          message: 'Test email from React frontend'
+        })
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log(data);
+    }
+    catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const handleSend = async () => {
+    setEmailSending(true);
+    await sendEmail();
+    setEmailSending(false);
+  };
   return (
     <div className="App">
       <SignUp />
@@ -76,29 +106,15 @@ function App() {
         </label>
         <label>Number of people: <input type="number" value = {val} onChange = {(e) => setVal(e.target.value)} className="form-input"/></label>
         <label>Categories: 
-          <datalist>
-            <option value = "Computer Science"/>
-            <option value = "Medicine"/>
-            <option value = "Filmmaking"/>
-            <option value = "Art"/>
-            <option value = "Psychology"/>
-            <option value = "History"/>
-          </datalist> </label>
-        <label>Location: <input type = "text" value = {location} onChange = {(e) => setLocation(e.target.value)}/> </label>
-        <label className="form-label">Weekly Time Commitment (hours): 
-          <input 
-            type="number" 
-            min="1" 
-            max="168" 
-            value={weeklyHours} 
-            onChange={(e) => setWeeklyHours(e.target.value)}
-          />
+          <datalist id="categories">
+            <option value="Computer Science"/>
+            <option value="Medicine"/>
+          </datalist>
         </label>
-        <br/>        
-        <input type = "submit" value = "Submit"/>
       </form>
+
+      <button onClick={handleSend} disabled={emailSending} className="form-button">Submit</button>
     </div>
- 
   );
 }
 
