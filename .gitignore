@@ -95,3 +95,4 @@ CMakeLists.txt.user*
 # --------
 *.dll
 *.exe
+firebase_key.json
