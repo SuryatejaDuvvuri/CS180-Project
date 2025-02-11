@@ -1,5 +1,15 @@
+:root{
+  --website-background: #C1D4F1;
+  --main-color: #0C60DC;
+  --acc-color: #8B9BF0;
+  --header-shadow: #1C4684;
+  --hover-color: #f5ad42;
+  --text-hover-color: ;
+}
+
 .App {
   text-align: center;
+  background-color: var(--website-background);
 }
 
 .App-logo {
@@ -35,4 +45,57 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.Subcategory
+{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.Header {
+  background-color: var(--main-color);
+
+  padding: 20px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.HeaderShadow {
+  color: white;
+
+  background-color: var(--header-shadow);
+
+  padding: 3px;
+
+  display: flex;
+  min-width: 100vw;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.DropdownElement {
+  color: white;
+
+  background-color: green;
+  border-radius: 5px;
+
+  padding: 5px;
+
+  width: max-content;
 }
