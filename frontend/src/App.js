@@ -18,14 +18,16 @@ function App() {
   const [color, setColor] = useState(null);
   const colorOptions = ['red','orange','yellow','green','blue','purple'];
   const sendEmail = async () => {
+    setEmailSending(true);
     try {
-      const response = await fetch('https://localhost:8000/send-email', {
+      const response = await fetch('http://localhost:8000/send-email/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
-          email: 'recipient@gmail.com',
+          email: 'sduvv003@ucr.edu',
           name: 'John Doe',
           subject: 'New Project Submission',
           message: 'Test email from React frontend'
@@ -35,10 +37,13 @@ function App() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log(data);
+      console.log('Success:', data);
     }
     catch (error) {
       console.error('Error:', error);
+    }
+    finally {
+      setEmailSending(false);
     }
   };
 
@@ -113,7 +118,9 @@ function App() {
         </label>
       </form>
 
-      <button onClick={handleSend} disabled={emailSending} className="form-button">Submit</button>
+      <button onClick={handleSend} disabled={emailSending} className="form-button">{emailSending ? 'Sending...': 'Submit'}</button>
+          
+    
     </div>
   );
 }
