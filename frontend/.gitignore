@@ -4,9 +4,13 @@
 /node_modules
 /.pnp
 .pnp.js
-/backend/config
-/backend/api
-/backend/projectAPI
+../backend/config
+../backend/api
+../backend/.env
+../backend/api/
+../backend/config/
+../backend/db.sqlite3
+../backend/manage.py
 
 # testing
 /coverage
