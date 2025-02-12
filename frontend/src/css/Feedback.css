@@ -1,0 +1,95 @@
+
+.Feedback-overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.Feedback-container{
+
+    border: 1px solid;
+    border-radius: 10px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
+    width: 30%;
+    height: auto;
+    max-height: 90vh;
+    box-shadow: 0 0 20px rgba(0,0,0, 0.2);
+    padding: 10px 20px;
+    transition: 0.2s;
+    align-items: center;
+    display: flex;
+    flex-direction : column;
+    align-items: center;
+    
+    justify-content: flex-start;
+    gap: 10px;
+    overflow: auto;
+}
+.Feedback-container button{
+    align-self: center;
+}
+h1{
+    font-size:x-large;
+    text-align: center;
+    color: black;
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+.exit{
+    width: 100%;
+    text-align: right;
+    border-radius: 50%;
+}
+.exit button{
+    
+    background-color: red;
+    
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    flex-shrink: 1;
+}
+
+label{
+    font-size: 15px;
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    margin-bottom: 5px;
+    text-align: left;
+    font-weight: bold;
+    
+}
+input{
+    
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 15px;
+    height: 10%;
+}
+
+textarea{
+    font-size: 12px;
+    resize: none;
+    min-height: 100px;
+    
+}
+
+.submit{
+    margin-top: 10px;
+}
