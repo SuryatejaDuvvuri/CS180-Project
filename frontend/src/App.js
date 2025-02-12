@@ -6,7 +6,6 @@ import "react-datepicker/dist/react-datepicker.css";
 
 function App() {
   const [name, setName] = useState('');
-  const [emailSending, setEmailSending] = useState(false);
   const [desc, setDesc] = useState('');
   const [range, setRange] = useState([null, null]);
   const [startDate, endDate] = range;
@@ -17,41 +16,7 @@ function App() {
   const [image, setImage] = useState(null);
   const [color, setColor] = useState(null);
   const colorOptions = ['red','orange','yellow','green','blue','purple'];
-  const sendEmail = async () => {
-    setEmailSending(true);
-    try {
-      const response = await fetch('http://localhost:8000/send-email/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          email: 'sduvv003@ucr.edu',
-          name: 'John Doe',
-          subject: 'New Project Submission',
-          message: 'Test email from React frontend'
-        })
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log('Success:', data);
-    }
-    catch (error) {
-      console.error('Error:', error);
-    }
-    finally {
-      setEmailSending(false);
-    }
-  };
-
-  const handleSend = async () => {
-    setEmailSending(true);
-    await sendEmail();
-    setEmailSending(false);
-  };
+ 
   return (
     <div className="App">
       <SignUp />
@@ -111,17 +76,29 @@ function App() {
         </label>
         <label>Number of people: <input type="number" value = {val} onChange = {(e) => setVal(e.target.value)} className="form-input"/></label>
         <label>Categories: 
-          <datalist id="categories">
-            <option value="Computer Science"/>
-            <option value="Medicine"/>
-          </datalist>
+          <datalist>
+            <option value = "Computer Science"/>
+            <option value = "Medicine"/>
+            <option value = "Filmmaking"/>
+            <option value = "Art"/>
+            <option value = "Psychology"/>
+            <option value = "History"/>
+          </datalist> </label>
+        <label>Location: <input type = "text" value = {location} onChange = {(e) => setLocation(e.target.value)}/> </label>
+        <label className="form-label">Weekly Time Commitment (hours): 
+          <input 
+            type="number" 
+            min="1" 
+            max="168" 
+            value={weeklyHours} 
+            onChange={(e) => setWeeklyHours(e.target.value)}
+          />
         </label>
+        <br/>        
+        <input type = "submit" value = "Submit"/>
       </form>
-
-      <button onClick={handleSend} disabled={emailSending} className="form-button">{emailSending ? 'Sending...': 'Submit'}</button>
-          
-    
     </div>
+ 
   );
 }
 
