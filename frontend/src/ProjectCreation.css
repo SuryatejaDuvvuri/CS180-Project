@@ -1,0 +1,71 @@
+
+
+  
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    margin: 0 auto;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .form-label {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+  }
+  
+  
+  .form-input,
+  .form-textarea,
+  .date-picker {
+    margin-top: 0.25rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  
+  .form-textarea {
+    resize: vertical;
+  }
+  
+  
+  .color-row {
+    display: flex;
+    margin-top: 0.5rem;
+  }
+  
+  
+  .color-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 8px;
+    cursor: pointer;
+    border: 1px solid #aaa;
+  }
+  
+  .color-circle.selected {
+    border: 2px solid black;
+  }
+  
+  
+  .file-info {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .submit-button {
+    padding: 0.75rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+  }
+  
