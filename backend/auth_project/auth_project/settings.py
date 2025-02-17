@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+import firebase_admin
+from firebase_admin import credentials
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +28,7 @@ SECRET_KEY = "django-insecure-6l!_(oi)d=8o_f8u^-j0110a2_^n5j&%#$yv-%8unjo7bhjsa_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -40,7 +43,6 @@ INSTALLED_APPS = [
     'accounts',
     'corsheaders',
     "rest_framework",
-
 ]
 
 MIDDLEWARE = [
@@ -126,17 +128,32 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# 🔹 Allowed Hosts
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
+# 🔹 CORS settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Allow requests from frontend
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# 🔹 Firebase Authentication Setup
+FIREBASE_CREDENTIALS = os.path.join(BASE_DIR, "firebase_key.json")
+
+if os.path.exists(FIREBASE_CREDENTIALS):  # Ensure Firebase JSON file exists
+    if not firebase_admin._apps:  # Avoid re-initialization
+        cred = credentials.Certificate(FIREBASE_CREDENTIALS)
+        firebase_admin.initialize_app(cred)
+
+# 🔹 Django REST Framework Authentication
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
 }
 
+# 🔹 Custom User Model (if using a custom model)
 AUTH_USER_MODEL = 'accounts.CustomUser'

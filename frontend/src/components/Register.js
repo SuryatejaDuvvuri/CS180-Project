@@ -1,56 +1,30 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { signInWithGoogle } from "../firebase";
 
-export default function Login() {
+export default function Register() {
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [success, setSuccess] = useState(null);
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/auth/login/", {
+      const response = await fetch("http://127.0.0.1:8000/auth/register/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, email, password }),
       });
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.detail || "Login failed");
+        throw new Error(data.detail || "Registration failed");
       }
 
-      localStorage.setItem("authToken", data.token);
-      navigate("/dashboard");
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    try {
-      const idToken = await signInWithGoogle();
-      if (!idToken) {
-        throw new Error("Failed to retrieve Firebase ID token.");
-      }
-
-      const response = await fetch("http://127.0.0.1:8000/auth/google-login/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idToken }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.detail || "Google Login failed");
-      }
-
-      localStorage.setItem("authToken", data.token);
-      navigate("/dashboard");
+      setSuccess("Registration successful! You can now log in.");
     } catch (err) {
       setError(err.message);
     }
@@ -59,10 +33,24 @@ export default function Login() {
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
+        <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
+        {success && <p className="text-green-500 text-center">{success}</p>}
 
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleRegister}>
+          {/* Username Field */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Username</label>
+            <input
+              type="text"
+              className="mt-1 block w-full p-2 border rounded-lg"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Email Field */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">Email</label>
             <input
@@ -73,6 +61,8 @@ export default function Login() {
               required
             />
           </div>
+
+          {/* Password Field */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">Password</label>
             <input
@@ -83,20 +73,14 @@ export default function Login() {
               required
             />
           </div>
+
           <button
             type="submit"
             className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
           >
-            Login
+            Register
           </button>
         </form>
-
-        <button
-          onClick={handleGoogleLogin}
-          className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-        >
-          Sign in with Google
-        </button>
       </div>
     </div>
   );
