@@ -38,6 +38,12 @@
     ]
   },
   "devDependencies": {
-    "ajv": "^7.2.4"
+    "ajv": "^7.2.4",
+    "web-vitals": "^4.2.4"    
+  },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false
   }
 }
