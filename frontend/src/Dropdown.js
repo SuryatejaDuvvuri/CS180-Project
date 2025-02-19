@@ -26,12 +26,15 @@ function Dropdown({title, arr}) {
     return(
         <div className="dropdown">
             <button className="Button" onClick={toggleDropdown}>
+                {/*Dropdown arrow image*/}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={15} height={15} strokeWidth={4} stroke="currentColor" className={`ml-2 ${isOpen ? "rotate-180" : "rotate-0"}`}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                 </svg>
+                {/*Is supposed to flip the image up and down. Currently doesn't work and does nothing*/}
                 <i className={`fas fa-caret-${isOpen ? 'up' : 'down'}`}></i>
                 {title}
             </button>
+            {/*Dropdown items*/}
             <div className="dropdown-content">
                 {arr.map((arr)=><DropdownItem text={arr} method={GetIsOpen}/>)}
             </div>
