@@ -4,7 +4,7 @@ import GetMajors from './GetMajors';
 // The header for the website. Consists of a "View profile" button, a "Create project" button,
 //    a "Filter" button to filter by majors, and a search bar.
 function Header() {
-    const majorsArr = ["A", "B", "C", "D"];
+    
     return (
     <div className="App">
         <div className="Header">

@@ -5,7 +5,10 @@ import Header from './Header';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App LightMode">
+      <div className="grad">
+        test
+      </div>
       <Header />
     </div>
     /*<div className="App">

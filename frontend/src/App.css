@@ -1,10 +1,46 @@
 :root{
-  --website-background: #C1D4F1;
-  --main-color: #0C60DC;
-  --acc-color: #8B9BF0;
-  --header-shadow: #1C4684;
+  --website-background-light: #C1D4F1;
+  --main-color-light: #0C60DC;
+  --acc-color-light: #8B9BF0;
+  --header-shadow-light: #1C4684;
   --hover-color: #f5ad42;
   --text-hover-color: ;
+
+  --website-background-dark: #141517;
+  --main-color-dark: #1C4684;
+  --acc-color-dark: #8B9BF0;
+  --header-shadow-dark: #102544;
+  --hover-color: #f5ad42;
+  --text-hover-color: ;
+}
+
+.LightMode {
+  --website-background: var(--website-background-light);
+  --main-color: var(--main-color-light);
+  --acc-color: var(--acc-color-light);
+  --header-shadow: var(--header-shadow-light);
+}
+
+.DarkMode {
+  --website-background: var(--website-background-dark);
+  --main-color: var(--main-color-dark);
+  --acc-color: var(--acc-color-dark);
+  --header-shadow: var(--header-shadow-dark);
+}
+
+.LightMode {
+  --website-background: var(--website-background-light);
+  --main-color: var(--main-color-light);
+  --acc-color: var(--acc-color-light);
+  --header-shadow: var(--header-shadow-light);
+}
+
+.grad {
+  background: linear-gradient(to right, rgb(0, 115, 255), rgb(74, 204, 255));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display:inline-block;
 }
 
 .App {
