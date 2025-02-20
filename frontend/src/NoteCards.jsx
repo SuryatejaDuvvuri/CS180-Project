@@ -10,18 +10,26 @@ import Note from "./Note.jsx"
 function NoteCards({items = [], category}){
 
     
-    const projects = items.slice();
-
+    const [projects, setProjects] = useState(items);
     const [selectedProject, setSelectedProject] = useState(null);
+    const [scrollIndex, setScrollIndex] = useState(0);
+    const maxVisible = 5; // Number of visible notes
     
     // Handle clicking on a preview box
     const handleClick = (project) => {
     setSelectedProject(project);
     };
 
+    const updateProject = (updatedProject) => {
+        // Update the projects state
+        setProjects((prevProjects) =>
+            prevProjects.map((proj) =>
+                proj.id === updatedProject.id ? updatedProject : proj
+            )
+        );
+        setSelectedProject(updatedProject); // Ensure selectedProject is also updated
+    };
     
-    const [scrollIndex, setScrollIndex] = useState(0);
-    const maxVisible = 5; // Number of visible notes
 
 return(
     <>
@@ -45,7 +53,7 @@ return(
             </div>
         </div>
         
-        <Note selectedProject ={selectedProject} setSelectedProject = {setSelectedProject}/>
+        <Note selectedProject ={selectedProject} setSelectedProject = {setSelectedProject} updateProject = {updateProject}/>
     </>
 );
 
