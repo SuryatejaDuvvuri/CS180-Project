@@ -1,4 +1,4 @@
-:root{
+:root {
   --website-background: #C1D4F1;
   --main-color: #0C60DC;
   --acc-color: #8B9BF0;
@@ -43,13 +43,13 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
 
-.Subcategory
-{
+.Subcategory {
   display: flex;
   flex-direction: row;
   align-items: center;
