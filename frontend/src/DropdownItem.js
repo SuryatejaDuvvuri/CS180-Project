@@ -48,7 +48,9 @@ class DropdownItem extends React.Component {
             <div>
                 <a style={styles} onClick={this.handleItemClick}>
                     {this.state.checkmark}
+                    {/*Separator to create space in the case that the checkmark box is empty. Spacing will be off otherwise*/}
                     {this.state.clicked && (<i className="fas fa-home"></i>)}
+                    {/*Separator to create space between checkmark box and text*/}
                     <i className="fas fa-home"></i>
                     {this.props.text}
                 </a>
