@@ -2,8 +2,8 @@
 # CS180-Project
  <!-- > Your author list below should include links to all members GitHub (remove existing author). -->
  
- > Authors: [Rakshan Rajesh Jagadeesan](), [Suryateja Duvvuri](https://github.com/SuryatejaDuvvuri), 
- [Abraham Zambrano Gomez](), [David Frias-Sanchez](), [Rain Calabro]()
+ > Authors: [Rakshan Rajesh Jagadeesan](https://github.com/rraje008), [Suryateja Duvvuri](https://github.com/SuryatejaDuvvuri), 
+ [Abraham Zambrano Gomez](https://github.com/StrickVax), [David Frias-Sanchez](https://github.com/SirBossDavid), [Rain Calabro](https://github.com/dazed-and-defeated)
 
 <!-- 
  > ## Expectations
