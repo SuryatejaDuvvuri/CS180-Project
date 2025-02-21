@@ -15,8 +15,7 @@ const getData = (apiUrl) => {
 let fileContents = await getData("Major-Categories.txt");
 
 // Returns a string array of the file contents
-function GetMajors(fileName)
-{
+function GetMajors(fileName) {
     var arr = fileContents.split(", ");
     return arr;
 }

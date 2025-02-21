@@ -8,7 +8,7 @@ import './Dropdown.css';
 import DropdownItem from './DropdownItem';
 
 // The Dropdown menu. Consists of a button and several DropdownItems
-function Dropdown({title, arr}) {
+function Dropdown({ title, arr }) {
 
     const [isOpen, setIsOpen] = React.useState(false);
 
@@ -18,12 +18,11 @@ function Dropdown({title, arr}) {
     }
 
     // Returns the isOpen bool
-    function GetIsOpen()
-    {
+    function GetIsOpen() {
         return isOpen;
     }
 
-    return(
+    return (
         <div className="dropdown">
             <button className="Button" onClick={toggleDropdown}>
                 {/*Dropdown arrow image*/}
@@ -36,7 +35,7 @@ function Dropdown({title, arr}) {
             </button>
             {/*Dropdown items*/}
             <div className="dropdown-content">
-                {arr.map((arr)=><DropdownItem text={arr} method={GetIsOpen}/>)}
+                {arr.map((arr) => <DropdownItem text={arr} method={GetIsOpen} />)}
             </div>
         </div>
     );

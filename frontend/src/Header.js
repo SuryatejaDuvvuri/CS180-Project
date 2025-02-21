@@ -21,8 +21,15 @@ function Header({method}) {
     }
 
     return (
-    <div>
         <div className="Header">
+           <div className='Subcategory'>
+                <button className='Button'>View Profile</button>
+                <button className='Button'>+ Create Project</button>
+            </div>
+            <div className='Subcategory'>
+               <Dropdown title={"Filter..."} arr={GetMajors()} />
+                <input type="text" className='Button' />
+            </div>
             {/*Buttons to left*/}
             <div className='Subcategory'>
                 {/*Light/Dark mode button*/}
@@ -38,9 +45,8 @@ function Header({method}) {
                 {/*Search bar*/}
                 <input type="text" className='Button'/>
             </div>
+            <div className='HeaderShadow' />
         </div>
-        <div className='HeaderShadow'/>
-    </div>
     );
 }
 

@@ -3,16 +3,14 @@ import Dropdown from './Dropdown';
 import './Dropdown.css';
 
 // A single element in the dropdown menu
-class DropdownItem extends React.Component
-{
+class DropdownItem extends React.Component {
     /* this.props.method: assigned the GetIsOpen() function from Dropdown; is used to toggle the display of the DropdownItems
        this.state.checkmark: toggles betwee [] and [✓]
        this.state.isOpen: keeps track of whether the dropdown menu is open
     */
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
-        this.state = {checkmark: "[]"}
+        this.state = { checkmark: "[]" }
         this.state.isOpen = this.props.isOpen
     }
 
@@ -21,23 +19,21 @@ class DropdownItem extends React.Component
        Otherwise it'll make the box empty.
     */
     handleItemClick = () => {
-        this.state.clicked ? this.setState({checkmark: "[✓]"}) : this.setState({checkmark: "[]"});
-        this.setState({clicked: !this.state.clicked});
+        this.state.clicked ? this.setState({ checkmark: "[✓]" }) : this.setState({ checkmark: "[]" });
+        this.setState({ clicked: !this.state.clicked });
     }
 
     /* Triggers at the beginning of the program.
        HACK: This method reuses the same code in handleItemClick. Without it, the boxes will not appear
              in the dropdown menu until you click on a DropdownItem.
     */
-    componentDidMount()
-    {
-        this.state.clicked ? this.setState({checkmark: "[✓]"}) : this.setState({checkmark: "[]"});
-        this.setState({clicked: !this.state.clicked});
+    componentDidMount() {
+        this.state.clicked ? this.setState({ checkmark: "[✓]" }) : this.setState({ checkmark: "[]" });
+        this.setState({ clicked: !this.state.clicked });
     }
 
     // Returns this.props.method(), which calls Dropdown.GetIsOpen().
-    getIsOpenValue()
-    {
+    getIsOpenValue() {
         return this.props.method();
     }
 
