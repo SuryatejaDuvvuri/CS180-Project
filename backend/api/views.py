@@ -36,16 +36,49 @@ def send_email(request):
                 "message": "Sender email not configured",
                 "status": 500
             }, status=500)
-        data = json.loads(request.body
-                          )
+        data = json.loads(request.body)
+        print("Parsed JSON:", data)
         email = data.get("email")
         name = data.get("name")
         subject = data.get("subject")
+        email_type = data.get("type")
+        frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+        if not email or not name or not subject or not email_type:
+            return JsonResponse({"message": "Missing required fields", "status": 400}, status=400)
+        
+        email_temps = {
+             "accept": f"""
+                <p>Dear {name},</p>
+                <p>Congratulations! We are pleased to inform you that you have been accepted.</p>
+                 <p>We’re excited to have you on the team! Click below to visit your project dashboard:</p>
+                <a href="{frontend_url}/dashboard" style="display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 15px; text-decoration: none; font-weight: bold; border-radius: 5px;">
+                    Welcome to the team!
+                </a>
+                <p>Looking forward to working with you!</p>
+                <p>Best Regards,<br>Team</p>
+            """,
+            "reject": f"""
+                <p>Dear {name},</p>
+                <p>Thank you for your application. Unfortunately, we regret to inform you that you have not been selected.</p>
+                <p>We appreciate your effort and encourage you to apply again in the future.</p>
+                <p>Best Regards,<br>Team</p>
+            """,
+            "thanks": f"""
+                <p>Dear {name},</p>
+                <p>Thank you for applying! We appreciate your interest and will get back to you soon.</p>
+                <p>Best Regards,<br>Team</p>
+            """
+        }
+        
+        email_content = email_temps.get(email_type)
+        if not email_content:
+            return JsonResponse({"message": "Invalid email type", "status": 400}, status=400)
+        
         message = Mail(
             from_email=sender_email,
             to_emails=email,
             subject=subject,
-            html_content=f"<strong>Name:</strong> {name}<br><strong>Email:</strong> {email}<br><strong>Message:</strong> {request.POST.get('message')}"
+            html_content=email_content
         )
         
         sendGrid = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
