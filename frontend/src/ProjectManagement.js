@@ -13,22 +13,9 @@ function ProjectManagement() {
         setLoading(true);
         try
         {
-            const response = await fetch("http://localhost:8000/api/projects/", {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                },
-            });
-
-            if(response.ok)
-            {
-                const data = await response.json();
-                setProjects(Array.isArray(data) ? data: data.results || []);
-            }
-            else
-            {
-                throw new Error("Failed to fetch projects");
-            }
+            const response = await fetch("http://localhost:8000/api/projects/");
+            const data = await response.json();
+            setProjects(data);
         }
         catch(err)
         {
@@ -42,52 +29,11 @@ function ProjectManagement() {
         
     }
 
-    // const addProject = async (projectData) =>
-    // {
-    //     try
-    //     {
-    //         const response = await fetch("http://localhost:8000/api/projects/", {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //             },
-    //             body: JSON.stringify({
-    //                 name: projectData.name,
-    //                 description: projectData.description,
-    //                 start_date: projectData.start_date,
-    //                 end_date: projectData.end_date,
-    //                 no_of_people: Number(projectData.no_of_people),
-    //                 category: projectData.category,
-    //                 image_url: projectData.img_url,
-    //                 weekly_hours: Number(projectData.weekly_hours),
-    //                 color: projectData.color,
-    //                 authors:[1],
-    //             }),
-    //         });
-    //         const newProject = await response.json();
-    //         console.log("New project added: ", newProject);
-    //         if(response.ok)
-    //         {
-    //             setProjects([...projects, newProject]);
-    //         }
-    //         else
-    //         {
-    //             console.error("Backend error.");
-    //             throw new Error(`HTTP error! status: ${response.status}`);
-    //         }
-    //     }
-    //     catch(err)
-    //     {
-    //         console.log(err);
-    //         setError(err.message);
-    //     }
-    // };
-
     const deleteProj = async (id) =>
     {
         try
         {
-            const response = await fetch(`http://localhost:8000/api/projects/${id}/`, {
+            const response = await fetch(`http://localhost:8000/api/projects/delete/${id}/`, {
                 method: 'DELETE'
             });
 
@@ -103,12 +49,13 @@ function ProjectManagement() {
         } 
     };
 
-    const handleFormSubmit = async(project) => {
+    const handleFormSubmit = async (project) => {
         const method = editProj ? "PUT" : "POST";
-        const url = editProj ? `http://localhost:8000/api/projects/${editProj.id}/`
-        : "http://localhost:8000/api/projects/";
-        try
-        {
+        const url = editProj 
+            ? `http://localhost:8000/api/projects/update/${editProj.id}/`
+            : "http://localhost:8000/api/projects/";
+    
+        try {
             const response = await fetch(url, {
                 method: method,
                 headers: {
@@ -116,64 +63,30 @@ function ProjectManagement() {
                 },
                 body: JSON.stringify(project),
             });
+    
             const newProject = await response.json();
             console.log("New project added: ", newProject);
-            if(response.ok)
-            {
-                if(editProj)
-                {
-                    setProjects(projects.map((project) => project.id === editProj.id ? newProject : project))
-                }
-                else
-                {
-                    setProjects([...projects, newProject]);
-                }
-
+    
+            if (response.ok) {
+                setProjects((currProjects) =>
+                    editProj
+                        ? currProjects.map((p) => (p.id === editProj.id ? newProject : p))
+                        : [...currProjects, newProject]
+                );
+    
                 setShowForm(false);
                 setEditProj(null);
-               
-            }
-            else
-            {
+                getProjects(); 
+            } else {
                 console.error("Backend error.");
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-        }
-        catch(err)
-        {
+        } catch (err) {
             console.log(err);
             setError(err.message);
         }
-        
-    }
-
-    // const updateProj = async (id, updatedProject) =>
-    // {
-    //     try
-    //     {
-    //         const response = await fetch(`http://localhost:8000/api/projects/${id}/`, {
-    //             method: 'PUT',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify(updatedProject),
-    //         });
-    //         const newProject =  await response.json();
-    //         if (response.ok)
-    //         {
-    //           setProjects(projects.map((project) => project.id === id ? newProject : project))
-    //         }
-    //         else
-    //         {
-    //             console.error("Backend Error:");
-    //             throw new Error("Failed to update project.");
-    //         }
-    //     }
-    //     catch(err)
-    //     {
-    //         console.log(err)
-    //     } 
-    // };
+    };
+    
 
     useEffect(() => {
         getProjects();
@@ -191,13 +104,14 @@ function ProjectManagement() {
                     <div key = {project.id} className = "project">
                         <h3>{project.name}</h3>
                         <p>{project.description}</p>
-                        <p>{project.startDate}</p>
-                        <p>{project.endDate}</p>
-                        <p>{project.noOfPeople}</p>
+                        <p>{project.start_date}</p>
+                        <p>{project.end_date}</p>
+                        <p>{project.no_of_people}</p>
                         <p>{project.category}</p>
                         <p>{project.img_url}</p>
                         <p>{project.weeklyHours}</p>
                         <p>{project.color}</p>
+                        <p>{project.owner}</p>
                         <button onClick = {() => deleteProj(project.id)}>Delete</button>
                         <button onClick={() => {setEditProj(project); setShowForm(true); }}>Edit</button>
                     </div>
@@ -236,6 +150,7 @@ const ProjectForm = ({project, submit, cancel}) => {
           image_url: "",
           weekly_hours: 0,
           color: "",
+          
       }
   );
 
