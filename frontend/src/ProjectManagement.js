@@ -23,7 +23,12 @@ function ProjectManagement() {
             if(response.ok)
             {
                 const data = await response.json();
-                setProjects(Array.isArray(data) ? data: data.results || []);
+                if (!Array.isArray(data)) {
+                    throw new Error("Invalid response format: projects is not an array.");
+                }
+                console.log("Fetched Projects:", data);
+                setProjects(data);
+                
             }
             else
             {
@@ -87,7 +92,7 @@ function ProjectManagement() {
     {
         try
         {
-            const response = await fetch(`http://localhost:8000/api/projects/${id}/`, {
+            const response = await fetch(`http://localhost:8000/api/projects/delete/${id}/`, {
                 method: 'DELETE'
             });
 
@@ -105,7 +110,7 @@ function ProjectManagement() {
 
     const handleFormSubmit = async(project) => {
         const method = editProj ? "PUT" : "POST";
-        const url = editProj ? `http://localhost:8000/api/projects/${editProj.id}/`
+        const url = editProj ? `http://localhost:8000/api/projects/update/${editProj.id}/`
         : "http://localhost:8000/api/projects/";
         try
         {
@@ -189,25 +194,32 @@ function ProjectManagement() {
           <p className="text-center">Loading...</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {projects.map((project) => (
-              <div key={project.id} className="bg-white shadow-md p-5 rounded-lg">
-                <h3 className="text-xl font-semibold">{project.name}</h3>
-                <p className="text-gray-700">{project.description}</p>
-                <p className="text-sm text-gray-500">{project.start_date} - {project.end_date}</p>
-                <button
-                  className="bg-red-500 text-white px-3 py-1 rounded mt-2"
-                  onClick={() => deleteProj(project.id)}
-                >
-                  Delete
-                </button>
-                <button
-                  className="bg-blue-500 text-white px-3 py-1 rounded mt-2 ml-2"
-                  onClick={() => { setEditProj(project); setShowForm(true); }}
-                >
-                  Edit
-                </button>
-              </div>
-            ))}
+            {Array.isArray(projects) && projects.length > 0 ? (
+                projects.map((project) => (
+                    <div key={project.id || project.name} className="bg-white shadow-md p-5 rounded-lg">
+                        <h3 className="text-xl font-semibold">{project.name}</h3>
+                        <p className="text-gray-700">{project.description}</p>
+                        <p className="text-sm text-gray-500">{project.start_date} - {project.end_date}</p>
+                        <p>{project.no_of_people}</p>
+                        <p>{project.category}</p>
+                        <p>{project.image_url}</p>
+                        <p>{project.weekly_hours}</p>
+                        <p>{project.color}</p>
+                        <p>{project.owner}</p>
+                        <button
+                        className="bg-red-500 text-white px-3 py-1 rounded mt-2"
+                        onClick={() => deleteProj(project.id)}
+                        >
+                        Delete
+                        </button>
+                        <button  className="bg-blue-500 text-white px-3 py-1 rounded mt-2 ml-2" 
+                        onClick={() => { setEditProj(project); setShowForm(true); }}>Edit</button>
+                    </div>
+                ))
+            ) : (
+                <p>No projects are listed.</p>
+            )}
+           
           </div>
         )}
       
