@@ -93,47 +93,58 @@ function ProjectManagement() {
     }, []);
 
     return (
-    <div className="ProjectManagement">
-        <h1>Project Management</h1>
-        {error && <p style = {{color: 'red'}}>{error}</p>}
-        {loading ? (<p>Loading...</p>) :
-        (
-            <div className = "list">
-                {Array.isArray(projects) && projects.length > 0 ? (
-                    projects.map((project) => (
-                    <div key = {project.id} className = "project">
-                        <h3>{project.name}</h3>
-                        <p>{project.description}</p>
-                        <p>{project.start_date}</p>
-                        <p>{project.end_date}</p>
-                        <p>{project.no_of_people}</p>
-                        <p>{project.category}</p>
-                        <p>{project.img_url}</p>
-                        <p>{project.weeklyHours}</p>
-                        <p>{project.color}</p>
-                        <p>{project.owner}</p>
-                        <button onClick = {() => deleteProj(project.id)}>Delete</button>
-                        <button onClick={() => {setEditProj(project); setShowForm(true); }}>Edit</button>
-                    </div>
-                ))
-            ) : (
-                <p>No projects are listed.</p>
-            )}
-                <div className = "buttons">
-                        <button onClick = {getProjects}>Refresh</button>
-                        <button onClick={() => { setEditProj(null); setShowForm(true); }}>Add Project</button>
-                           
-                </div>  
-            </div>
+        <div className="bg-gray-100 min-h-screen p-5">
+        <h1 className="text-3xl font-bold text-center mb-5">Project Management</h1>
+      
+        {error && <p className="text-red-500">{error}</p>}
+      
+        {loading ? (
+          <p className="text-center">Loading...</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {projects.map((project) => (
+              <div key={project.id} className="bg-white shadow-md p-5 rounded-lg">
+                <h3 className="text-xl font-semibold">{project.name}</h3>
+                <p className="text-gray-700">{project.description}</p>
+                <p className="text-sm text-gray-500">{project.start_date} - {project.end_date}</p>
+                <button
+                  className="bg-red-500 text-white px-3 py-1 rounded mt-2"
+                  onClick={() => deleteProj(project.id)}
+                >
+                  Delete
+                </button>
+                <button
+                  className="bg-blue-500 text-white px-3 py-1 rounded mt-2 ml-2"
+                  onClick={() => { setEditProj(project); setShowForm(true); }}
+                >
+                  Edit
+                </button>
+              </div>
+            ))}
+          </div>
         )}
-
+      
+        <div className="flex justify-center mt-5">
+          <button
+            className="bg-green-500 text-white px-5 py-2 rounded"
+            onClick={() => { setEditProj(null); setShowForm(true); }}
+          >
+            Add Project
+          </button>
+        </div>
+      
         {showForm && (
-            <ProjectForm project={editProj} submit = {handleFormSubmit} cancel={()=> {
-                setShowForm(false);
-                setEditProj(null);
-            }}/>
+          <ProjectForm
+            project={editProj}
+            submit={handleFormSubmit}
+            cancel={() => {
+              setShowForm(false);
+              setEditProj(null);
+            }}
+          />
         )}
-    </div>
+      </div>
+      
     );
 
 }
