@@ -16,6 +16,8 @@ from rest_framework.generics import DestroyAPIView, RetrieveUpdateAPIView
 from .models import Project
 from .serializers import ProjectSerializer
 from firebase import db
+import ollama
+import requests
 
 
 @csrf_exempt
@@ -187,6 +189,23 @@ class ApplicantViewSet(viewsets.ViewSet):
 
 
 class ProjectViewSet(viewsets.ViewSet):
+    def generate_summary(self, description):
+        try:
+            print(description)
+            prompt = f"Summarize a project one short sentence."
+            prompt += f"Here is a project description:\n\n{description}\n\n"
+            # response = requests.post("http://127.0.0.1:11434/api/generate", json={
+            # "model": "llama3",
+            # "prompt": prompt,
+            # "stream": False
+            # })
+
+            response = ollama.chat(model="llama3.2", messages=[{"role": "user", "content": prompt}])
+            
+            summary = response['message']['content'].strip()
+            return summary
+        except Exception as e:
+            return "No summary available"
     def list(self,request):
         try:
             proj_ref = db.collection("Projects").stream()
@@ -198,13 +217,14 @@ class ProjectViewSet(viewsets.ViewSet):
     def create(self,request):
         try:
             data = json.loads(request.body)
-           
             proj_ref = db.collection("Projects").document() 
+            summary = self.generate_summary(data["description"])
             project_data = {
-                "id": proj_ref.id,  # Firestore-generated ID
+                "id": proj_ref.id, 
                 "name": data["name"],
                 "description": data["description"],
                 "owner": data.get("owner", "defaultOwner"),
+                "summary": summary,
                 "category": data["category"],
                 "weekly_hours": int(data.get("weekly_hours", 1)),  
                 "no_of_people": int(data.get("no_of_people", 1)),  

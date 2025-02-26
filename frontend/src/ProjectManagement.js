@@ -131,6 +131,7 @@ function ProjectManagement() {
                     <div key={project.id || `project-${index}`} className="bg-white shadow-md p-5 rounded-lg">
                         <h3 className="text-xl font-semibold">{project.name}</h3>
                         <p className="text-gray-700">{project.description}</p>
+                        <p className="text-gray-700">{project.summary}</p>
                         <p className="text-sm text-gray-500">{project.start_date} - {project.end_date}</p>
                         <p>{project.no_of_people}</p>
                         <p>{project.category}</p>
