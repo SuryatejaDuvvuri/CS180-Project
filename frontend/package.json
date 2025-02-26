@@ -10,8 +10,11 @@
     "react": "^19.0.0",
     "react-datepicker": "^8.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.5",
     "react-scripts": "^5.0.1",
+    "scrape-html-web": "^0.1.2"
     "web-vitals": "^2.1.4"
+
   },
   "scripts": {
     "start": "react-scripts --openssl-legacy-provider start",
@@ -38,6 +41,12 @@
     ]
   },
   "devDependencies": {
-    "ajv": "^7.2.4"
+    "ajv": "^7.2.4",
+    "web-vitals": "^4.2.4"    
+  },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false
   }
 }
