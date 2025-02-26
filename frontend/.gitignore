@@ -4,9 +4,15 @@
 /node_modules
 /.pnp
 .pnp.js
-./backend/config
-./backend/api
-./backend/projectAPI
+
+../backend/projectAPI
+../backend/config
+../backend/api
+../backend/.env
+../backend/api/
+../backend/config/
+../backend/db.sqlite3
+../backend/manage.py
 package-lock.json
 package.json
 
@@ -100,21 +106,3 @@ CMakeLists.txt.user*
 # --------
 *.dll
 *.exe
-
-
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
