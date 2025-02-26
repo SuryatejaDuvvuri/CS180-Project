@@ -88,6 +88,43 @@ def send_email(request):
     except Exception as e:
         return JsonResponse({"message": str(e), "status": 500})
 
+class FeedBackViewSet(viewsets.ViewSet):
+    def list(self,request):
+        try:
+            feedbacks_ref = db.collection("Feedback").stream()
+            feedbacks = [{**feedback.to_dict(),"id": feedback.id} for feedback in feedbacks_ref]
+            return JsonResponse({"feedbacks": feedbacks}, status=200)
+        except Exception as e:
+            return JsonResponse({"error":str(e)},status=500)
+    def create(self,request):
+        try:
+            data = json.loads(request.body)
+            required_fields = ["name", "email", "experience", "improvements"]
+            missing = [field for field in required_fields if field not in data]
+            if missing:
+                return Response({"error": f"Missing fields: {', '.join(missing)}"}, status=400)
+
+            feedback_ref = db.collection("Feedback").document()
+            feedback_data = {
+                "name": data["name"],
+                "email": data["email"],
+                "experience": data["experience"],
+                "improvements": data["improvements"],
+                "date_submitted": data.get("date_submitted", None),
+            }
+
+            feedback_ref.set(feedback_data) 
+
+            print("✅ Feedback successfully added:", feedback_data)
+
+            return JsonResponse(
+                {"message": "Feedback submitted successfully", "feedback": feedback_data},
+                status=201
+            )
+        except json.JSONDecodeError:
+            return Response({"error": "Invalid JSON format"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 class ApplicantViewSet(viewsets.ViewSet):
 
     def list(self,request):
