@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
 
 
-function Email({email,name,projName})
+function Email({email,name,projName,type})
 {
-
     const sendEmail = async(type) => {
         const subject = type === "accept" ?  `Congratulations! You’ve been accepted to ${projName}`
         : type === "reject" ? `Thank you for applying to ${projName}` : `Thank you for your interest in ${projName}`;

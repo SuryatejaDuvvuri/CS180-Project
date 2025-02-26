@@ -87,10 +87,66 @@ def send_email(request):
         return JsonResponse({"message": "Email sent successfully", "status": response.status_code})
     except Exception as e:
         return JsonResponse({"message": str(e), "status": 500})
-        
 
+class ApplicantViewSet(viewsets.ViewSet):
 
-username = "caje023"
+    def list(self,request):
+        try:
+            applicants_ref = db.collection("Applicants").stream()
+            applicants = [{**applicant.to_dict(),"id": applicant.id} for applicant in applicants_ref]
+            return JsonResponse({"applicants": applicants}, status=200)
+        except Exception as e:
+            return JsonResponse({"error":str(e)},status=500)
+    def create(self, request):
+        try:
+            data = json.loads(request.body)
+            required_fields = ["name", "email", "project_id"]
+            missing = [field for field in required_fields if field not in data]
+            if missing:
+                return Response({"error": f"Missing fields: {', '.join(missing)}"}, status=400)
+
+            applicant_ref = db.collection("Applicants").document()
+            applicant_data = {
+                "name": data["name"],
+                "email": data["email"],
+                "project_id": data["project_id"],
+                "status": data.get("status", "pending"),
+                "submission_date": data.get("submission_date", None),
+            }
+
+            applicant_ref.set(applicant_data) 
+
+            print("Applicant successfully added:", applicant_data) 
+
+            return JsonResponse(
+                {"message": "Applicant created successfully", "applicant": applicant_data},
+                status=201
+            )
+
+        except json.JSONDecodeError:
+            print("Invalid JSON format received!")
+            return Response({"error": "Invalid JSON format"}, status=400)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    def delete(self, request, applicant_id=None):
+        try:
+            if not applicant_id:
+                return Response({"error": "Applicant ID is required"}, status=400)
+
+            applicant_ref = db.collection("Applicants").document(applicant_id)
+            applicant_data = applicant_ref.get()
+
+            if not applicant_data.exists:
+                return Response({"error": "Applicant not found"}, status=404)
+
+            print(f"Deleting applicant: {applicant_id}, Data: {applicant_data.to_dict()}")
+            applicant_ref.delete()
+
+            return Response({"message": f"Applicant {applicant_id} deleted successfully"}, status=200)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
 
 class ProjectViewSet(viewsets.ViewSet):
