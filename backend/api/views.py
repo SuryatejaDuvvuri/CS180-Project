@@ -98,32 +98,35 @@ class ProjectViewSet(viewsets.ViewSet):
         try:
             proj_ref = db.collection("Projects").stream()
             projects = [{**proj.to_dict(), "id": proj.id} for proj in proj_ref]
+
             return Response(projects,status=200)
         except Exception as e:
             return Response({"error ": str(e)}, status=500)
-    def add(self,request):
+    def create(self,request):
         try:
             data = json.loads(request.body)
+           
             proj_ref = db.collection("Projects").document() 
-            proj_ref.set(
-                {
-                    "name": data["name"],
-                    "description": data["description"],
-                    "owner": username,
-                    "category": data["category"],
-                    "weekly_hours": int(data["weekly_hours"]),
-                    "no_of_people": int(data["no_of_people"]),
-                    "start_date": data["start_date"],
-                    "end_date": data["end_date"],
-                    "image_url": data.get("image_url", None),
-                    "color": data.get("color", "blue"),
-                }
-            )
+            project_data = {
+                "id": proj_ref.id,  # Firestore-generated ID
+                "name": data["name"],
+                "description": data["description"],
+                "owner": data.get("owner", "defaultOwner"),
+                "category": data["category"],
+                "weekly_hours": int(data.get("weekly_hours", 1)),  
+                "no_of_people": int(data.get("no_of_people", 1)),  
+                "start_date": data.get("start_date"),
+                "end_date": data.get("end_date"),
+                "image_url": data.get("image_url", ""),
+                "color": data.get("color", "blue"),
+            }
+            proj_ref.set(project_data)
             
-            return JsonResponse({"Project is added successfully. Project id: ": proj_ref.id}, status=201)
-
+            return JsonResponse({"message": "Project created successfully", "project": project_data}, status=201)
+        except json.JSONDecodeError:
+            return Response({"error": "Invalid JSON format"}, status=400)
         except Exception as e:
-            return JsonResponse({"error":str(e)}, status=100)   
+            return JsonResponse({"error":str(e)}, status=500)   
 
         # return JsonResponse({"error": "Invalid request method"}, status=405)
 

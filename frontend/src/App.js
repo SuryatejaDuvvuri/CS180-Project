@@ -24,9 +24,9 @@ function App() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-5">
       {/* <SignUp />
       <ProjectCreation/> */}
-      {/* <ProjectManagement/> */}
-      <h1 className="text-3xl font-bold mb-5">Send Email Actions</h1>
-      <Email email = "duvvurisuryateja95@gmail.com" name = "Suryateja Duvvuri" projName="1"/>
+      <ProjectManagement/>
+      {/* <h1 className="text-3xl font-bold mb-5">Send Email Actions</h1>
+      <Email email = "duvvurisuryateja95@gmail.com" name = "Suryateja Duvvuri" projName="1"/> */}
     </div>
  
   );

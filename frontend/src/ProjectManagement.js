@@ -47,47 +47,6 @@ function ProjectManagement() {
         
     }
 
-    // const addProject = async (projectData) =>
-    // {
-    //     try
-    //     {
-    //         const response = await fetch("http://localhost:8000/api/projects/", {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //             },
-    //             body: JSON.stringify({
-    //                 name: projectData.name,
-    //                 description: projectData.description,
-    //                 start_date: projectData.start_date,
-    //                 end_date: projectData.end_date,
-    //                 no_of_people: Number(projectData.no_of_people),
-    //                 category: projectData.category,
-    //                 image_url: projectData.img_url,
-    //                 weekly_hours: Number(projectData.weekly_hours),
-    //                 color: projectData.color,
-    //                 authors:[1],
-    //             }),
-    //         });
-    //         const newProject = await response.json();
-    //         console.log("New project added: ", newProject);
-    //         if(response.ok)
-    //         {
-    //             setProjects([...projects, newProject]);
-    //         }
-    //         else
-    //         {
-    //             console.error("Backend error.");
-    //             throw new Error(`HTTP error! status: ${response.status}`);
-    //         }
-    //     }
-    //     catch(err)
-    //     {
-    //         console.log(err);
-    //         setError(err.message);
-    //     }
-    // };
-
     const deleteProj = async (id) =>
     {
         try
@@ -108,77 +67,50 @@ function ProjectManagement() {
         } 
     };
 
-    const handleFormSubmit = async(project) => {
+    const handleFormSubmit = async (project) => {
         const method = editProj ? "PUT" : "POST";
-        const url = editProj ? `http://localhost:8000/api/projects/update/${editProj.id}/`
-        : "http://localhost:8000/api/projects/";
-        try
-        {
+        const url = editProj
+            ? `http://localhost:8000/api/projects/update/${editProj.id}/`
+            : "http://localhost:8000/api/projects/";
+    
+        try {
             const response = await fetch(url, {
                 method: method,
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(project),
-            });
-            const newProject = await response.json();
-            console.log("New project added: ", newProject);
-            if(response.ok)
-            {
-                if(editProj)
-                {
-                    setProjects(projects.map((project) => project.id === editProj.id ? newProject : project))
-                }
-                else
-                {
-                    setProjects([...projects, newProject]);
-                }
-
-                setShowForm(false);
-                setEditProj(null);
-               
+        });
+    
+            console.log("Raw Response:", response); 
+    
+          
+            if (!response.ok) {
+                const errorMessage = `HTTP error! status: ${response.status}`;
+                console.error(errorMessage);
+                throw new Error(errorMessage);
             }
-            else
-            {
-                console.error("Backend error.");
-                throw new Error(`HTTP error! status: ${response.status}`);
+    
+            const data = await response.json();
+            console.log("Server Response:", data);
+    
+            if (editProj) {
+                setProjects(projects.map((proj) => (proj.id === editProj.id ? data : proj)));
+            } else {
+                setProjects([...projects, data]);
             }
-        }
-        catch(err)
-        {
-            console.log(err);
+    
+            setShowForm(false);
+            setEditProj(null);
+        } catch (err) {
+            console.error("Error submitting project:", err);
+            alert(`Error: ${err.message}`);
             setError(err.message);
         }
-        
-    }
 
-    // const updateProj = async (id, updatedProject) =>
-    // {
-    //     try
-    //     {
-    //         const response = await fetch(`http://localhost:8000/api/projects/${id}/`, {
-    //             method: 'PUT',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify(updatedProject),
-    //         });
-    //         const newProject =  await response.json();
-    //         if (response.ok)
-    //         {
-    //           setProjects(projects.map((project) => project.id === id ? newProject : project))
-    //         }
-    //         else
-    //         {
-    //             console.error("Backend Error:");
-    //             throw new Error("Failed to update project.");
-    //         }
-    //     }
-    //     catch(err)
-    //     {
-    //         console.log(err)
-    //     } 
-    // };
+        getProjects();
+    };
+    
 
     useEffect(() => {
         getProjects();
@@ -195,8 +127,8 @@ function ProjectManagement() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.isArray(projects) && projects.length > 0 ? (
-                projects.map((project) => (
-                    <div key={project.id || project.name} className="bg-white shadow-md p-5 rounded-lg">
+                projects.map((project,index) => (
+                    <div key={project.id || `project-${index}`} className="bg-white shadow-md p-5 rounded-lg">
                         <h3 className="text-xl font-semibold">{project.name}</h3>
                         <p className="text-gray-700">{project.description}</p>
                         <p className="text-sm text-gray-500">{project.start_date} - {project.end_date}</p>
