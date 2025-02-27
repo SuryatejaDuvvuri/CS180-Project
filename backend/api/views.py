@@ -149,6 +149,7 @@ class ApplicantViewSet(viewsets.ViewSet):
                 "name": data["name"],
                 "email": data["email"],
                 "project_id": data["project_id"],
+                "position":data["position"],
                 "status": data.get("status", "pending"),
                 "submission_date": data.get("submission_date", None),
             }
@@ -186,7 +187,80 @@ class ApplicantViewSet(viewsets.ViewSet):
 
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+        
+class UserProfileViewSet(viewsets.ViewSet):
+     def retrieve(self, request, user_id):
+        try:
+            user_ref = db.collection("users").document(user_id)
+            user_doc = user_ref.get()
 
+            if not user_doc.exists:
+                return Response({"error": "User not found"}, status=404)
+
+            return Response({**user_doc.to_dict(), "id": user_doc.id}, status=200)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+     @csrf_exempt
+     def create(self, request):
+        try:
+            data = json.loads(request.body)
+            existing_users = db.collection("users").where("net_id", "==", data["net_id"]).stream()
+            if any(existing_users):
+                return Response({"error": "User with this NetID already exists"}, status=400)
+
+            user_ref = db.collection("users").document()
+            user_data = {
+                "id": user_ref.id,
+                "fullname": data["fullname"],
+                "password": data["password"],
+                "net_id": data["net_id"],
+                "pronouns": data.get("pronouns", ""),
+                "skills": data.get("skills", []),
+                "interests": data.get("interests", []),
+                "experience": data.get("experience", ""),
+                "location": data.get("location", ""),
+                "weekly_hours": int(data.get("weekly_hours", 0)),
+                "projects_created": [],
+                "projects_joined": []
+            }
+            user_ref.set(user_data)
+            return JsonResponse({"message": "User profile created successfully", "user": user_data}, status=201)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+         
+     @csrf_exempt
+     def update(self, request, user_id):
+         try:
+            data = json.loads(request.body)
+
+            user_ref = db.collection("users").document(user_id)
+            user_doc = user_ref.get()
+
+            if not user_doc.exists:
+                return Response({"error": "User not found"}, status=404)
+
+            update_data = {
+                key: data[key] for key in data if key in user_doc.to_dict() and data[key]
+            }
+
+            user_ref.update(update_data)
+
+            return Response({"message": "User profile updated successfully", "updated_data": update_data}, status=200)
+         except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+     @csrf_exempt
+     def delete(self, request, user_id):
+        try:
+            user_ref = db.collection("users").document(user_id)
+            user_doc = user_ref.get()
+
+            if not user_doc.exists():
+                return Response({"error": "User not found"}, status=404)
+
+            user_ref.delete()
+            return Response({"message": f"User {user_id} deleted successfully"}, status=200)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
 class ProjectViewSet(viewsets.ViewSet):
     def generate_summary(self, description):
@@ -232,6 +306,7 @@ class ProjectViewSet(viewsets.ViewSet):
                 "end_date": data.get("end_date"),
                 "image_url": data.get("image_url", ""),
                 "color": data.get("color", "blue"),
+                "looking_for": data.get("looking_for","No one")
             }
             proj_ref.set(project_data)
             
@@ -282,7 +357,7 @@ class ProjectUpdateView(RetrieveUpdateAPIView):
 
             allowed_fields = [
                 "name", "description", "owner", "category", "weekly_hours",
-                "no_of_people", "start_date", "end_date", "image_url", "color"
+                "no_of_people", "start_date", "end_date", "image_url", "color", "looking_for"
             ]
             update_data = {key: data[key] for key in data if key in allowed_fields and data[key]}
 
