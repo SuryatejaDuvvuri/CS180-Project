@@ -283,8 +283,12 @@ class ProjectViewSet(viewsets.ViewSet):
     def list(self,request):
         try:
             proj_ref = db.collection("Projects").stream()
+            
+            category_filter = request.GET.get("category", None)
+            if category_filter and category_filter != "All":
+                proj_ref = proj_ref.where("category", "==", category_filter)
+                
             projects = [{**proj.to_dict(), "id": proj.id} for proj in proj_ref]
-
             return Response(projects,status=200)
         except Exception as e:
             return Response({"error ": str(e)}, status=500)
