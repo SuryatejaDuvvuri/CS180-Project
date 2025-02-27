@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './ApplicationForm.css';
+import Email from './Email';
+import Applicants from './Applicants';
 
 const ApplicationForm = () => {
     const [formData, setFormData] = useState({
@@ -28,7 +30,11 @@ const ApplicationForm = () => {
                 <input className="input-field" name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone" /><br />
                 <input className="input-field" name="position" value={formData.position} onChange={handleChange} placeholder="Position" /><br />
                 <input type="file" /><br />
-                <button type="submit">Submit</button>
+                <button type="submit"  onClick={() =>
+                                                Email.sendEmail("duvvurisuryateja95@gmail.com", formData.name, "AI Project", "thanks")
+                
+                // Connect the ApplicantsView.
+                }>Submit</button>
             </form>
         </div>
     );
