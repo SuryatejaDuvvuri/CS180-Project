@@ -1,5 +1,12 @@
-import React, {useState} from 'react';
+
+import logo from './logo.svg';
 import './App.css';
+
+import React from 'react';
+import Header from './Header';
+import Home from './Home';
+import ApplicationForm from './ApplicationForm';
+import UserProfile from './UserProfile';
 import SignUp from './Signup';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -9,28 +16,34 @@ import Email from "./Email"
 import Applicants from "./Applicants"
 
 function App() {
-  // const [name, setName] = useState('');
-  // const [desc, setDesc] = useState('');
-  // const [range, setRange] = useState([null, null]);
-  // const [startDate, endDate] = range;
-  // const [val, setVal] = useState(0);
-  // const [category, setCategory] = useState('');
-  // const [location, setLocation] = useState('');
-  // const [weeklyHours, setWeeklyHours] = useState(0);
-  // const [image, setImage] = useState(null);
-  // const [color, setColor] = useState(null);
-  // const colorOptions = ['red','orange','yellow','green','blue','purple'];
- 
+  const [isLight, setMode] = React.useState(true);
+  
+  // Triggers whenever the light/dark mode button is pressed
+  // Switches the App's className
+  function toggleLightAndDarkMode() {
+    setMode(!isLight);
+  }
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-5">
-      {/* <SignUp />
-      <ProjectCreation/> */}
-      <ProjectManagement/>
-      {/* <Applicants/> */}
-      {/* <h1 className="text-3xl font-bold mb-5">Send Email Actions</h1>
-      <Email email = "duvvurisuryateja95@gmail.com" name = "Suryateja Duvvuri" projName="1"/> */}
+
+    <div className="App">
+      <div className={isLight ? "App LightMode" : "App DarkMode"}>
+          <Header method={toggleLightAndDarkMode}/>
+          {/*Text with gradient*/}
+          {/* <SignUp />
+                <ProjectCreation/> 
+                  <ProjectManagement/>
+                
+                */}
+
+          {/* <Applicants/> */}
+          <div className="grad">
+            TEXT TEST
+          </div>
+        
+      </div>
+         <ApplicationForm />
     </div>
- 
   );
 }
 
