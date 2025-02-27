@@ -38,15 +38,15 @@ return(
             <h1 className='category'>{category}</h1>
             <div className="project-row">
                 <button className = "arrowButton" onClick={() => setScrollIndex((prev) => Math.max(prev - 1, 0))}>←</button>
-
-                {projects.slice(scrollIndex, scrollIndex + maxVisible).map((project) => (
-                    <div key={project.id} className="project-box" onClick={() => handleClick(project)}>
-                        <h3 className='project-title'>{project.title}</h3>
-                        <img className="prev_image" src={profileImage} alt="Profile" />
-                        <p>{project.description}</p>
-                    </div>
-                ))}
-
+                <div className="projects">
+                    {projects.slice(scrollIndex, scrollIndex + maxVisible).map((project) => (
+                        <div key={project.id} className="project-box" onClick={() => handleClick(project)}>
+                            <h3 className='project-title'>{project.title}</h3>
+                            <img className="prev_image" src={profileImage} alt="Profile" />
+                            <p>{project.description}</p>
+                        </div>
+                    ))}
+                </div>
                 <button className = "arrowButton" onClick={() => setScrollIndex((prev) => 
                 Math.min(prev + 1, Math.max(0, projects.length - maxVisible)))}>→</button>
 

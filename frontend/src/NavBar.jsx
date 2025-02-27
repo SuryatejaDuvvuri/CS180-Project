@@ -10,7 +10,7 @@ function NavBar() {
         </div>
         <div className="navbar-links">
             <Link to={"/"}><p className="nav-link">Home</p></Link>
-            <Link to = {"/"}><p className="nav-link">Profile</p></Link>
+            <Link to = {"/Profile"}><p className="nav-link">Profile</p></Link>
             
         </div>
     </nav>

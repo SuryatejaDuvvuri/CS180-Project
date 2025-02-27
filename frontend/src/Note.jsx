@@ -68,11 +68,11 @@ function Note({selectedProject, setSelectedProject, updateProject}){
      // Update applicants when selectedProject changes
      useEffect(() => {
         if (selectedProject) {
-            // Example: Set dummy applicants data based on selectedProject
+           
             const dummyApplicants = [
-                { name: selectedProject.Name || "Unknown", status: "Owner" },
-                { name: "John Doe", status: "Approved" },
-                { name: "Jane Smith", status: "Rejected" },
+                { name: selectedProject.Name || "Unknown", status: "Owner", position: "Backend Dev" },
+                { name: "Matt", status: "Approved" , position: "Frontend Dev"},
+                { name: "Jane Smith", status: "Rejected", position: "UI Designer "},
             ];
             setApplicants(dummyApplicants);
         }
@@ -82,7 +82,7 @@ function Note({selectedProject, setSelectedProject, updateProject}){
     const handleChange = (event, applicantName) => {
         setApplicantStatuses((prev) => ({
             ...prev,
-            [applicantName]: event.target.value, // Update status for the specific applicant
+            [applicantName]: event.target.value, 
         }));
     };
     
@@ -119,6 +119,16 @@ function Note({selectedProject, setSelectedProject, updateProject}){
                                     ) : (selectedProject.skills_required.join(", "))}
                             </p>
                            <p className='info'><strong>Status:</strong> {selectedProject.progress}</p>
+
+                        <p ><strong>Team:</strong>{applicants.map((app) =>(
+                            <>
+                            <div className='project-team'>
+                                <p>{app.name}</p>
+                                <p>{app.position}</p>
+                            </div>
+                            </>
+                         ))}
+                         </p>
                        </div>
                    </div>
   

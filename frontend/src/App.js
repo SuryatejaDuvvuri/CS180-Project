@@ -10,6 +10,7 @@ import './css/App.css';
 import NoteCards from "./NoteCards";
 import Apply from "./apply.jsx";
 import NavBar from './NavBar.jsx';
+import Profile from './Profile.jsx';
 
 
 
@@ -57,6 +58,7 @@ function App() {
               <NoteCards items = {cs_projects} category ="cs"/>
             </>
           }/>
+        <Route path='/Profile' element = {<Profile/>}/>
         <Route path='/Apply' element= {<Apply/>}/>
       </Routes>
     </main>
