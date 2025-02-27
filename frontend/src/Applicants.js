@@ -6,6 +6,8 @@ function Applicants()
     const [applicants, setApplicants] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [profileLoading, setProfileLoading] = useState(false);
     useEffect(() => {
         fetchApplicants();
     }, []);
@@ -32,6 +34,27 @@ function Applicants()
             setApplicants([]);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchUserProfile = async (userId) => {
+        setProfileLoading(true);
+        try {
+            const response = await fetch(`http://localhost:8000/api/users/${userId}/`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            });
+
+            if (!response.ok) {
+                throw new Error("User not found");
+            }
+
+            const data = await response.json();
+            setSelectedUser(data);
+        } catch (err) {
+            console.error("Error fetching user profile:", err);
+        } finally {
+            setProfileLoading(false);
         }
     };
 
@@ -90,7 +113,11 @@ function Applicants()
                         {applicants.length > 0 ? (
                             applicants.map((applicant, index) => (
                                 <tr key={applicant.id || `fallback-key-${index}`} className="border-t">
-                                    <td className="px-4 py-2">{applicant.name}</td>
+                                    <td className="px-4 py-2">
+                                    <a href={`http://localhost:8000/api/users/${applicant.user_id}`} className="text-blue-500 hover:underline">
+                                        {applicant.name}
+                                    </a>
+                                    </td>
                                     <td className="px-4 py-2">{applicant.email}</td>
                                     <td className="px-4 py-2">{applicant.project_name}</td>
                                     <td className="px-4 py-2">
@@ -123,6 +150,26 @@ function Applicants()
                     </tbody>
                 </table>
             )}
+        {/* {selectedUser && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 shadow-lg rounded-lg max-w-md w-full">
+                        <h2 className="text-2xl font-bold">{selectedUser.fullname}</h2>
+                        <p className="text-gray-600">NetID: {selectedUser.net_id}</p>
+                        <p className="text-gray-600">Pronouns: {selectedUser.pronouns}</p>
+                        <p className="text-gray-600">Location: {selectedUser.location}</p>
+                        <p className="text-gray-600">Experience: {selectedUser.experience}</p>
+                        <p className="text-gray-600">Weekly Hours: {selectedUser.weekly_hours} hrs</p>
+
+                        <h3 className="text-xl font-bold mt-4">Skills & Interests</h3>
+                        <p className="text-gray-600">Skills: {selectedUser.skills.join(", ")}</p>
+                        <p className="text-gray-600">Interests: {selectedUser.interests.join(", ")}</p>
+
+                        <button onClick={() => setSelectedUser(null)} className="bg-red-500 text-white px-4 py-2 rounded mt-4">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )} */}
         </div>
     );
 }
