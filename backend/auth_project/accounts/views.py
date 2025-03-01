@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -17,15 +18,23 @@ db = firestore.client()
 @api_view(['POST'])
 def register_user(request):
     serializer = RegisterSerializer(data=request.data)
+    
     if serializer.is_valid():
         user = serializer.save()
 
-        doc_ref = db.collection("users").document(str(user.id))
-        doc_ref.set({
+        user_data = {
             "email": user.email,
-            "username": user.username,
-            "created_at": firestore.SERVER_TIMESTAMP
-        })
+            "name": request.data.get("name"),
+            "netId": request.data.get("netId"),
+            "skills": request.data.get("skills", []),
+            "interests": request.data.get("interests", []),
+            "experience": request.data.get("experience"),
+            "location": request.data.get("location"),
+            "weeklyHours": request.data.get("weeklyHours"),
+            "password": request.data.get("password"),
+            "created_at": firestore.SERVER_TIMESTAMP,
+        }
+        db.collection("users").document(user.email).set(user_data)
 
         return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
     

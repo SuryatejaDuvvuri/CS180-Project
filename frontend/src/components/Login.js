@@ -97,6 +97,15 @@ export default function Login() {
         >
           Sign in with Google
         </button>
+
+        {/*  New Sign Up Button */}
+        <button
+          onClick={() => navigate("/signup")}
+          className="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg"
+        >
+          Sign Up
+        </button>
+
       </div>
     </div>
   );
