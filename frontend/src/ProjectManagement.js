@@ -139,6 +139,7 @@ function ProjectManagement() {
                         <p>{project.weekly_hours}</p>
                         <p>{project.color}</p>
                         <p>{project.owner}</p>
+                        <p>{project.lookingFor}</p>
                         <button
                         className="bg-red-500 text-white px-3 py-1 rounded mt-2"
                         onClick={() => deleteProj(project.id)}
@@ -193,6 +194,7 @@ const ProjectForm = ({project, submit, cancel}) => {
           image_url: "",
           weekly_hours: 0,
           color: "",
+          lookingFor:"",
       }
   );
 
@@ -222,6 +224,7 @@ const ProjectForm = ({project, submit, cancel}) => {
           <input type="url" name="image_url" value={formData.image_url} onChange={handleChange} placeholder="Image URL" />
           <input type="number" name="weekly_hours" value={formData.weekly_hours} onChange={handleChange} placeholder="Weekly Hours" required />
           <input type="text" name="color" value={formData.color} onChange={handleChange} placeholder="Color" />
+          <input type="text" name="looking_for" value={formData.lookingFor} onChange={handleChange} placeholder="Looking for..." />
 
           <div className = "buttons">
             <button type = "submit">{project ? "Update" : "Add"}</button>
