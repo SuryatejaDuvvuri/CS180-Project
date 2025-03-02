@@ -1,4 +1,5 @@
 
+
 import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -16,6 +17,9 @@ import ProjectCreation from './ProjectCreation.js';
 import ProjectManagement from './ProjectManagement.js';
 import Email from "./Email.js"
 import Applicants from "./Applicants.js"
+// import Login from "./components/Login";
+// import Signup from "./components/Signup"; 
+// import Dashboard from "./pages/Dashboard";
 
 function App() {
   const [isLight, setMode] = React.useState(true);
@@ -28,24 +32,24 @@ function App() {
 
   return (
 
+
     <div className="App">
       <div className={isLight ? "App LightMode" : "App DarkMode"}>
           <Header method={toggleLightAndDarkMode}/>
-          {/*Text with gradient*/}
-          {/* <SignUp />
-                <ProjectCreation/> 
-                  <ProjectManagement/>
-                
-                */}
-
-          {/* <Applicants/> */}
+        <Router>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />  
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
+        </Router>
           <div className="grad">
             TEXT TEST
           </div>
         
       </div>
-         <ApplicationForm />
     </div>
+
   );
 }
 
