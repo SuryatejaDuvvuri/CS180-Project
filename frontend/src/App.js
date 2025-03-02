@@ -1,10 +1,8 @@
 
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-
-import React from 'react';
 import Header from './Header.js';
 import Home from './Home.js';
 import ApplicationForm from './ApplicationForm.js';
@@ -30,21 +28,24 @@ function App() {
 
     <div className="App">
       <div className={isLight ? "App LightMode" : "App DarkMode"}>
-          <Header method={toggleLightAndDarkMode}/>
-          {/*Text with gradient*/}
-          {/* <SignUp />
-                <ProjectCreation/> 
-                  <ProjectManagement/>
-                
-                */}
-
-          {/* <Applicants/> */}
+        <Router>
+          <Header method={toggleLightAndDarkMode} />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/create" element={<ProjectCreation />} />
+            <Route path="/manage" element={<ProjectManagement />} />
+            <Route path="/email" element={<Email />} />
+            <Route path="/applicants" element={<Applicants />} />
+          </Routes>
+        </Router>
+          
           <div className="grad">
             TEXT TEST
           </div>
         
       </div>
-         {/* <ApplicationForm /> */}
     </div>
   );
 }

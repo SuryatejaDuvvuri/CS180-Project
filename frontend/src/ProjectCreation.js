@@ -3,8 +3,7 @@ import './ProjectCreation.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-
-export default function ProjectCreation() {
+function ProjectCreation() {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
     const [range, setRange] = useState([null, null]);
@@ -99,3 +98,5 @@ export default function ProjectCreation() {
         </div>
     );
 }
+
+export default ProjectCreation;
