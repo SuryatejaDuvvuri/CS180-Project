@@ -1,7 +1,7 @@
-
 import logo from './logo.svg';
 import './App.css';
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { createRoot } from 'react-dom/client';
 import React from 'react';
 import Header from './Header.js';
 import Home from './Home.js';
@@ -14,11 +14,9 @@ import ProjectCreation from './ProjectCreation.js';
 import ProjectManagement from './ProjectManagement.js';
 import Email from "./Email.js"
 import Applicants from "./Applicants.js"
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { createRoot } from 'react-dom/client';
-
-//css
-import './css/App.css';
+// import Login from "./components/Login";
+// import Signup from "./components/Signup"; 
+// import Dashboard from "./pages/Dashboard";
 
 //jsx
 import NoteCards from "./NoteCards";
@@ -55,9 +53,6 @@ const film_projects = [
   { id: 10, title: 'Thriller Film J', Name: 'Mia', description: 'Producing a suspenseful thriller with a twist ending', looking_for: "producers", skills_required: ["Budgeting", "Casting", "Production Management"], progress: "In Progress" }
 ];
 
-
-
-
 function App() {
   const [isLight, setMode] = React.useState(true);
   
@@ -68,27 +63,29 @@ function App() {
   }
 
   return (
+
+
     <div className="App">
-       <div className={isLight ? "App LightMode" : "App DarkMode"}>
-       <Header method={toggleLightAndDarkMode}/>
-       
-     <Routes>
-        <Route path='/' element= {
-            <>
-              
-              <NoteCards items = {cs_projects} category ="Recommended"/>
-              <NoteCards items = {film_projects} category ="Film"/>
-              <NoteCards items = {cs_projects} category ="cs"/>
-            </>
-          }/>
-        <Route path='/Profile' element = {<Profile/>}/>
-        <Route path='/Apply' element= {<Apply/>}/>
-      </Routes>
-      <div className="grad">
+      <div className={isLight ? "App LightMode" : "App DarkMode"}>
+          <Header method={toggleLightAndDarkMode}/>
+        <Router>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />  
+              <Route path="/dashboard" element={<Dashboard />} />
+//                <NoteCards items = {cs_projects} category ="Recommended"/>
+//               <NoteCards items = {film_projects} category ="Film"/>
+//               <NoteCards items = {cs_projects} category ="cs"/>
+              <Route path='/Profile' element = {<Profile/>}/>
+              <Route path='/Apply' element= {<Apply/>}/>
+            </Routes>
+        </Router>
+          <div className="grad">
             TEXT TEST
           </div>
       </div>
     </div>
+
   );
 }
 
