@@ -1,0 +1,152 @@
+/* =========full display=========*/
+.project-detail-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+ .project-detail-box {
+  background: repeating-linear-gradient(
+      white,
+      white 24px,
+      #d3d3d3 25px /* Light gray lines every 25px */
+  );
+  border-left: 5px solid #f39c12; /* Orange margin like a notebook */
+ 
+  padding: 15px;
+  border-radius: 8px;
+  width: 50%;
+  max-width: 400px;
+  height: auto;
+  max-height: 600px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-wrap: wrap;
+  box-shadow: 4px 4px 10px rgba(167, 113, 113, 0.2); /* X, Y, blur, spread */
+}
+
+
+ .title {
+  text-align: center;
+  margin-top: 0px;
+  margin-bottom: 10px;
+ 
+  width: 100%;
+  border-bottom: solid;
+}
+
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Align items to the top */
+  justify-content: center;
+  width: 100%;
+  margin: 0px;
+}
+.image{
+width: 25%;
+height: auto;
+border-radius: 50%;
+}
+.info{
+text-align: flex-start ;
+flex: 1;
+padding-left: 5px;
+padding-bottom: 5px;
+margin: 0px;
+}
+.project-team{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.name{
+margin: 0px;
+}
+ button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+ button:hover {
+  background-color: #0056b3;
+}
+
+
+.button-container {
+  display: flex;
+  justify-content: space-between; /* Center buttons horizontally */
+  gap: 10px; /* Add space between buttons */
+  width: 100%;
+  margin-top: 10px; /* Add some space above the buttons */
+
+
+}
+button{
+  height: 40px;
+ 
+}
+
+/*project-manager (might move to different file)*/
+.Project-Manager{
+  border: 1px solid black;
+  background-color: white;
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  height: auto;
+}
+.Project-Manager h2{
+  text-align: center;
+  margin-bottom: 0px;
+  width: 100%;
+  border-bottom: 2px solid black;
+}
+
+.applicants{
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  border-bottom: 2px solid black;
+}
+.Line{
+  width: 1px;
+  background-color: black;
+  flex-grow: 1;
+  transform: scaleX(0.5);
+}
+.status{
+  width: 49%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  border-bottom: 2px solid black;
+}
+
+
+.buttons{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  
+}
+
+li{
+  margin-left: 10px;
+}
+
+img{
+  width: 5%;
+}

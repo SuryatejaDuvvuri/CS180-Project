@@ -12,8 +12,7 @@
 ../backend/api/*
 ../backend/config/
 ../backend/db.sqlite3
-../frontend/package.json
-../frontend/package-lock.json
+
 backend/.env
 backend/api/admin.py
 backend/manage.py
@@ -30,6 +29,8 @@ backend/config/settings.py
 backend/config/urls.py
 backend/config/wsgi.py
 firebase_key.json
+frontend/package-lock.json
+frontend/package-lock.json
 # production
 /build
 
@@ -117,4 +118,3 @@ CMakeLists.txt.user*
 # --------
 *.dll
 *.exe
-
