@@ -1,6 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
-from api.views import ProjectViewSet, send_email, ProjectDeleteView, ProjectUpdateView, ApplicantViewSet,FeedBackViewSet, UserProfileViewSet
+from api.views import (
+    ProjectViewSet, send_email, ProjectDeleteView, ProjectUpdateView, 
+    ApplicantViewSet, FeedBackViewSet, UserProfileViewSet, 
+    ProjectRecommendationViewSet  
+)
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -18,4 +22,5 @@ urlpatterns = [
     path("api/users/", UserProfileViewSet.as_view({"get": "list", "post": "create"})),
     path("api/users/<str:user_id>/", UserProfileViewSet.as_view({"get": "retrieve", "put": "update", "delete": "delete"})),
 
+    path("api/recommend-projects/", ProjectRecommendationViewSet.as_view({"get": "list"}), name="recommend_projects"),
 ]
