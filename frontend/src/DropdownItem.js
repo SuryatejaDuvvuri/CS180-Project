@@ -1,5 +1,5 @@
 import React from 'react';
-import Dropdown from './Dropdown';
+import Dropdown from './Dropdown.js';
 import './Dropdown.css';
 
 // A single element in the dropdown menu

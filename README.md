@@ -25,7 +25,7 @@
 #### Languages/Tools/Technologies used:
 
 Frontend: React.js
-Backend: Python(Django web framework), Rest API, Firebase Firestore, Authentication Login, Hosting and OpenAI API
+Backend: Python(Django web framework), Rest API, Firebase Firestore, Authentication Login, Hosting and Deepseek R1
 
  
 #### The features in this project would be:

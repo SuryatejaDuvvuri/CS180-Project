@@ -1,15 +1,18 @@
-import React from 'react';
-import Dropdown from './Dropdown';
-import GetMajors from './GetMajors';
+import React, { useState } from "react";
+import Dropdown from './Dropdown.js';
+import GetMajors from './GetMajors.js';
 
 import lightLogo from "./assets/light mode logo.png";
 import darkLogo from "./assets/dark mode logo.png";
+import ProjectCreation  from "./ProjectCreation";
 
 // The header for the website. Consists of a "View profile" button, a "Create project" button,
 //    a "Filter" button to filter by majors, and a search bar.
 function Header({method}) {
 
     const [isLight, setMode] = React.useState(true);
+    const [showProjectCreation, setShowProjectCreation] = React.useState(false);
+    const [majors, setMajors] = useState([]);
 
     // Triggers whenever the light/dark mode button is pressed
     // Calls App.toggleLightAndDarkMode() to switch the App's className, then
@@ -24,7 +27,9 @@ function Header({method}) {
         <div className="Header">
            <div className='Subcategory'>
                 <button className='Button'>View Profile</button>
-                <button className='Button'>+ Create Project</button>
+                <button className="Button" onClick={() => setShowProjectCreation(true)}>
+                    + Create Project
+                </button>
             </div>
             <div className='Subcategory'>
                <Dropdown title={"Filter..."} arr={GetMajors()} />
@@ -37,7 +42,9 @@ function Header({method}) {
                     <img style={{width: 20, margin: "5px"}} src={isLight ? lightLogo : darkLogo} />
                 </button>
                 <button className='Button'>View Profile</button>
-                <button className='Button'>+ Create Project</button>
+                <button className='Button' onClick={
+                   ProjectCreation
+                }>+ Create Project</button>
             </div>
             {/*Buttons to right*/}
             <div className='Subcategory'>
@@ -46,6 +53,7 @@ function Header({method}) {
                 <input type="text" className='Button'/>
             </div>
             <div className='HeaderShadow' />
+            {showProjectCreation && <ProjectCreation />}
         </div>
     );
 }
