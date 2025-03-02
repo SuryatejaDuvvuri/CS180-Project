@@ -18,7 +18,7 @@ from .serializers import ProjectSerializer
 from firebase import db
 import ollama
 import requests
-
+from .recommendation import recommend_projects
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -378,3 +378,14 @@ class ProjectUpdateView(RetrieveUpdateAPIView):
         except Exception as e:
             return Response({"error": str(e)}, status=400)
         
+
+class ProjectRecommendationViewSet(viewsets.ViewSet):
+     def list(self, request):
+        """ API endpoint to get project recommendations for a user. """
+        user_email = request.query_params.get("email")  # Get user email from request
+        if not user_email:
+            return Response({"error": "Email parameter is required"}, status=400)
+
+        recommended_projects = recommend_projects(user_email)
+        return JsonResponse(recommended_projects, safe=False)  # Ensure proper JSON serialization
+
