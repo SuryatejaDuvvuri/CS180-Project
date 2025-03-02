@@ -2,12 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBMnIeCiPo6KuDkXm5ewln_elW27gSRry8",
-  authDomain: "collabhub-28a6c.firebaseapp.com",
-  projectId: "collabhub-28a6c",
-  storageBucket: "collabhub-28a6c.appspot.com",
-  messagingSenderId: "458858566808",
-  appId: "1:458858566808:web:711c46f48b381f4e72aced"
+  apiKey: process.env.apiKey,
+  authDomain: process.env.authDomain,
+  projectId: process.env.projectId,
+  storageBucket: process.env.storageBucket,
+  messagingSenderId: process.env.messagingSenderId,
+  appId: process.env.appId,
 };
 
 // Initialize Firebase

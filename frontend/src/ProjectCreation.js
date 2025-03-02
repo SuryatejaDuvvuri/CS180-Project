@@ -1,8 +1,7 @@
-import React, {useState} from 'react';
+import React, { useState } from "react";
 import './ProjectCreation.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
 
 function ProjectCreation() {
     const [name, setName] = useState('');
@@ -99,5 +98,4 @@ function ProjectCreation() {
         </div>
     );
 }
-
 export default ProjectCreation;

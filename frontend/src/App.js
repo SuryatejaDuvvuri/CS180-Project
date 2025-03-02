@@ -67,19 +67,25 @@ function App() {
 
     <div className="App">
       <div className={isLight ? "App LightMode" : "App DarkMode"}>
-          <Header method={toggleLightAndDarkMode}/>
         <Router>
-            <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />  
-              <Route path="/dashboard" element={<Dashboard />} />
+          <Header method={toggleLightAndDarkMode} />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/create" element={<ProjectCreation />} />
+            <Route path="/manage" element={<ProjectManagement />} />
+            <Route path="/email" element={<Email />} />
+            <Route path="/applicants" element={<Applicants />} />
+            <Route path="/dashboard" element={<Dashboard />} />
 //                <NoteCards items = {cs_projects} category ="Recommended"/>
 //               <NoteCards items = {film_projects} category ="Film"/>
 //               <NoteCards items = {cs_projects} category ="cs"/>
               <Route path='/Profile' element = {<Profile/>}/>
               <Route path='/Apply' element= {<Apply/>}/>
-            </Routes>
+          </Routes>
         </Router>
+          
           <div className="grad">
             TEXT TEST
           </div>

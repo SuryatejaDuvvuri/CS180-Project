@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 
 function ProjectManagement() {
@@ -6,14 +7,17 @@ function ProjectManagement() {
     const [projects, setProjects] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const id = uuidv4();
+
     const [editProj, setEditProj] = useState(null);
     const [showForm, setShowForm] = useState(false);
-  
+
     const getProjects = async () => {
         setLoading(true);
         try
         {
             const response = await fetch("http://localhost:8000/api/projects/", {
+
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
