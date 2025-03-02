@@ -1,19 +1,21 @@
 
 import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 
 import React from 'react';
-import Header from './Header';
-import Home from './Home';
-import ApplicationForm from './ApplicationForm';
-import UserProfile from './UserProfile';
-import SignUp from './Signup';
+import Header from './Header.js';
+import Home from './Home.js';
+import ApplicationForm from './ApplicationForm.js';
+import UserProfile from './UserProfile.js';
+import SignUp from './Signup.js';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import ProjectCreation from './ProjectCreation';
-import ProjectManagement from './ProjectManagement';
-import Email from "./Email"
-import Applicants from "./Applicants"
+import ProjectCreation from './ProjectCreation.js';
+import ProjectManagement from './ProjectManagement.js';
+import Email from "./Email.js"
+import Applicants from "./Applicants.js"
 
 function App() {
   const [isLight, setMode] = React.useState(true);

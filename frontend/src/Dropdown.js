@@ -5,7 +5,7 @@
 
 import React from 'react';
 import './Dropdown.css';
-import DropdownItem from './DropdownItem';
+import DropdownItem from './DropdownItem.js';
 
 // The Dropdown menu. Consists of a button and several DropdownItems
 function Dropdown({ title, arr }) {

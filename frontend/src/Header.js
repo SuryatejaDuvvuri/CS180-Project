@@ -1,6 +1,6 @@
 import React from 'react';
-import Dropdown from './Dropdown';
-import GetMajors from './GetMajors';
+import Dropdown from './Dropdown.js';
+import GetMajors from './GetMajors.js';
 
 import lightLogo from "./assets/light mode logo.png";
 import darkLogo from "./assets/dark mode logo.png";

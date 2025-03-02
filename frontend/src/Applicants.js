@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import Email from './Email';
+import Email from './Email.js';
 
 function Applicants()
 {
