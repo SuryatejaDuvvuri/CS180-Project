@@ -25,7 +25,7 @@ function Header({method}) {
     }
 
     return (
-        <header className={`w-screen h-screen ${!isLight ? 'bg-websiteBackgroundDark' : 'bg-websiteBackground'} text-gray-900 dark:text-white`}>
+        <header className={`w-screen ${!isLight ? 'bg-websiteBackgroundDark' : 'bg-websiteBackground'} text-gray-900 dark:text-white`}>
         <div className="bg-mainColor p-5 flex items-center justify-between">
             <div className="flex justify-between h-16">
                 <div className="flex space-x-4 items-center">

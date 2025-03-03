@@ -4,6 +4,7 @@ from django.shortcuts import render
 
 import os
 from django.http import JsonResponse
+from django.contrib.auth.hashers import make_password, check_password
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from sendgrid import SendGridAPIClient
@@ -215,21 +216,27 @@ class UserProfileViewSet(viewsets.ViewSet):
         except Exception as e:
             return Response({"error": str(e)}, status=500)
     @csrf_exempt
-    def login_user(request):
-        email = request.data.get("email")
-        password = request.data.get("password")
+    def login_user(self,request):
+        data = json.loads(request.body.decode("utf-8"))
+        email = data.get("email")
+        password = data.get("password")
 
-        user_ref = db.collection("users").where("email", "==", email).get()
-        
-        if not user_ref:
-            return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+        if not email or not password:
+            return JsonResponse({"error": "Email and password are required"}, status=400)
+        user_docs = db.collection("users").where("email", "==", email).stream()
+        user_data = None
+        for doc in user_docs:
+            user_data = doc.to_dict()
+            break 
 
-        user = authenticate(request, username=email, password=password)
-        if user:
-            login(request, user)
-            return Response({"message": "Login successful!"}, status=status.HTTP_200_OK)
+        if not user_data:
+            return JsonResponse({"error": "User not found"}, status=400)
 
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+        stored_password = user_data.get("password")
+        if not check_password(password, stored_password):
+            return JsonResponse({"error": "Invalid credentials"}, status=400)
+
+        return JsonResponse({"message": "Login successful!", "user": {"fullname": user_data.get("fullname"), "net_id": user_data.get("net_id")}}, status=200)
     @csrf_exempt
     def create(self, request):
         try:
@@ -249,8 +256,8 @@ class UserProfileViewSet(viewsets.ViewSet):
                 return Response({"error": "User with this NetID already exists"}, status=400)
 
             user_ref = db.collection("users").document()
+            hashed_password = make_password(data["password"])
 
-            # Ensure weekly_hours is a valid integer
             weekly_hours = data.get("weekly_hours", 0)
             if isinstance(weekly_hours, str) and not weekly_hours.isdigit():
                 return JsonResponse({"error": "weekly_hours must be a number"}, status=400)
@@ -258,6 +265,7 @@ class UserProfileViewSet(viewsets.ViewSet):
             user_data = {
                 "id": user_ref.id,
                 "fullname": data.get("fullname", ""),
+                "password": hashed_password,
                 "net_id": net_id,
                 "email": data.get("email", ""),
                 "password": data.get("password", ""),
@@ -269,11 +277,11 @@ class UserProfileViewSet(viewsets.ViewSet):
                 "weekly_hours": int(weekly_hours),
             }
 
-            # Create subcollections
+
             user_ref.collection("projects_created").document("init").set({"initialized": True})
             user_ref.collection("projects_joined").document("init").set({"initialized": True})
 
-            # Store user in Firestore
+
             user_ref.set(user_data)
 
             return JsonResponse({"message": "User profile created successfully", "user": user_data}, status=201)
@@ -302,16 +310,15 @@ class UserProfileViewSet(viewsets.ViewSet):
         except Exception as e:
             return Response({"error": str(e)}, status=400)
         
-        @api_view(['POST'])
-        def logout_user(request):
-            logout(request)
-            return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
 
-        @api_view(['GET'])
-        def check_authentication(request):
-            if request.user.is_authenticated:
-                return Response({"is_authenticated": True, "user": request.user.email})
-            return Response({"is_authenticated": False})
+    def logout_user(request):
+        logout(request)
+        return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
+
+    def check_authentication(request):
+        if request.user.is_authenticated:
+            return Response({"is_authenticated": True, "user": request.user.email})
+        return Response({"is_authenticated": False})
     @csrf_exempt
     def update(self, request, user_id):
          try:

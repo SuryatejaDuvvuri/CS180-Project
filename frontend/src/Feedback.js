@@ -30,6 +30,7 @@ function Feedback()
             if (!response.ok) {
                 throw new Error(data.error || "Failed to send email");
             }
+            setFeedback(Array.isArray(data) ? data : []);
         }
         catch (err)
         {
@@ -64,7 +65,7 @@ function Feedback()
     }
 
     return (
-        <div className="bg-gray-100 min-h-screen p-5">
+        <div className="bg-gray-100 p-5">
             <h1 className="text-3xl font-bold text-center mb-5">User Feedback</h1>
 
             {error && <p className="text-red-500">{error}</p>}
@@ -82,7 +83,7 @@ function Feedback()
                         </tr>
                     </thead>
                     <tbody>
-                        {feedback.map((feedback, index) => (
+                    {Array.isArray(feedback) && feedback.map((feedback, index) => (
                             <tr key={feedback.id || `fallback-${index}`} className="border-t">
                                 <td className="px-4 py-2">{feedback.name}</td>
                                 <td className="px-4 py-2">{feedback.email}</td>
