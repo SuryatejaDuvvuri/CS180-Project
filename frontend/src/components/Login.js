@@ -13,7 +13,7 @@ export default function Login() {
     setError(null);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/auth/login/", {
+      const response = await fetch("http://localhost:8000/api/login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -38,7 +38,7 @@ export default function Login() {
         throw new Error("Failed to retrieve Firebase ID token.");
       }
 
-      const response = await fetch("http://127.0.0.1:8000/auth/google-login/", {
+      const response = await fetch("http://localhost:8000/api/google-login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),

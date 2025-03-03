@@ -2,7 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-code {
+html, body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent unwanted horizontal scrolling */
+}
+
+
+/* code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-}
+} */
+
+

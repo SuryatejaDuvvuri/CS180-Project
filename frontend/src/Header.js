@@ -25,36 +25,33 @@ function Header({method}) {
     }
 
     return (
-        <div className="Header">
-           <div className="Subcategory">
-                <button className="Button">View Profile</button>
-                <button className="Button" onClick={() => navigate("/create")}>
-                    + Create Project
-                </button>
+        <header className={`w-screen h-screen ${!isLight ? 'bg-websiteBackgroundDark' : 'bg-websiteBackground'} text-gray-900 dark:text-white`}>
+        <div className="bg-mainColor p-5 flex items-center justify-between">
+            <div className="flex justify-between h-16">
+                <div className="flex space-x-4 items-center">
+                    <button 
+                        className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                        onClick={() => navigate("/profile")}
+                    >
+                        View Profile
+                    </button>
+                    <button 
+                        className="px-4 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                        onClick={() => navigate("/create")}
+                    >
+                        + Create Project
+                    </button>
+                </div>
             </div>
-            <div className="Subcategory">
-                <Dropdown title={"Filter..."} arr={majors} />
-                <input type="text" className="Button" />
+            <div className="w-full flex justify-center mt-4">
+                <Dropdown className = "text-white bg-green-500 rounded-md px-2 py-1 w-max" title={"Filter..."} arr={majors} />
+                <input type="text" className="border p-2 rounded-md w-64" placeholder="Search projects..." />
             </div>
-            {/*Buttons to left*/}
-            <div className='Subcategory'>
-                {/*Light/Dark mode button*/}
-                <button style={{width: 30, padding: "0px"}} className="Button" onClick={toggleLightAndDarkMode}>
-                    <img style={{width: 20, margin: "5px"}} src={isLight ? lightLogo : darkLogo} />
-                </button>
-                <button className='Button'>View Profile</button>
-                <button className="Button" onClick={() => navigate("/create")}>
-                    + Create Project
-                </button>
-            </div>
-            {/*Buttons to right*/}
-            <div className='Subcategory'>
-                <Dropdown title={"Filter..."} arr={GetMajors()} />
-                {/*Search bar*/}
-                <input type="text" className='Button'/>
-            </div>
-            <div className='HeaderShadow' />
         </div>
+
+        <div className = "text-white bg-headerShadow p-1 w-full flex items-center justify-center"/>
+    </header>
+    
     );
 }
 

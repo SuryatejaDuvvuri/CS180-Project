@@ -12,6 +12,10 @@ router.register(r'', ProjectViewSet, basename='projects')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/login/', include('rest_framework.urls')),
+    path('api/logout', UserProfileViewSet.as_view({"get": "logout"}), name='logout'),
+    path('api/check-auth', UserProfileViewSet.as_view({"get": "check_authentication"}), name='check_auth'),
+    path('api/google-login/', UserProfileViewSet.as_view({"post": "google_login"}), name='google_login'),
     path("api/feedback/",FeedBackViewSet.as_view({"get": "list", "post": "create"}),name="get_feedback"),
     path("api/applicants/", ApplicantViewSet.as_view({"get": "list", "post": "create"}), name="get_applicants"),
     path("api/applicants/<str:applicant_id>/", ApplicantViewSet.as_view({"get": "list", "post": "create", "delete": "delete"}), name="get_delete_project"),

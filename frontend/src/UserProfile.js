@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-function UserProfile()
+export default function UserProfile()
 {
     const { userId } = useParams();
     const [user, setUser] = useState(null);
@@ -74,4 +74,4 @@ function UserProfile()
     );
 }
 
-export default UserProfile;
+// export default UserProfile;
