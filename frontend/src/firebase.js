@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -9,6 +9,21 @@ const firebaseConfig = {
   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_APP_ID,
 };
+
+const monitorAuthState = (callback) => {
+  return onAuthStateChanged(auth, (user) => {
+      if (user) {
+          user.getIdToken().then((token) => {
+              localStorage.setItem('authToken', token);
+              callback(user);
+          });
+      } else {
+          localStorage.removeItem('authToken');
+          callback(null);
+      }
+  });
+};
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -37,4 +52,12 @@ const signUpWithEmail = async (email, password) => {
   }
 };
 
-export { auth, signInWithGoogle, signUpWithEmail };
+const logout = async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error("Logout Error", error);
+  }
+};
+
+export { auth, signInWithGoogle, signUpWithEmail, monitorAuthState, logout };

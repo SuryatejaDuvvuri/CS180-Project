@@ -2,7 +2,7 @@
 // import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import { createRoot } from 'react-dom/client';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Header from './Header.js';
 import Home from './Home.js';
 import Login from './components/Login.js';
@@ -19,22 +19,28 @@ import Feedback from "./Feedback.js"
 // import Login from "./components/Login";
 // import Signup from "./components/Signup"; 
 import Dashboard from "./pages/Dashboard";
-
+import ProtectedRoute from "./ProtectedRoute";
 //jsx
 import NoteCards from "./NoteCards.js";
 import Apply from "./apply.jsx";
 import NavBar from './NavBar.jsx';
 import Profile from './Profile.jsx';
 import Note from './Note.jsx';
+import { auth, monitorAuthState } from "./firebase";
 
 function App() {
   const [isLight, setMode] = React.useState(true);
-  
+  const [token, setTokenState] = useState(localStorage.getItem('authToken'))
   // Triggers whenever the light/dark mode button is pressed
   // Switches the App's className
   function toggleLightAndDarkMode() {
     setMode(!isLight);
   }
+  // const [user, setUser] = useState(null);
+
+  // useEffect(() => {
+  //   monitorAuthState(setUser); 
+  // }, []);
 
   return (
     <div className="w-screen flex flex-col w-full  bg-gray-50 justify-between">
@@ -51,19 +57,48 @@ function App() {
           </div> */}
            <div className="text-center bg-websiteBackground">
            {/* <Header method={toggleLightAndDarkMode} /> */}
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/profile" element={<UserProfile />} />
-                <Route path="/create" element={<ProjectCreation />} />
-                <Route path="/manage" element={<ProjectManagement />} />
-                <Route path="/email" element={<Email />} />
-                <Route path="/applicants" element={<Applicants />} />
-                <Route path="/home" element={<Dashboard />} />
-                <Route path='/Profile' element={<Profile/>}/>
-                <Route path='/Apply' element={<Apply/>}/>
-              </Routes>
+           <Routes>
+  
+            <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={
+              <UserProfile />} />
+                 <Route path="/create" element={
+
+                    <ProjectCreation />
+
+                } />
+                <Route path="/manage" element={
+                    <ProjectManagement />
+
+                } />
+                <Route path="/email" element={
+
+                    <Email />
+
+                } />
+                <Route path="/applicants" element={
+
+                    <Applicants />
+
+                } />
+                <Route path="/home" element={
+
+                   token ? <Dashboard /> : <Navigate to="/login" replace />
+
+                } />
+                <Route path='/apply' element={
+
+                    <Apply />
+
+                } />
+            </Route>
+      
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            
+           
+          </Routes>
             </div>
       </div>
     </div>

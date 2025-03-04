@@ -1,23 +1,35 @@
-import React, {useState, useEffect} from "react";
-import { Navigate } from "react-router-dom";
-// import { getAuth } from "firebase/auth";
-import { auth } from "./firebase.js";
-import { onAuthStateChanged } from "firebase/auth";
-const ProtectedRoute = ({ children }) => {
-    const [user, setUser] = useState(null);
+import React, { useState, useEffect } from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { auth, monitorAuthState } from "./firebase.js";
+
+const ProtectedRoute = () => {
+    const [authUser, setAuthUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-            setLoading(false);
-        });
+    // useEffect(() => {
+    //     const unsubscribe = monitorAuthState((currentUser) => {
+    //         setAuthUser(currentUser);
+    //         setLoading(false);
+    //     });
 
-        return () => unsubscribe();
-    }, []);
+    //     return () => unsubscribe();
+    // }, []);
 
-    if (loading) return <div>Loading...</div>; 
-    return user ? children : <Navigate to="/login" />;
+    
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            </div>
+        );
+    }
+    if (!localStorage.getItem("authToken")) {
+        return <Navigate to="/login" replace />;
+    }
+   
+  
+    return <Outlet />;
 };
 
 export default ProtectedRoute;

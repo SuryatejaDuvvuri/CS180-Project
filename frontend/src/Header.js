@@ -47,6 +47,18 @@ function Header({method}) {
                 <Dropdown className = "text-white bg-green-500 rounded-md px-2 py-1 w-max" title={"Filter..."} arr={majors} />
                 <input type="text" className="border p-2 rounded-md w-64" placeholder="Search projects..." />
             </div>
+
+            <div className="flex items-center">
+                <button className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50" onClick={toggleLightAndDarkMode}>
+                    {isLight ? '🌞' : '🌜'}
+                </button>
+            </div>
+
+            <div className="flex items-center">
+                <button className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50" onClick = {() => navigate("/")}>
+                    Logout
+                </button>
+            </div>
         </div>
 
         <div className = "text-white bg-headerShadow p-1 w-full flex items-center justify-center"/>
