@@ -147,7 +147,7 @@ function ProjectCreation() {
       createError.numPplError = createData.numPpl == '' ? true : false;
     };
 
-    //If category input is filled, there is no error (catError = false)
+    //If selectedCats array has a length > 0, there is no error (catError = false)
     const checkCategory = (e) => {
       setCreateData({ ...createData, [e.target.name]: e.target.value });
       createError.catError = createData.selectedCats.length == 0 ? true : false;
