@@ -4,7 +4,6 @@ from django.shortcuts import render
 
 import os
 from django.http import JsonResponse
-from django.contrib.auth.hashers import make_password, check_password
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from sendgrid import SendGridAPIClient
@@ -233,7 +232,7 @@ class UserProfileViewSet(viewsets.ViewSet):
             return JsonResponse({"error": "User not found"}, status=400)
 
         stored_password = user_data.get("password")
-        if not check_password(password, stored_password):
+        if password != stored_password:
             return JsonResponse({"error": "Invalid credentials"}, status=400)
 
         return JsonResponse({"message": "Login successful!", "user": {"fullname": user_data.get("fullname"), "net_id": user_data.get("net_id")}}, status=200)
@@ -256,7 +255,6 @@ class UserProfileViewSet(viewsets.ViewSet):
                 return Response({"error": "User with this NetID already exists"}, status=400)
 
             user_ref = db.collection("users").document()
-            hashed_password = make_password(data["password"])
 
             weekly_hours = data.get("weekly_hours", 0)
             if isinstance(weekly_hours, str) and not weekly_hours.isdigit():
@@ -265,7 +263,6 @@ class UserProfileViewSet(viewsets.ViewSet):
             user_data = {
                 "id": user_ref.id,
                 "fullname": data.get("fullname", ""),
-                "password": hashed_password,
                 "net_id": net_id,
                 "email": data.get("email", ""),
                 "password": data.get("password", ""),
