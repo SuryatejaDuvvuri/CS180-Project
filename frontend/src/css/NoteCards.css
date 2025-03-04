@@ -29,8 +29,8 @@
 }
   .projects{
     display: flex;
-    gap:70px;
-    width: 100%
+    gap:70px
+    
   }
   /*note preview*/
   .project-box {
@@ -55,7 +55,6 @@
     flex: 1 1 20%;
     line-height: 25px;
     font-size: 16px;
-    min-width: 10%;
   }
   /* styling the elements within the note preview */
   .project-box > h3{

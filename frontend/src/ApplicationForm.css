@@ -1,19 +1,39 @@
+@import './css/Colors.css';
+
 .form-container {
     width: 300px;
     padding: 20px;
-    border: 1px solid black;
-    background-color: #f9f9f9;
+    border: 1px solid var(--acc-color);
+    background-color: var(--box-background);
+}
+
+.formTitle {
+    padding: 0px 0px 15px 0px;
+    font-size: 22px;
+    color: var(--acc-color);
 }
 
 .input-field {
     width: 100%;
     margin: 3px;
-    border: 1px solid #cbcbec;
+    border: 1px solid var(--acc-color);
+    border-radius: 5px;
+    background-color: var(--button-color);
+    text-align: left;
+}
+
+.resumeLabel {
+    padding: 7px 0px 0px 7px;
+}
+
+.input-file {
+    height: auto;
+    border: 0px;
     border-radius: 2px;
 }
 
 button {
-    background-color: #377510;
+    background-color: var(--acc-color);
     color: white;
     border: none;
     padding: 8px;

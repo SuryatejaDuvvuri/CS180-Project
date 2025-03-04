@@ -39,9 +39,6 @@ function Home() {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log("home page");
-                console.log(data);
-                console.log("home page");
                 setProjects(data);
             } else {
                 throw new Error("Failed to fetch projects");

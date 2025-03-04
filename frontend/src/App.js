@@ -1,6 +1,6 @@
-
-import './css/App.css';
-import {  Router, Routes, Route } from "react-router-dom";
+//import logo from './logo.svg';
+import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createRoot } from 'react-dom/client';
 import React from 'react';
 import Header from './Header.js';
@@ -16,13 +16,14 @@ import Email from "./Email.js"
 import Applicants from "./Applicants.js"
 // import Login from "./components/Login";
 // import Signup from "./components/Signup"; 
-import Dashboard from "./pages/Dashboard";
+// import Dashboard from "./pages/Dashboard";
 
 //jsx
 import NoteCards from "./NoteCards";
 import Apply from "./apply.jsx";
 import NavBar from './NavBar.jsx';
 import Profile from './Profile.jsx';
+import Feedback from './Feedback.jsx';
 
 
 
@@ -63,12 +64,10 @@ function App() {
   }
 
   return (
-
-
-    <div className="App">
-      <div className={isLight ? "App LightMode" : "App DarkMode"}>
-       
-          <Header method={toggleLightAndDarkMode} />
+    <div>
+      <div className="App">
+        <Router>
+          <Header/>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<SignUp />} />
@@ -77,26 +76,25 @@ function App() {
             <Route path="/manage" element={<ProjectManagement />} />
             <Route path="/email" element={<Email />} />
             <Route path="/applicants" element={<Applicants />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path = "/notecards" element = {
-              <>
-                <NoteCards items = {cs_projects} category ="Recommended"/>
-              </>}/>
-               
               <Route path='/Profile' element = {<Profile/>}/>
               <Route path='/Apply' element= {<Apply/>}/>
           </Routes>
-          <NoteCards items = {cs_projects} category ="Recommended"/>
-                <NoteCards items = {film_projects} category ="Film"/>
-                <NoteCards items = {cs_projects} category ="cs"/>
-          
-          <div className="grad">
-            TEXT TEST
-          </div>
+        </Router>
+        <NoteCards items = {cs_projects} category ="Recommended"/>
+        <NoteCards items = {film_projects} category ="Film"/>
+        <NoteCards items = {cs_projects} category ="cs"/>
       </div>
     </div>
 
   );
+  /*return(
+    <div className={isLight ? "App LightMode" : "App DarkMode"}>
+      <Router>
+        <Header/>
+      </Router>
+      <Feedback/>
+    </div>
+  );*/
 }
 
 export default App;
