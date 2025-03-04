@@ -17,6 +17,7 @@ import Applicants from "./Applicants.js"
 // import Login from "./components/Login";
 // import Signup from "./components/Signup"; 
 // import Dashboard from "./pages/Dashboard";
+import Signup from "./Signup.js";
 
 //jsx
 import NoteCards from "./NoteCards";
@@ -92,7 +93,7 @@ function App() {
       <Router>
         <Header/>
       </Router>
-      <Feedback/>
+      <ApplicationForm/>
     </div>
   );*/
 }

@@ -80,35 +80,19 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
 
 
     // HACK: I made a border style for each of the inputs because I couldn't hardcode it straight into the html
-    const fNameBorderStyle = {
-        border: valueError.fNameError ? '2px solid var(--error-color)' : '1px solid var(--acc-color)'
-    }
-    const fNameDisplayStyle = {
+   const fNameDisplayStyle = {
         display: valueError.fNameError ? "flex" : "none",
-    }
-
-    const lNameBorderStyle = {
-        border: valueError.lNameError ? '2px solid var(--error-color)' : '1px solid var(--acc-color)'
     }
     const lNameDisplayStyle = {
         display: valueError.lNameError ? "flex" : "none",
     }
-    
-    const emailBorderStyle = {
-        border: valueError.emailError ? '2px solid var(--error-color)' : '1px solid var(--acc-color)'
-    }
     const emailDisplayStyle = {
         display: valueError.emailError ? "flex" : "none",
-    }
-
-    const feedbackBorderStyle = {
-        border: valueError.feedbackError ? '2px solid var(--error-color)' : '1px solid var(--acc-color)'
     }
     const feedbackDisplayStyle = {
         display: valueError.feedbackError ? "flex" : "none",
     }
-
-
+    
     
     return(
         <>
@@ -125,7 +109,7 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
                         {/*First name input*/}
                         <label htmlFor="firstname">First Name*</label>
                         <input  
-                            style={fNameBorderStyle}
+                            className={valueError.fNameError ? "form-input error-input" : "form-input"}
                             name ="firstname" type="text"
                             id = "firstname"
                             placeholder='Enter first Name'
@@ -136,7 +120,7 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
                         {/*Last name input*/}
                         <label htmlFor="lastname">Last Name*</label>
                         <input
-                            style={lNameBorderStyle}
+                            className={valueError.lNameError ? "form-input error-input" : "form-input"}
                             name ="lastname"
                             type="text"
                             placeholder='Enter last Name'
@@ -148,7 +132,7 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
                         {/*Email input*/}
                         <label htmlFor="email">Email*</label>
                         <input
-                            style={emailBorderStyle}
+                            className={valueError.emailError ? "form-input error-input" : "form-input"}
                             type="email"
                             placeholder="Enter Email"
                             name ="email"
@@ -160,7 +144,7 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
                         {/*Feedback input*/}
                         <label htmlFor="Feedback">FeedBack*</label>
                         <textarea
-                            style={feedbackBorderStyle}
+                            className={valueError.feedbackError ? "form-input error-input" : "form-input"}
                             name="feedback"
                             id="Feedback"
                             cols ="30"

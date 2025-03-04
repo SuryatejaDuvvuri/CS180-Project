@@ -166,9 +166,6 @@ function ProjectCreation() {
     };
     
     // HACK: I made a label style for each of the inputs because I couldn't hardcode it straight into the html
-    /* Unlike ApplicationForm.js and Feedback.jsx, we are imbedding the border styles directly by changing the
-       classNames. I cannot get the "styles" component to change otherwise.
-    */
     const projImgDisplayStyle = {
       display: createError.projImgError ? "flex" : "none",
     }

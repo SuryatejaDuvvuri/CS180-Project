@@ -28,3 +28,7 @@
       color: var(--error-color);
       font-weight: normal;
   }
+
+  .error-input {
+    border: 2px solid var(--error-color);
+  }

@@ -38,10 +38,6 @@
     font-size: 1rem;
     border: 1px solid var(--acc-color);
   }
-
-  .error-input {
-    border: 2px solid var(--error-color);
-  }
   
   
   .form-textarea {

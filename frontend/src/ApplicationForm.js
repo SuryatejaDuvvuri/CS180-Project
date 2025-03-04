@@ -141,15 +141,8 @@ const ApplicationForm = () => {
     };
 
     // HACK: I made a border style for each of the inputs because I couldn't hardcode it straight into the html
-    const nameBorderStyle = {
-        border: formError.nameError ? '2px solid var(--error-color)' : '1px solid var(--acc-color)'
-    }
     const nameDisplayStyle = {
         display: formError.nameError ? "flex" : "none",
-    }
-    
-    const emailBorderStyle = {
-        border: formError.emailError ? '2px solid var(--error-color)' : '1px solid var(--acc-color)'
     }
     const emailDisplayStyle = {
         display: formError.emailError ? "flex" : "none",
@@ -157,26 +150,14 @@ const ApplicationForm = () => {
     const emailInvalidDisplayStyle = {
         display: formError.emailInvalidError ? "flex" : "none",
     }
-    
-    const phoneBorderStyle = {
-        border: formError.phoneError ? '2px solid var(--error-color)' : '1px solid var(--acc-color)'
-    }
     const phoneReqDisplayStyle = {
         display: formError.phoneReqError ? "flex" : "none",
     }
     const phoneInvalidDisplayStyle = {
         display: formError.phoneInvalidError ? "flex" : "none",
     }
-
-    const positionBorderStyle = {
-        border: formError.positionError ? '2px solid var(--error-color)' : '1px solid var(--acc-color)'
-    }
     const positionDisplayStyle = {
         display: formError.positionError ? "flex" : "none",
-    }
-    
-    const resumeBorderStyle = {
-        border: formError.resumeError ? '2px solid var(--error-color)' : '1px solid var(--acc-color)'
     }
     const resumeDisplayStyle = {
         display: formError.resumeError ? "flex" : "none",
@@ -189,57 +170,61 @@ const ApplicationForm = () => {
             <div className='formTitle'>Application Form</div>
             <form onSubmit={handleSubmit}>
                 {/*Name input*/}
+                <h1>Feedback Form</h1>
+                <label className="form-label">Full name: 
                 <input 
-                    style={nameBorderStyle}
-                    className="input-field"
+                    className={formError.nameError ? "input-field error-input" : "input-field"}
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="Name" /><br />
                 <div style={nameDisplayStyle} className='errorLabel' >Required</div>
-               
+                </ label>
+
                 {/*Email input*/}
+                <label className="form-label">Email: 
                 <input 
-                    style={emailBorderStyle}
-                    className="input-field"
+                    className={formError.emailError ? "input-field error-input" : "input-field"}
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="Email" /><br />
                 <div style={emailDisplayStyle} className='errorLabel' >Required</div>
-                
+                </ label>
+
                 {/*Phone number input*/}
+                <label className="form-label">Phone number:
                 <input 
-                    style={phoneBorderStyle}
-                    className="input-field"
+                    className={formError.phoneError ? "input-field error-input" : "input-field"}
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="Phone" /><br />
                 <div style={phoneReqDisplayStyle} className='errorLabel' >Required</div>
                 <div style={phoneInvalidDisplayStyle} className='errorLabel' >Invalid phone number</div>
-                
+                </ label>
+
                 {/*Position input*/}
+                <label className="form-label">Position:
                 <input 
-                    style={positionBorderStyle}
-                    className="input-field"
+                    className={formError.positionError ? "input-field error-input" : "input-field"}
                     name="position"
                     value={formData.position}
                     onChange={handleChange}
                     placeholder="Position" /><br />
                 <div style={positionDisplayStyle} className='errorLabel' >Required</div>
-                
+                </ label>
+
                 {/*Resume input*/}
-                <div 
-                    style={resumeBorderStyle}
-                    className="input-field">
-                    <div className='resumeLabel'>Resume:</div>
+                <label className="form-label">Resume:
+                <div className={formError.resumeError ? "input-field error-input" : "input-field"}>
                     <input className='input-file' type="file"
                     onChange={(event) => formError.resumeChanged = true} /><br />
                 </div>
                 <div style={resumeDisplayStyle}className='errorLabel' >File required</div>
-                
+                </ label>
+
                 {/*Submit button*/}
                 <button type="submit">Submit</button>
             </form>
