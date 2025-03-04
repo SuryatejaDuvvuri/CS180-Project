@@ -1,21 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './index.css';
-import App from './App.js';
-import reportWebVitals from './reportWebVitals.js';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import Feedback from './Feedback';
 
-function HelloWorld() {
+function HelloWorld()
+{
   return (<h1 className="greeting">Hello, world!</h1>);
 };
 
-const root = createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

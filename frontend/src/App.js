@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createRoot } from 'react-dom/client';
@@ -23,6 +23,7 @@ import NoteCards from "./NoteCards";
 import Apply from "./apply.jsx";
 import NavBar from './NavBar.jsx';
 import Profile from './Profile.jsx';
+import Feedback from './Feedback.jsx';
 
 
 
@@ -63,12 +64,10 @@ function App() {
   }
 
   return (
-
-
-    <div className="App">
-      <div className={isLight ? "App LightMode" : "App DarkMode"}>
+    <div>
+      <div className="App">
         <Router>
-          <Header method={toggleLightAndDarkMode} />
+          <Header/>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<SignUp />} />
@@ -77,22 +76,25 @@ function App() {
             <Route path="/manage" element={<ProjectManagement />} />
             <Route path="/email" element={<Email />} />
             <Route path="/applicants" element={<Applicants />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-//                <NoteCards items = {cs_projects} category ="Recommended"/>
-//               <NoteCards items = {film_projects} category ="Film"/>
-//               <NoteCards items = {cs_projects} category ="cs"/>
               <Route path='/Profile' element = {<Profile/>}/>
               <Route path='/Apply' element= {<Apply/>}/>
           </Routes>
         </Router>
-          
-          <div className="grad">
-            TEXT TEST
-          </div>
+        <NoteCards items = {cs_projects} category ="Recommended"/>
+        <NoteCards items = {film_projects} category ="Film"/>
+        <NoteCards items = {cs_projects} category ="cs"/>
       </div>
     </div>
 
   );
+  /*return(
+    <div className={isLight ? "App LightMode" : "App DarkMode"}>
+      <Router>
+        <Header/>
+      </Router>
+      <Feedback/>
+    </div>
+  );*/
 }
 
 export default App;

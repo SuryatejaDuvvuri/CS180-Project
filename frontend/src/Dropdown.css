@@ -1,3 +1,5 @@
+@import './css/Colors.css';
+
 :root {
     --hover-color: #f5ad42;
     --white: #ffffff;
@@ -21,7 +23,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #fff;
+    background-color: var(--button-color);
     font-family: 'Poppins', sans-serif;
     width: auto;
     color: #000;

@@ -6,7 +6,7 @@ import profileImage from "./assets/profile.png";
 //css
 import "./css/Note.css"
 //jsx
-import Feedback from "./Feedback";
+import Feedback from "./Feedback.jsx";
 
 function Note({selectedProject, setSelectedProject, updateProject}){
   
