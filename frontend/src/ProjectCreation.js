@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import './ProjectCreation.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Dropdown from "./Dropdown.js";
+import GetMajors from './GetMajors.js';
 
 function ProjectCreation() {
     const [range, setRange] = useState([null, null]);
@@ -10,11 +12,19 @@ function ProjectCreation() {
     const [color, setColor] = useState(null);
     const colorOptions = ['rgb(204, 83, 83)','rgb(245, 173, 66)','rgb(237, 215, 107)','rgb(122, 224, 124)','var(--box-background)','rgb(181, 122, 224)','rgb(230, 167, 192)','rgb(197, 197, 197)'];
     
+    // Ensures form only submits if the Submit button is pressed and not the Dropdown
+    const[submitClicked, setSubmitClicked] = useState();
+    const handleSubmitClicked = () =>
+    {
+      setSubmitClicked(true);
+    }
+
     const [createData, setCreateData] = useState({
         projImg: '',
         name: '',
         desc: '',
         numPpl: '',
+        selectedCats: [],
         location: '',
         weeklyTime: '',
     });
@@ -29,14 +39,48 @@ function ProjectCreation() {
         projDescError: false,
         projDurError: false,
         numPplError: false,
+        catError: false,
         categoriesError: false,
         locationError: false,
         weeklyTimeError: false,
     });
 
+    // This function is used in DropdownItem to add elements to the create.Data.selectedCats array
+    function addCategory(element)
+    {
+      if(!createData.selectedCats.includes(element))
+        createData.selectedCats.push(element);
+    }
+    
+    // This function is used in DropdownItem to remove elements to the create.Data.selectedCats array
+    function removeCategory(element)
+    {
+      if(createData.selectedCats.includes(element))
+      {
+        var tempArr = [];
+        createData.selectedCats.forEach((elem) => {
+          if(elem != element)
+            tempArr.push(elem);
+        });
+
+        createData.selectedCats = tempArr;
+      }
+    }
+
+    //Returns a string of the array with ", " in between each item
+    function selectedCatsToString()
+    {
+      var returnStr = "";
+      createData.selectedCats.toSorted().forEach((elem) => {
+        returnStr = returnStr + elem + ", ";
+      });
+      return returnStr.substring(0, returnStr.length-2);
+    }
+
     //Not applicable to project image, color, duration, and categories
     const handleChange = (e) => {
       setCreateData({ ...createData, [e.target.name]: e.target.value });
+      setSubmitClicked(false);
     };
 
     /* Before submitting, update the form data one last time to ensure there are no lagged inputs.
@@ -51,14 +95,16 @@ function ProjectCreation() {
       checkProjDesc(e);
       checkProjDur(e);
       checkNumPpl(e);
+      checkCategory(e);
       checkLocation(e);
       checkWeeklyTime(e);
       // There is no need to check for numPpl and weeklyTime since you cannot submit the form without those being > 0
 
       e.preventDefault();
       // If there are no errors, send the alert
-      if(!(createError.projImgError || createError.colorError || createError.projNameError || createError.projDescError || createError.projDurError || createError.locationError))
+      if(submitClicked && !(createError.projImgError || createError.colorError || createError.projNameError || createError.projDescError || createError.projDurError || createError.numPplError || createError.catError || createError.locationError || createError.weeklyTimeError))
           alert('Project created');
+      setSubmitClicked(false);
     };
 
     // Sets projImgError to !projImgChanged.
@@ -101,6 +147,12 @@ function ProjectCreation() {
       createError.numPplError = createData.numPpl == '' ? true : false;
     };
 
+    //If category input is filled, there is no error (catError = false)
+    const checkCategory = (e) => {
+      setCreateData({ ...createData, [e.target.name]: e.target.value });
+      createError.catError = createData.selectedCats.length == 0 ? true : false;
+    };
+
     //If location input is filled, there is no error (locationError = false)
     const checkLocation = (e) => {
       setCreateData({ ...createData, [e.target.name]: e.target.value });
@@ -134,6 +186,9 @@ function ProjectCreation() {
     }
     const numPplDisplayStyle = {
       display: createError.numPplError ? "flex" : "none",
+    }
+    const catDisplayStyle = {
+      display: createError.catError ? "flex" : "none",
     }
     const locationDisplayStyle = {
       display: createError.locationError ? "flex" : "none",
@@ -245,7 +300,6 @@ function ProjectCreation() {
             </label>
 
             {/*Categories input*/}
-            {/*Currently does nothing*/}
             <label className="form-label">Categories: 
               <datalist>
                 <option value = "Computer Science"/>
@@ -255,6 +309,20 @@ function ProjectCreation() {
                 <option value = "Psychology"/>
                 <option value = "History"/>
               </datalist>
+              <div className={createError.catError ? "error-input" : ""}>
+                <Dropdown
+                  title={"Add Majors..."}
+                  arr={GetMajors()}
+                  addChosenElem={addCategory}
+                  removeChosenElem={removeCategory}
+                />
+              </div>
+              {createData.selectedCats.length != 0 && (
+                <div className="file-info">
+                  <strong>Selected:</strong> {selectedCatsToString()}
+                </div>
+              )}
+              <div style={catDisplayStyle} className='errorLabel' >Required</div>
             </label>
             
             {/*Location input*/}
@@ -284,7 +352,7 @@ function ProjectCreation() {
             </label>
 
             {/*Submit button*/}
-            <input className="submitButton" type = "submit" value = "Submit"/>
+            <input onClick={handleSubmitClicked} className="submitButton" type = "submit" value = "Submit"/>
           </form>
         </div>
     );

@@ -36,7 +36,7 @@
     margin-top: 0.25rem;
     padding: 0.5rem;
     font-size: 1rem;
-    border: 0px;
+    border: 1px solid var(--acc-color);
   }
 
   .error-input {
