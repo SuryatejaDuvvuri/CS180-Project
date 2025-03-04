@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import profileImage from "./assets/profile.png";
 
@@ -6,19 +7,20 @@ import profileImage from "./assets/profile.png";
 //css
 import "./css/Note.css"
 //jsx
-import Feedback from "./Feedback";
+import Feedback from "./Feedback.jsx";
 
-function Note({selectedProject, setSelectedProject, updateProject}){
+function Note({selectedProject, setSelectedProject}){
   
-   const [selectedFeedback, setselectedFeedback] = useState(false);
-   const [lastProj, setlastProj] = useState(null);
-   const [buttonText, setButtonText] = useState('Apply');
+    const navigate = useNavigate();
+    const [selectedFeedback, setselectedFeedback] = useState(false);
+    const [lastProj, setlastProj] = useState(null);
+    const [buttonText, setButtonText] = useState('Apply');
 
-   const [isEditing, setIsEditing] = useState(false); // Toggle edit mode
-   const [editedProject, setEditedProject] = useState(selectedProject );
-   const [applicants, setApplicants] = useState([]); 
-   const [selectedOption, setSelectedOption] = useState("");
-   const [applicantStatuses, setApplicantStatuses] = useState({});
+    const [isEditing, setIsEditing] = useState(false); // Toggle edit mode
+    const [editedProject, setEditedProject] = useState(selectedProject );
+    const [applicants, setApplicants] = useState([]); 
+    const [selectedOption, setSelectedOption] = useState("");
+    const [applicantStatuses, setApplicantStatuses] = useState({});
 
 
     //closes the selected project and opens feedback
@@ -42,12 +44,17 @@ function Note({selectedProject, setSelectedProject, updateProject}){
             setButtonText("Apply");
         }
     }
-//edit functions
+
+    //go to user profile
+    const goToProfile = () => {
+        navigate('/profile');
+    }
+    //edit function
    const toggleEdit = () => {
     if (isEditing) {
         // Save changes to selectedProject
         setSelectedProject(editedProject);
-        updateProject(editedProject);
+        //updateProject(editedProject);
         console.log("saving");
     } else {
         // Load current project details into edit state
@@ -88,24 +95,25 @@ function Note({selectedProject, setSelectedProject, updateProject}){
     
    return(
        <>
-           {/* bigger display */}
+       
+           {/* bigger display - project change */}
            {selectedProject && (
            <div className="project-detail-overlay" >
                <div className="project-detail-box" onClick={(e) => e.stopPropagation()}>
                    <h2 className='title'>{isEditing?
-                        (<input type='text' name ="title" value={editedProject.title} onChange={handleInputChange}/>):(selectedProject.title)}
+                        (<input type='text' name ="title" value={editedProject.title} onChange={handleInputChange}/>):(selectedProject.name)}
                    </h2>
                    <div className="content">
-                       <img className="image" src={profileImage} alt="Profile" />
+                       <img className="image" src={profileImage} alt="Profile"  onClick={goToProfile} style={{ cursor: 'pointer'}}/>
                        <div className="info">
                            <p className="info"><strong>Name:</strong>{" "}
                                 {isEditing ? (<input type="text" name="Name" value={editedProject.Name} onChange={handleInputChange}/>) : 
-                                (selectedProject.Name)}
+                                (selectedProject.owner)}
                             </p>
 
                            <p className="info"> <strong>Description:</strong>{" "}
                                     {isEditing ? (<textarea name="description" value={editedProject.description} onChange={handleInputChange}/>) : 
-                                    (selectedProject.description)}
+                                    (selectedProject.summary)}
                             </p>
                            <p className='info'><strong>Looking for:</strong>{" "}
                                     {isEditing ? (<input type="text" name="looking_for" value={editedProject.looking_for}
@@ -116,7 +124,7 @@ function Note({selectedProject, setSelectedProject, updateProject}){
                                     {isEditing ? (
                                         <input type="text" name="skills_required" value={editedProject.skills_required.join(", ")} onChange={(e) => setEditedProject((prev) => ({...prev,
                                         skills_required: e.target.value.split(", "), }))}/>
-                                    ) : (selectedProject.skills_required.join(", "))}
+                                    ) : (selectedProject.weekly_hours)}
                             </p>
                            <p className='info'><strong>Status:</strong> {selectedProject.progress}</p>
 

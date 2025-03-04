@@ -1,8 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 //css 
 import "./css/Feedback.css"
 function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, lastProj}){
+    //useStates
+    //const [feedback,setFeedback] = useState([]);
+    //const [loading, setLoading] = useState(true);
+    //const [error, setError] = useState(null);
 
     const closeFeedback = () => {
         setselectedFeedback(false);
@@ -12,6 +16,7 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(values);
+        sendFeedback(values.email, values.firstname, values.feedback, values.improvements);
         closeFeedback();
     }
 
@@ -20,7 +25,8 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
         firstname: '',
         lastname: '',
         email: '',
-        feedback: ''
+        feedback: '',
+        improvements: ''
     });
 
     const handleChanges = (e) =>{
@@ -28,6 +34,33 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
         setValues({...values, [e.target.name]:[e.target.value]})
     }
 
+    const sendFeedback = async (email, name, feedback, improvements) => 
+        {
+            try
+            {
+                const response = await fetch("http://localhost:8000/api/feedback", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        name: name,
+                        experiences: feedback,
+                        improvements: improvements,
+                    }),
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || "Failed to send email");
+                }
+            }
+            catch (err)
+            {
+                console.error("Error: ",err);
+            }
+        }
+    
     return(
         <>
             
@@ -48,7 +81,10 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
                         <input type="email" placeholder="Enter Email" name ="email" id="email" onChange ={(e)=>handleChanges(e)} required/>
 
                         <label htmlFor="Feedback">FeedBack*</label>
-                        <textarea name="feedback" id="Feedback" cols ="30" row = "10" placeholder="Feedback for Project" onChange ={(e)=>handleChanges(e)} required></textarea>
+                        <textarea name="feedback" id="Feedback" cols ="30" rows = "10" placeholder="Feedback for Project" onChange ={(e)=>handleChanges(e)} required></textarea>
+
+                        <label htmlFor="Improvments">Improvments*</label>
+                        <textarea name="improvements" id="Improvments" cols ="30" rows = "10" placeholder="What needed improvement?" onChange ={(e)=>handleChanges(e)} required></textarea>
 
                         <button className='submit'>submit</button>
                     </form>
