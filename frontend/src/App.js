@@ -27,6 +27,7 @@ import NavBar from './NavBar.jsx';
 import Profile from './Profile.jsx';
 import Note from './Note.jsx';
 import { auth, monitorAuthState } from "./firebase";
+import {Navigate} from "react-router-dom"
 
 function App() {
   const [isLight, setMode] = React.useState(true);
@@ -63,8 +64,8 @@ function App() {
               <Route path="/profile" element={
               <UserProfile />} />
                  <Route path="/create" element={
-
                     <ProjectCreation />
+  
 
                 } />
                 <Route path="/manage" element={
@@ -84,6 +85,7 @@ function App() {
                 <Route path="/home" element={
 
                    token ? <Dashboard /> : <Navigate to="/login" replace />
+
 
                 } />
                 <Route path='/apply' element={
