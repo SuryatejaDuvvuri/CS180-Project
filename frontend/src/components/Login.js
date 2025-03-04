@@ -25,7 +25,7 @@ export default function Login() {
       }
 
       localStorage.setItem("authToken", data.token);
-      navigate("/dashboard");
+      navigate("/home");
     } catch (err) {
       setError(err.message);
     }
