@@ -6,6 +6,7 @@ function Home() {
     const [selectedMajor, setSelectedMajor] = useState("All"); 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [filteredProjects, setFilteredProjects] = useState([]);
     const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0); // ✅ Fixed feature index logic
     const navigate = useNavigate();
 
@@ -61,13 +62,24 @@ function Home() {
         }
     };
 
-    // ✅ Auto-cycle through features every 3 seconds
+
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentFeatureIndex((prevIndex) => (prevIndex + 1) % features.length);
         }, 3000);
         return () => clearInterval(interval);
     }, []);
+
+    const handleMajorSelect = (major) =>
+    {
+        setSelectedMajor(major);
+        if (major === "All") {
+            setFilteredProjects(projects);
+        } else {
+            const filtered = projects.filter(project => project.category === major);
+            setFilteredProjects(filtered);
+        }
+    };
 
     return (
         <div className="w-full flex flex-col items-center bg-gray-100">
@@ -126,7 +138,6 @@ function Home() {
                         </div>
                     </section>
 
-                    {/* 🔥 Filter & Project Display Section */}
                     <section className="text-center">
                         <h2 className="text-3xl font-bold mb-4">Explore Projects by Major</h2>
                         
@@ -150,21 +161,19 @@ function Home() {
                             <p className="text-red-500">{error}</p>
                         ) : projects.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {projects.map((project, index) => (
-                                    <div key={project.id || index} className="bg-white shadow-md p-5 rounded-lg">
-                                        <h3 className="text-xl font-semibold">{project.name}</h3>
-                                        <p className="text-gray-700">{project.description}</p>
-                                        <p className="text-sm text-gray-500">{project.start_date} - {project.end_date}</p>
-                                        <p>{project.no_of_people} members</p>
-                                        <p className="text-blue-600 font-semibold">{project.category}</p>
-                                        <button 
-                                            className="bg-blue-500 text-white px-4 py-2 rounded mt-3"
-                                            onClick={() => navigate(`/project/${project.id}`)}
-                                        >
-                                            View Project
-                                        </button>
-                                    </div>
-                                ))}
+                                {filteredProjects.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {filteredProjects.map((project) => (
+                                        <div key={project.id} className="bg-white p-4 rounded shadow-md">
+                                            <h2 className="text-xl font-semibold">{project.name}</h2>
+                                            <p className="text-gray-600">{project.description}</p>
+                                            <p className="text-sm text-gray-500">Category: {project.category}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-center text-gray-500">No projects available in this category.</p>
+                            )}
                             </div>
                         ) : (
                             <p>No projects found for {selectedMajor}.</p>

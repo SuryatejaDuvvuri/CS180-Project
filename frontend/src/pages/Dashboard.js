@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../Header";
 import NoteCards from "../NoteCards";
 import { useNavigate } from "react-router-dom";
-export default function Dashboard() {
+export default function Dashboard({ selectedMajor }) {
     const [projects, setProjects] = React.useState([]);
     const [error, setError] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
@@ -36,7 +36,11 @@ export default function Dashboard() {
     const getProjects = async () => {
         setLoading(true);
         try {
-            const response = await fetch("http://localhost:8000/api/projects/", {
+            let url = "http://localhost:8000/api/projects/";
+            if (selectedMajor !== "All") {
+                url += `?category=${encodeURIComponent(selectedMajor)}`;
+            }
+            const response = await fetch(url, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
             });
@@ -64,12 +68,13 @@ export default function Dashboard() {
     };
     React.useEffect(() => {
         getProjects();
-    }, []);
+    }, [selectedMajor]);
 
 
     return (
       <div className="w-screen flex flex-col items-center justify-center">
         {/* <Header/> */}
+        
         <main className = "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold mb-8">Welcome to CollabHub🎉</h1>
         {loading ? (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Dropdown from './Dropdown.js';
-import useMajors from './GetMajors.js';
+import { useMajors } from "./GetMajors"; 
 import { useNavigate } from "react-router-dom"; 
 import lightLogo from "./assets/light mode logo.png";
 import darkLogo from "./assets/dark mode logo.png";
@@ -9,12 +9,20 @@ import { logout } from "./firebase.js";
 
 // The header for the website. Consists of a "View profile" button, a "Create project" button,
 //    a "Filter" button to filter by majors, and a search bar.
-function Header({method}) {
+function Header({method, onMajorChange}) {
 
     const navigate = useNavigate();
-    // const [isLight, setMode] = useState(true);
-    // const [showProjectCreation, setShowProjectCreation] = React.useState(false);
+    const [isLight, setMode] = useState(true);
     const majors = useMajors();
+    // useEffect(() => {
+    //     async function fetchMajors() {
+    //         const majorList = useMajors();
+    //         setMajors(majorList);
+    //     }
+    //     fetchMajors();
+    // }, []);
+
+    const [selectedMajor, setSelectedMajor] = useState("All");
     
     const handleLogout = async () => {
         await logout();
@@ -27,9 +35,18 @@ function Header({method}) {
     // Calls App.toggleLightAndDarkMode() to switch the App's className, then
     // sets this.isLight to toggle the image inside the toggle's button
 
-    const [isLight, setIsLight] = useState(() => {
-        return localStorage.getItem("theme") === "dark" ? false : true;
-    });
+    // const [isLight, setIsLight] = useState(() => {
+    //     return localStorage.getItem("theme") === "dark" ? false : true;
+    // });
+
+    const handleMajorSelect = (event) => {
+        const major = event.target.value;
+        setSelectedMajor(major);
+        if (onMajorChange) 
+        {
+            onMajorChange(major);
+        }
+    };
 
     useEffect(() => {
         if (isLight) {
@@ -42,7 +59,8 @@ function Header({method}) {
     }, [isLight]);
 
     const toggleLightAndDarkMode = () => {
-        setIsLight((prevMode) => !prevMode);
+        method();
+        setMode(!isLight);
     };
 
 
@@ -66,9 +84,18 @@ function Header({method}) {
                 </div>
 
                 <div className="w-full flex justify-center">
-                    <Dropdown className="text-white bg-green-500 rounded-md px-2 py-1 w-max" title={"Filter..."} arr={majors} />
-                    <input type="text" className="border p-2 rounded-md w-64" placeholder="Search projects..." />
+                    <select 
+                        className="text-white bg-green-500 rounded-md px-4 py-2 cursor-pointer"
+                        onChange={handleMajorSelect}
+                        value={selectedMajor}
+                    >
+                        <option value="All">All Majors</option>
+                        {majors.map((major, index) => (
+                            <option key={index} value={major}>{major}</option>
+                        ))}
+                    </select>
                 </div>
+
 
                 <div className="flex items-center space-x-4">
                     <button className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50" onClick={toggleLightAndDarkMode}>

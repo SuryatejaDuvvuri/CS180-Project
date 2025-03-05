@@ -1,11 +1,11 @@
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import React, { useState, useEffect } from 'react';
 
-import { useParams, Navigate} from 'react-router-dom';
+import { useParams, useNavigate} from 'react-router-dom';
 
 export default function UserProfile()
 {
-    // const { userId } = useParams();
+    const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -90,7 +90,7 @@ export default function UserProfile()
 
                         <button 
                             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                            onClick={() => Navigate("/home")}
+                            onClick={() => navigate("/home")}
                         >
                             Back to Home
                         </button>
@@ -100,7 +100,7 @@ export default function UserProfile()
                             className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                             onClick={() => {
                                 signOut(getAuth());
-                                Navigate("/login");
+                                navigate("/login");
                             }}
                         >
                             Logout
