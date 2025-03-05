@@ -197,16 +197,25 @@ class UserProfileViewSet(viewsets.ViewSet):
     @csrf_exempt
     def list(self,request):
         try:
-            users_ref = db.collection("Users").stream()
+            users_ref = db.collection("users").stream()
             users = [{**user.to_dict(),"id": user.id} for user in users_ref]
             return JsonResponse({"users": users}, status=200)
         except Exception as e:
             return JsonResponse({"error":str(e)},status=500)
         
-    def retrieve(self, request, user_id):
+    def retrieve(self, request, email):
         try:
-            user_ref = db.collection("users").document(user_id)
-            user_doc = user_ref.get()
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return Response({"error": "Missing or invalid Authorization token"}, status=401)
+
+            id_token = auth_header.split(" ")[1]
+            decoded_token = auth.verify_id_token(id_token)
+            firebase_email = decoded_token.get("email")
+            if firebase_email != email:
+                return Response({"error": "Unauthorized access"}, status=403)
+            users_query = db.collection("users").where("email", "==", email).stream()
+            user_doc = next(users_query, None)
 
             if not user_doc.exists:
                 return Response({"error": "User not found"}, status=404)
