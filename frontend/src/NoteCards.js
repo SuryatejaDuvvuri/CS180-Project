@@ -24,7 +24,7 @@ function NoteCards({ items = [], category }) {
     return (
         <>
             <div className="category-row">
-                <h1 className="category">{category}</h1>
+                {/* <h1 className="category">{category}</h1> */}
                 <div className="project-row">
                     <button className="arrowButton" onClick={handleLeftScroll}>
                         ←

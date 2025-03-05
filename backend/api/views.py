@@ -107,15 +107,27 @@ class FeedBackViewSet(viewsets.ViewSet):
             return JsonResponse({"feedbacks": feedbacks}, status=200)
         except Exception as e:
             return JsonResponse({"error":str(e)},status=500)
-    def create(self,request):
+    def create(self,request,project_id):
         try:
-            data = json.loads(request.body)
-            required_fields = ["name", "email", "experience", "improvements"]
-            missing = [field for field in required_fields if field not in data]
-            if missing:
-                return Response({"error": f"Missing fields: {', '.join(missing)}"}, status=400)
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return Response({"error": "Missing or invalid Authorization token"}, status=401)
 
-            feedback_ref = db.collection("Feedback").document()
+            id_token = auth_header.split(" ")[1]
+            decoded_token = auth.verify_id_token(id_token)
+            firebase_email = decoded_token.get("email")
+
+            data = json.loads(request.body)
+            feedback = data.get("feedback","")
+            user_ref = db.collection("users").where("email", "==", firebase_email).stream()
+            user_docs = list(user_ref)
+            if not user_docs:
+                return Response({"error": "User not found"}, status=404)
+
+            user_doc = user_docs[0]
+            user_id = user_doc.id  
+            proj_ref = db.collection("users").document(user_id).collection("projects_created").document(project_id)
+            feedback_ref = db.collection("feedback").document()
             feedback_data = {
                 "name": data["name"],
                 "email": data["email"],
@@ -126,7 +138,7 @@ class FeedBackViewSet(viewsets.ViewSet):
 
             feedback_ref.set(feedback_data) 
 
-            print("✅ Feedback successfully added:", feedback_data)
+            print("Feedback successfully added:", feedback_data)
 
             return JsonResponse(
                 {"message": "Feedback submitted successfully", "feedback": feedback_data},
@@ -303,6 +315,38 @@ class UserProfileViewSet(viewsets.ViewSet):
         except Exception as e:
             print(f"Signup Error: {e}")
             return JsonResponse({"error": str(e)}, status=500)
+    def list_projects(self, request, user_id):
+        try:
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return Response({"error": "Missing or invalid Authorization token"}, status=401)
+
+            id_token = auth_header.split(" ")[1]
+            decoded_token = auth.verify_id_token(id_token)
+            firebase_uid = decoded_token.get("uid")
+            user_ref = db.collection("users").document(user_id)
+            user_doc = user_ref.get()
+
+            if not user_doc.exists:
+                return Response({"error": "User not found"}, status=404)
+
+
+            created_projects_ref = user_ref.collection("projects_created").stream()
+            created_projects = [
+                {**proj.to_dict(), "id": proj.id} for proj in created_projects_ref
+            ]
+            joined_projects_ref = user_ref.collection("projects_joined").stream()
+            joined_projects = [
+                {**proj.to_dict(), "id": proj.id} for proj in joined_projects_ref
+            ]
+
+            return Response({
+                "projects_created": created_projects,
+                "projects_joined": joined_projects
+            }, status=200)
+
+        except Exception as e:
+             return Response({"error": str(e)}, status=500)
     def google_login(request):
         try:
             id_token = request.data.get("idToken")
@@ -394,9 +438,7 @@ class ProjectViewSet(viewsets.ViewSet):
                     created_projects_ref = db.collection("users").document(user_id).collection("projects_created").stream()
                     created_projects = [{**proj.to_dict(), "id": proj.id} for proj in created_projects_ref]
 
-                    # if category_filter and category_filter != "All":
-                    #     created_projects = [proj for proj in created_projects if proj.get("category") == category_filter]
-
+                   
                     public_projects.extend(created_projects)
                 random_projects = random.sample(public_projects, min(5, len(public_projects)))
                 return Response(random_projects, status=200)
@@ -405,11 +447,6 @@ class ProjectViewSet(viewsets.ViewSet):
             decoded_token = auth.verify_id_token(id_token)
             
             email = decoded_token.get("email")
-            # user_ref = db.collection("users").where("email", "==", email).stream()
-            # user_docs = list(user_ref)
-            # user_doc = user_docs[0] 
-            
-            # user_projects_ref = db.collection("users").stream()
             projects = []
             for user_doc in user_projects_ref:
                 user_data = user_doc.to_dict()
@@ -428,50 +465,66 @@ class ProjectViewSet(viewsets.ViewSet):
                 created_projects = [proj for proj in created_projects if proj.get("category") == category_filter]
                 joined_projects = [proj for proj in joined_projects if proj.get("category") == category_filter]
 
-            # projects = [{**proj.to_dict(), "id": proj.id} for proj in proj_ref.stream()]
-            # projects = {
-            #     "projects_created": created_projects,
-            #     "projects_joined": joined_projects
-            # }
-            
-            # print(projects)
-            
             return Response(projects, status=200)
         
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
     def create(self,request):
         try:
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return Response({"error": "Missing or invalid Authorization token"}, status=401)
+
+            id_token = auth_header.split(" ")[1]
+            decoded_token = auth.verify_id_token(id_token)
+            firebase_email = decoded_token.get("email")
+
+            user_ref = db.collection("users").where("email", "==", firebase_email).stream()
+            user_docs = list(user_ref)
+            if not user_docs:
+                return Response({"error": "User not found"}, status=404)
+
+            user_doc = user_docs[0]
+            user_id = user_doc.id  
+
             data = json.loads(request.body)
-            owner_netid = data.get("owner_netid") 
-            proj_ref = db.collection("Projects").document() 
-            summary = self.generate_summary(data["description"])
+            summary = self.generate_summary(data.get("description", ""))
+
+
+            project_ref = db.collection("users").document(user_id).collection("projects_created").document()
+
             project_data = {
-                "id": proj_ref.id, 
-                "name": data["name"],
-                "description": data["description"],
-                "owner": data.get("owner", "defaultOwner"),
-                "owner_netid": data.get("owner_netid"),
+                "id": project_ref.id,
+                "name": data.get("name", "Unnamed Project"),
+                "description": data.get("description", ""),
+                "owner": firebase_email, 
                 "summary": summary,
-                "category": data["category"],
-                "weekly_hours": int(data.get("weekly_hours", 1)),  
-                "no_of_people": int(data.get("no_of_people", 1)),  
-                "start_date": data.get("start_date"),
-                "end_date": data.get("end_date"),
+                "category": data.get("category", "Uncategorized"),
+                "weekly_hours": int(data.get("weekly_hours", 1)),
+                "no_of_people": int(data.get("no_of_people", 1)),
+                "start_date": data.get("start_date", None),
+                "end_date": data.get("end_date", None),
                 "image_url": data.get("image_url", ""),
                 "color": data.get("color", "blue"),
-                "looking_for": data.get("looking_for","No one")
+                "looking_for": data.get("looking_for", "No one"),
             }
-            # proj_ref.set(project_data)
-            user_project_ref = db.collection("Users").document(owner_netid).collection("Projects_Created").document(project_ref.id)
-            user_project_ref.set(project_data)
+
+            project_ref.set(project_data)
+            
+            applicants_ref = project_ref.collection("Applicants").document("init")
+            feedback_ref = project_ref.collection("Feedback").document("init")
+            
+            applicants_ref.set({"initialized": True})
+            feedback_ref.set({"initialized": True})
+
             return JsonResponse({"message": "Project created successfully", "project": project_data}, status=201)
+
         except json.JSONDecodeError:
             return Response({"error": "Invalid JSON format"}, status=400)
         except Exception as e:
-            return JsonResponse({"error":str(e)}, status=500)   
+            return JsonResponse({"error": str(e)}, status=500)
 
-        # return JsonResponse({"error": "Invalid request method"}, status=405)
     @csrf_exempt
     def join_project(request):
         if request.method == 'POST':
@@ -505,28 +558,39 @@ class ProjectViewSet(viewsets.ViewSet):
 
         return JsonResponse({"error": "Invalid request method"}, status=405)
     @csrf_exempt
-    def apply_to_project(request):
+    def apply_to_project(self, request, project_id):
         try:
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return Response({"error": "Missing or invalid Authorization token"}, status=401)
+
+            id_token = auth_header.split(" ")[1]
+            decoded_token = auth.verify_id_token(id_token)
+            firebase_email = decoded_token.get("email")
+
             data = json.loads(request.body)
-            user_netid = data.get("user_netid")
-            project_id = data.get("project_id")
-            owner_netid = data.get("owner_netid")
-            position = data.get("position")
+            position = data.get("position", "Not Specified")
+            cv_link = data.get("cv", None)
 
-            if not user_netid or not project_id or not owner_netid:
-                return JsonResponse({"error": "User NetID, Project ID, and Owner NetID are required"}, status=400)
+            user_ref = db.collection("users").where("email", "==", firebase_email).stream()
+            user_docs = list(user_ref)
+            if not user_docs:
+                return Response({"error": "User not found"}, status=404)
+            user_doc = user_docs[0]
+            user_id = user_doc.id  
+            
+            project_ref = db.collection("users").document(user_id).collection("projects_created").document(project_id)
+            application_ref = project_ref.collection("Applicants").document(user_id)
+            application_data = {
+                "user_id": user_id,
+                "email": firebase_email,
+                "name": data.get("name", "Unnamed User"),
+                "position": position,
+                "cv": cv_link,
+                "status": "Pending"  # Default status until project manager reviews
+            }
 
-            application_ref = db.collection("Users").document(owner_netid).collection("Projects_Created") \
-                .document(project_id).collection("Applicants").document(user_netid)
-
-            application_ref.set({
-                "Name": data.get("name"),
-                "Email": data.get("email"),
-                "Position": position,
-                "Project_id": project_id,
-                "Status": ["Pending"]
-            })
-
+            application_ref.set(application_data)
             return JsonResponse({"message": "Application submitted successfully"}, status=201)
 
         except json.JSONDecodeError:

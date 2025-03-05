@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signUpWithEmail } from "./firebase";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 
 function Signup() {
     const navigate = useNavigate(); 

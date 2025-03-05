@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import './ProjectCreation.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import {auth} from "./firebase";
 
 function ProjectCreation() {
     const [name, setName] = useState('');
@@ -15,6 +16,67 @@ function ProjectCreation() {
     const [image, setImage] = useState(null);
     const [color, setColor] = useState(null);
     const colorOptions = ['red','orange','yellow','green','blue','purple'];
+
+    const handleSubmit = async (e) => 
+    {
+        e.preventDefault();
+        setError(null);
+
+        const user = auth.currentUser;
+        if (!user) 
+        {
+            setError("You need to be logged in to create a project.");
+            return;
+        }
+
+        if (!name || !desc || !category) 
+        {
+          setError("Please fill all required fields.");
+          return;
+        }
+
+        try
+        {
+            const idToken = await user.getIdToken();
+            const response = await fetch("http://localhost:8000/api/projects/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${idToken}`,
+                },
+                body: JSON.stringify(projectData),
+            });
+
+          
+            const project = {
+              name:name,
+              description: desc,
+              owner: auth.currentUser.name,
+              start_date: startDate ? startDate.toISOString() : null,
+              end_date: endDate ? endDate.toISOString() : null,
+              no_of_people: val,
+              lookingFor:lookingFor,
+              category:category,
+              location:location,
+              weekly_hours: weeklyHours,
+              color:color,
+              image_url: image ? URL.createObjectURL(image) : null, 
+          };
+          
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || "Failed to create project.");
+            }
+
+            alert("Project created successfully!");
+        }
+        catch (err) 
+        {
+            setError(err.message);
+            console.error("Error creating project:", err);
+        }
+
+    }
      
     return (
         <div className="ProjectCreation">
@@ -73,15 +135,19 @@ function ProjectCreation() {
                     />
                     </label>
                     <label>Number of people: <input type="number" value = {val} onChange = {(e) => setVal(e.target.value)} className="form-input"/></label>
-                    <label>Categories: 
-                      <datalist>
-                        <option value = "Computer Science"/>
-                        <option value = "Medicine"/>
-                        <option value = "Filmmaking"/>
-                        <option value = "Art"/>
-                        <option value = "Psychology"/>
-                        <option value = "History"/>
-                      </datalist> </label>
+                    <label className="form-label">
+                    Categories:
+                        <select value={category} onChange={(e) => setCategory(e.target.value)} className="form-input">
+                            <option value="">Select a category</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Medicine">Medicine</option>
+                            <option value="Filmmaking">Filmmaking</option>
+                            <option value="Art">Art</option>
+                            <option value="Psychology">Psychology</option>
+                            <option value="History">History</option>
+                        </select>
+                    </label>
+
                     <label>Location: <input type = "text" value = {location} onChange = {(e) => setLocation(e.target.value)}/> </label>
                     <label className="form-label">Weekly Time Commitment (hours): 
                       <input 
@@ -93,7 +159,7 @@ function ProjectCreation() {
                       />
                     </label>
                     <br/>        
-                    <input type = "submit" value = "Submit"/>
+                    <input type = "submit" value = "Submit" onSubmit={handleSubmit}/>
                   </form>
         </div>
     );
