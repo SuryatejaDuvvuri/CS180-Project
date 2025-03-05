@@ -41,6 +41,7 @@ function NoteCards({ items = [], category }) {
                                         alt={item.name}
                                         className="w-full h-40 object-cover"
                                     />
+                                    // <img src={project.image_base64} alt="Project" className="w-full h-48 object-cover rounded-lg" />
                                 )}
                                 <div className="p-6">
                                     <h3 className="text-xl font-semibold mb-2">{item.name}</h3>

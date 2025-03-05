@@ -61,6 +61,7 @@ function Note({ selectedProject, setSelectedProject, updateProject }) {
                         </h2>
                         <div className="content">
                             <img className="image" src={profileImage} alt="Profile" />
+                            {/* <img src={project.image_base64} alt="Project" className="w-full h-48 object-cover rounded-lg" /> */}
                             <div className="info">
                                 <p className="info"><strong>Name:</strong> {isEditing ? (
                                     <input type="text" name="name" value={editedProject.name} onChange={handleInputChange} />

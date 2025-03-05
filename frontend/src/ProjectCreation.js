@@ -2,33 +2,41 @@ import React, { useState } from "react";
 import './ProjectCreation.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {auth} from "./firebase";
+import { getAuth } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 function ProjectCreation() {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
     const [range, setRange] = useState([null, null]);
     const [startDate, endDate] = range;
+    const [error,setError] = useState(null);
     const [val, setVal] = useState(0);
     const [category, setCategory] = useState('');
     const [location, setLocation] = useState('');
     const [weeklyHours, setWeeklyHours] = useState(0);
     const [image, setImage] = useState(null);
     const [color, setColor] = useState(null);
+    const [looking_for, setLooking_for] = useState('');
     const colorOptions = ['red','orange','yellow','green','blue','purple'];
-
+    const navigate = useNavigate();
+    
     const handleSubmit = async (e) => 
     {
         e.preventDefault();
         setError(null);
 
+        const auth = getAuth();
         const user = auth.currentUser;
+      
         console.log(user);
         if (!user) 
         {
             setError("You need to be logged in to create a project.");
             return;
         }
+
+        
 
         if (!name || !desc || !category) 
         {
@@ -39,20 +47,32 @@ function ProjectCreation() {
         try
         {
             const idToken = await user.getIdToken();
-            const projectData = {
-              name:name,
-              description: desc,
-              owner: user.email,
-              start_date: startDate ? startDate.toISOString() : null,
-              end_date: endDate ? endDate.toISOString() : null,
-              no_of_people: val,
-              lookingFor:lookingFor,
-              category:category,
-              location:location,
-              weekly_hours: weeklyHours,
-              color:color,
-              image_url: image ? URL.createObjectURL(image) : null, 
-          };
+            let imageBase64 = null;
+
+            if (image) {
+              const fileReader = new FileReader();
+              fileReader.readAsDataURL(image);
+              await new Promise((resolve) => {
+                  fileReader.onloadend = () => {
+                      imageBase64 = fileReader.result;
+                      resolve();
+                  };
+              });
+          }
+          const projectData = {
+            name,
+            description: desc,
+            owner: user.email,
+            start_date: startDate ? startDate.toISOString() : null,
+            end_date: endDate ? endDate.toISOString() : null,
+            no_of_people: val,
+            looking_for, 
+            category,
+            location,
+            weekly_hours: weeklyHours,
+            color,
+            image: imageBase64,  
+        };
             const response = await fetch("http://localhost:8000/api/projects/", {
                 method: "POST",
                 headers: {
@@ -63,12 +83,13 @@ function ProjectCreation() {
             });
 
             const data = await response.json();
-            console.log(data)
+            console.log(data);
             if (!response.ok) {
                 throw new Error(data.error || "Failed to create project.");
             }
 
             alert("Project created successfully!");
+            navigate("/applicants");
         }
         catch (err) 
         {
@@ -77,13 +98,15 @@ function ProjectCreation() {
         }
 
     }
+
+ 
      
     return (
         <div className="ProjectCreation">
              <br/>
             
                   <h1>New Project</h1>
-                  <form onSubmit={(e) => handleSubmit} className = "form-container">
+                  <form onSubmit={handleSubmit} className = "form-container">
             
                     <label className="form-label">Project Image: 
                       <input type = "file" onChange={(e) => setImage(e.target.files[0])} className="form-input"/>
@@ -134,6 +157,9 @@ function ProjectCreation() {
                       isClearable={true}
                     />
                     </label>
+                    <label name = "name" className="form-label"> 
+                      Looking For: <input type = "text" value = {looking_for} className="form-input" onChange={(e) => setLooking_for(e.target.value)}/>
+                    </label>
                     <label>Number of people: <input type="number" value = {val} onChange = {(e) => setVal(e.target.value)} className="form-input"/></label>
                     <label className="form-label">
                     Categories:
@@ -161,9 +187,9 @@ function ProjectCreation() {
                     <br/>        
                     <div className = "buttons">
                       <button type = "submit">{"Add"}</button>
-                      <button type = "button" onClick = {cancel}>Cancel</button>
+                      {/* <button type = "button" onClick = {navigate("/home")}>Cancel</button> */}
                     </div>
-                  </form>
+                </form>
         </div>
     );
 }

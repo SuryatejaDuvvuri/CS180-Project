@@ -263,20 +263,19 @@ class UserProfileViewSet(viewsets.ViewSet):
     @csrf_exempt
     def create(self, request):
         try:
-
             if not request.body:
                 return JsonResponse({"error": "Empty request body"}, status=400)
 
             data = json.loads(request.body.decode("utf-8"))
             print("Received Data:", data)
 
-            net_id = data.get("net_id")
-            if not net_id:
-                return JsonResponse({"error": "NetID is required"}, status=400)
+            email = data.get("email")
+            if not email:
+                return JsonResponse({"error": "Email is required"}, status=400)
 
-            existing_users = list(db.collection("users").where("net_id", "==", net_id).stream())
+            existing_users = list(db.collection("users").where("email", "==", email).stream())
             if existing_users:
-                return Response({"error": "User with this NetID already exists"}, status=400)
+                return Response({"error": "User with this Email already exists"}, status=400)
 
             user_ref = db.collection("users").document()
 
@@ -287,7 +286,7 @@ class UserProfileViewSet(viewsets.ViewSet):
             user_data = {
                 "id": user_ref.id,
                 "fullname": data.get("fullname", ""),
-                "net_id": net_id,
+                "net_id": data.get("net_id"),
                 "email": data.get("email", ""),
                 "password": data.get("password", ""),
                 "pronouns": data.get("pronouns", ""),
@@ -479,12 +478,12 @@ class ProjectViewSet(viewsets.ViewSet):
             id_token = auth_header.split(" ")[1]
             decoded_token = auth.verify_id_token(id_token)
             firebase_email = decoded_token.get("email")
-            
-            if not data.get("name") or not data.get("category"):
-                return JsonResponse({"error": "Project name and category are required"}, status=400)
 
             
             data = json.loads(request.body)
+            
+            if not data.get("name") or not data.get("category"):
+                return JsonResponse({"error": "Project name and category are required"}, status=400)
             summary = self.generate_summary(data.get("description", ""))
 
 
@@ -501,9 +500,11 @@ class ProjectViewSet(viewsets.ViewSet):
                 "no_of_people": int(data.get("no_of_people", 1)),
                 "start_date": data.get("start_date", None),
                 "end_date": data.get("end_date", None),
-                "image_url": data.get("image_url", ""),
+                # "image_url": data.get("image_url", ""),
+                "image": data.get("image", ""),
                 "color": data.get("color", "blue"),
                 "looking_for": data.get("looking_for", "No one"),
+                "location": data.get("location", ""),
             }
 
             project_ref.set(project_data)
@@ -513,7 +514,7 @@ class ProjectViewSet(viewsets.ViewSet):
             
             applicants_ref.set({})
             feedback_ref.set({})
-            
+
             return JsonResponse({"message": "Project created successfully", "project": project_data}, status=201)
 
         except json.JSONDecodeError:
