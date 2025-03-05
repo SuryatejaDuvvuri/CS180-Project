@@ -69,7 +69,12 @@ function App() {
         <Router>
           <Header/>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<>
+              <Home />
+              <NoteCards items = {cs_projects} category ="Recommended"/>
+              <NoteCards items = {film_projects} category ="Film"/>
+              <NoteCards items = {cs_projects} category ="cs"/>
+            </>} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/create" element={<ProjectCreation />} />
@@ -80,9 +85,7 @@ function App() {
               <Route path='/Apply' element= {<Apply/>}/>
           </Routes>
         </Router>
-        <NoteCards items = {cs_projects} category ="Recommended"/>
-        <NoteCards items = {film_projects} category ="Film"/>
-        <NoteCards items = {cs_projects} category ="cs"/>
+        
       </div>
     </div>
 

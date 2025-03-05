@@ -9,7 +9,53 @@ function ProjectCreation() {
     const [image, setImage] = useState(null);
     const [color, setColor] = useState(null);
     const colorOptions = ['rgb(204, 83, 83)','rgb(245, 173, 66)','rgb(237, 215, 107)','rgb(122, 224, 124)','var(--box-background)','rgb(181, 122, 224)','rgb(230, 167, 192)','rgb(197, 197, 197)'];
+    ///////////////////////////////////////////////////////////////////////
+    const [projectData, setProjectData] = useState({
+      owner_netid: "dfria006",
+      name: "david",
+      description: "no description right now",
+      category: "cs",
+      weekly_hours: 1,
+      summary:"working on games",
+      no_of_people: 1,
+      start_date: "2020-01-01", // Use YYYY-MM-DD format
+      end_date: "2021-01-01",   // Use YYYY-MM-DD format
+      image_url: "",
+      color: "blue",
+      looking_for: "noOne",
+  });
+
+    // Handle form submission
+  const handleBackendSubmit = async () => {
     
+
+
+    try {
+      // Send the project data to the backend API
+      const response = await fetch("http://localhost:8000/api/projects/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(projectData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Project created successfully:", result);
+        alert("Project created successfully!");
+      } else {
+        console.error("Failed to create project:", response.statusText);
+        alert("Failed to create project. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error creating project:", error);
+      alert("An error occurred while creating the project.");
+    }
+  };
+
+
+    ///////////////////////////////////////////////////////////////////////
     const [createData, setCreateData] = useState({
         projImg: '',
         name: '',
@@ -44,6 +90,7 @@ function ProjectCreation() {
        If there are no errors, submit the form. Otherwise, update the display to show the errors.
     */
     const handleSubmit = (e) => {
+      handleBackendSubmit();
       setCreateData({ ...createData, [e.target.name]: e.target.value });
       checkProjImg(e);
       checkColor(e);

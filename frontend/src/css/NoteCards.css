@@ -29,7 +29,8 @@
 }
   .projects{
     display: flex;
-    gap:70px
+    gap:70px;
+    width: 100%;
     
   }
   /*note preview*/

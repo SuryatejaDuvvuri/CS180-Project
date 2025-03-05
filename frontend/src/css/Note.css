@@ -24,7 +24,6 @@
   width: 50%;
   max-width: 400px;
   height: auto;
-  max-height: 600px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-wrap: wrap;
@@ -51,24 +50,37 @@
   margin: 0px;
 }
 .image{
-width: 25%;
-height: auto;
-border-radius: 50%;
+  width: 25%;
+  height: auto;
+  border-radius: 50%;
 }
 .info{
-text-align: flex-start ;
-flex: 1;
-padding-left: 5px;
-padding-bottom: 5px;
-margin: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: start ;
+  flex: 1;
+  padding-left: 5px;
+  padding-bottom: 5px;
+  margin: 0px;
+  width: 100%;
+}
+.info p{
+  margin-bottom: 10px;
+  margin-top: 10px;
+  width: 100%;
 }
 .project-team{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  width: 100%;
+}
+.project-team p{
+width: auto;
 }
 .name{
-margin: 0px;
+  margin: 0px;
 }
  button {
   padding: 10px;
