@@ -1,10 +1,11 @@
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+
+import { useParams,Navigate} from 'react-router-dom';
 
 export default function UserProfile()
 {
-    const { userId } = useParams();
+    // const { userId } = useParams();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -12,10 +13,10 @@ export default function UserProfile()
     useEffect(() => {
         const auth = getAuth();
 
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
-                setFirebaseUser(user);
-                fetchUserProfile(user);
+                setUser(user);
+                await fetchUserProfile(user);
             } else {
                 setError("You need to be logged in to view this profile.");
                 setLoading(false);
@@ -29,24 +30,27 @@ export default function UserProfile()
     //     fetchUserProfile();
     // }, []);
 
-    const fetchUserProfile = async () => {
+    const fetchUserProfile = async (user) => {
         setLoading(true);
         setError(null);
         try {
-            if (!firebaseUser) 
+            if (!user) 
             {
                 setError("User is not authenticated.");
                 setLoading(false);
                 return;
             }
-            const token = await getIdToken(currentUser);
-            if (!currentUser) {
+            const token = await user.getIdToken(user);
+            const email = user.email;
+            console.log(user);
+
+            if (!user) {
                 setError("You need to be logged in to view this profile.");
                 setLoading(false);
                 return;
             }
 
-            const response = await fetch(`http://localhost:8000/api/users/${userId}/`, {
+            const response = await fetch(`http://localhost:8000/api/users/${email}/`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json',
                      Authorization: `Bearer ${token}`,
@@ -91,7 +95,7 @@ export default function UserProfile()
                             Back to Home
                         </button>
 
-                        {/* Logout button */}
+
                         <button 
                             className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                             onClick={() => {
