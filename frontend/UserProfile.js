@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 function UserProfile()
 {
@@ -43,9 +44,21 @@ function UserProfile()
                 <p className="text-center">Loading user profile...</p>
             ) : (
                 user && (
-                    <div className="max-w-2xl mx-auto bg-white p-6 shadow-lg rounded-lg">
-                        <h2 className="text-2xl font-bold">Name: {user.fullname}</h2>
-                        <p className="text-gray-600">NetID: {user.net_id}</p>
+                        <div className="max-w-2xl mx-auto bg-white p-6 shadow-lg rounded-lg">
+                            <h2 className="text-2xl font-bold">Name: {user.fullname}</h2>
+                            <p className="text-gray-600">NetID: {user.net_id}</p>
+                            <div className="flex gap-4 mt-4">
+                                {user.github && (
+                                    <a href={user.github} target="_blank" rel="noopener noreferrer">
+                                        <FaGithub className="text-gray-800 hover:text-black text-3xl" />
+                                    </a>
+                                )}
+                                {user.linkedin && (
+                                    <a href={user.linkedin} target="_blank" rel="noopener noreferrer">
+                                        <FaLinkedin className="text-blue-600 hover:text-blue-800 text-3xl" />
+                                    </a>
+                                )}
+                            </div>
                         <p className="text-gray-600">Pronouns: {user.pronouns}</p>
                         <p className="text-gray-600">Location: {user.location}</p>
                         <p className="text-gray-600">Experience: {user.experience}</p>
@@ -54,6 +67,17 @@ function UserProfile()
                         <h3 className="text-xl font-bold mt-4">Skills & Interests</h3>
                         <p className="text-gray-600">Skills: {user.skills.join(', ')}</p>
                         <p className="text-gray-600">Interests: {user.interests.join(', ')}</p>
+
+                        {user.resume_url && (
+                            <div className="mt-6">
+                                <h3 className="text-xl font-bold mb-2">Resume</h3>
+                                <iframe
+                                    src={user.resume_url}
+                                    className="w-full h-64 border rounded-md"
+                                    title="User Resume"
+                                />
+                            </div>
+                        )}
 
                         <h3 className="text-xl font-bold mt-4">Projects</h3>
                         <ul className="list-disc ml-5">

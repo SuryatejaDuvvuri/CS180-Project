@@ -87,7 +87,12 @@ export default function UserProfile()
                         <p className="text-gray-600">Location: {user.location || "Not specified"}</p>
                         <p className="text-gray-600">Experience: {user.experience || "No experience listed"}</p>
                         <p className="text-gray-600">Weekly Hours: {user.weekly_hours || "Not specified"} hrs</p>
-
+                        <h3 className="text-xl font-bold mt-4">Resume</h3>
+                        {user.resume ? (
+                            <iframe src={user.resume} className="w-full h-64 border rounded-lg"></iframe>
+                        ) : (
+                            <p>No resume uploaded.</p>
+                        )}
                         <button 
                             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                             onClick={() => navigate("/home")}
@@ -100,7 +105,7 @@ export default function UserProfile()
                             className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                             onClick={() => {
                                 signOut(getAuth());
-                                navigate("/login");
+                                navigate("/");
                             }}
                         >
                             Logout

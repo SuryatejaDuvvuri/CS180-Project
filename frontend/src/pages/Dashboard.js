@@ -66,6 +66,7 @@ export default function Dashboard({ selectedMajor }) {
             setLoading(false);
         }
     }
+    
 
     const fetchRecommendedProjects = async () => {
         setLoading(true);
@@ -118,7 +119,6 @@ export default function Dashboard({ selectedMajor }) {
 
     return (
       <div className="w-screen flex flex-col items-center justify-center">
-        {/* <Header/> */}
         
         <main className = "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold mb-8">Welcome to CollabHub🎉</h1>

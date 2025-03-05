@@ -3,6 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 
 import os
+import random
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -21,6 +22,8 @@ from .serializers import ProjectSerializer
 from firebase import db
 import ollama
 import requests
+from google.cloud import storage
+import uuid
 from .recommendation import recommend_projects
 
 User = get_user_model()
@@ -248,7 +251,7 @@ class UserProfileViewSet(viewsets.ViewSet):
     @csrf_exempt
     def create(self, request):
         try:
-            # Ensure request body is not empty
+
             if not request.body:
                 return JsonResponse({"error": "Empty request body"}, status=400)
 
@@ -281,6 +284,9 @@ class UserProfileViewSet(viewsets.ViewSet):
                 "experience": data.get("experience", ""),
                 "location": data.get("location", ""),
                 "weekly_hours": int(weekly_hours),
+                "github": data.get("github", "").strip(),
+                "linkedin": data.get("linkedin", "").strip(),
+                "resume": data.get("resume", ""),
             }
 
 
@@ -380,18 +386,30 @@ class ProjectViewSet(viewsets.ViewSet):
     def list(self, request):
         try:
             auth_header = request.headers.get("Authorization")
+            user_projects_ref = db.collection("users").stream()
+            public_projects = []
             if not auth_header or not auth_header.startswith("Bearer "):
-                return Response({"error": "Missing or invalid Authorization token"}, status=401)
+                for user_doc in user_projects_ref:
+                    user_id = user_doc.id
+                    created_projects_ref = db.collection("users").document(user_id).collection("projects_created").stream()
+                    created_projects = [{**proj.to_dict(), "id": proj.id} for proj in created_projects_ref]
+
+                    # if category_filter and category_filter != "All":
+                    #     created_projects = [proj for proj in created_projects if proj.get("category") == category_filter]
+
+                    public_projects.extend(created_projects)
+                random_projects = random.sample(public_projects, min(5, len(public_projects)))
+                return Response(random_projects, status=200)
             
             id_token = auth_header.split(" ")[1]
             decoded_token = auth.verify_id_token(id_token)
             
             email = decoded_token.get("email")
-            user_ref = db.collection("users").where("email", "==", email).stream()
+            # user_ref = db.collection("users").where("email", "==", email).stream()
             # user_docs = list(user_ref)
             # user_doc = user_docs[0] 
             
-            user_projects_ref = db.collection("users").stream()
+            # user_projects_ref = db.collection("users").stream()
             projects = []
             for user_doc in user_projects_ref:
                 user_data = user_doc.to_dict()

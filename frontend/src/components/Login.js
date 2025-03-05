@@ -69,7 +69,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center bg-gray-100">
+    <div className="w-screen h-screen flex justify-center items-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
         <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
         {error && <p className="text-red-500 text-center">{error}</p>}

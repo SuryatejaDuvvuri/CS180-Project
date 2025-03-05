@@ -71,10 +71,8 @@ function App() {
   return (
     <Router>
     <div className={`min-h-screen ${isLight ? "bg-white text-black" : "bg-gray-900 text-white"}`}>
-      
+       <Header method={toggleLightAndDarkMode} onMajorChange = {handleMajorChange} />
       <div className={`flex-1 w-full ${isLight ? "light" : "dark"}`}>
-        
-            <Header method={toggleLightAndDarkMode} onMajorChange = {handleMajorChange} />
           {/* <Home/> */}
           {/* <NoteCards items={cs_projects} category="Recommended" />
           <NoteCards items={film_projects} category="Film" /> */}

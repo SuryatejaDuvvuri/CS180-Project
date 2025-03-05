@@ -60,7 +60,7 @@ function Signup() {
   };
 
   return (
-    <div className="signup">
+    <div className="">
       <h1>Create an Account</h1>
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleSignup} className="signup-form">
