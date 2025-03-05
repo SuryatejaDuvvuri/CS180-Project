@@ -9,6 +9,33 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
         setSelectedProject(lastProj)
     } 
 
+    const sendFeedback = async (e) => 
+        {
+            try
+            {
+                const response = await fetch("http://localhost:8000/api/feedback", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: e.email,
+                        name: e.name,
+                        experiences: e.feedback,
+                        
+                    }),
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || "Failed to send email");
+                }
+            }
+            catch (err)
+            {
+                console.err("Error: ",err);
+            }
+        }
+
     /* Before submitting, update the form data one last time to ensure there are no lagged inputs.
        First, check to make sure there are no input errors. We check each input individually.
        If there are no errors, submit the form. Otherwise, update the display to show the errors.
@@ -25,6 +52,8 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
         // If there are no errors, close the tab and send the alert
         if(!(valueError.fNameError || valueError.lNameError || valueError.emailError || valueError.feedbackError))
         {
+            //send data to Feedback.js to upload to backend
+            sendFeedback(e);
             closeFeedback();
             alert('Form submitted');
         }

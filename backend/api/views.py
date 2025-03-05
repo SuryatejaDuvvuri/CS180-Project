@@ -197,16 +197,25 @@ class UserProfileViewSet(viewsets.ViewSet):
     @csrf_exempt
     def list(self,request):
         try:
-            users_ref = db.collection("Users").stream()
+            users_ref = db.collection("users").stream()
             users = [{**user.to_dict(),"id": user.id} for user in users_ref]
             return JsonResponse({"users": users}, status=200)
         except Exception as e:
             return JsonResponse({"error":str(e)},status=500)
         
-    def retrieve(self, request, user_id):
+    def retrieve(self, request, email):
         try:
-            user_ref = db.collection("users").document(user_id)
-            user_doc = user_ref.get()
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return Response({"error": "Missing or invalid Authorization token"}, status=401)
+
+            id_token = auth_header.split(" ")[1]
+            decoded_token = auth.verify_id_token(id_token)
+            firebase_email = decoded_token.get("email")
+            if firebase_email != email:
+                return Response({"error": "Unauthorized access"}, status=403)
+            users_query = db.collection("users").where("email", "==", email).stream()
+            user_doc = next(users_query, None)
 
             if not user_doc.exists:
                 return Response({"error": "User not found"}, status=404)
@@ -215,21 +224,27 @@ class UserProfileViewSet(viewsets.ViewSet):
         except Exception as e:
             return Response({"error": str(e)}, status=500)
     @csrf_exempt
-    def login_user(request):
-        email = request.data.get("email")
-        password = request.data.get("password")
+    def login_user(self,request):
+        data = json.loads(request.body.decode("utf-8"))
+        email = data.get("email")
+        password = data.get("password")
 
-        user_ref = db.collection("users").where("email", "==", email).get()
-        
-        if not user_ref:
-            return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+        if not email or not password:
+            return JsonResponse({"error": "Email and password are required"}, status=400)
+        user_docs = db.collection("users").where("email", "==", email).stream()
+        user_data = None
+        for doc in user_docs:
+            user_data = doc.to_dict()
+            break 
 
-        user = authenticate(request, username=email, password=password)
-        if user:
-            login(request, user)
-            return Response({"message": "Login successful!"}, status=status.HTTP_200_OK)
+        if not user_data:
+            return JsonResponse({"error": "User not found"}, status=400)
 
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+        stored_password = user_data.get("password")
+        if password != stored_password:
+            return JsonResponse({"error": "Invalid credentials"}, status=400)
+
+        return JsonResponse({"message": "Login successful!", "user": {"fullname": user_data.get("fullname"), "net_id": user_data.get("net_id")}}, status=200)
     @csrf_exempt
     def create(self, request):
         try:
@@ -250,7 +265,6 @@ class UserProfileViewSet(viewsets.ViewSet):
 
             user_ref = db.collection("users").document()
 
-            # Ensure weekly_hours is a valid integer
             weekly_hours = data.get("weekly_hours", 0)
             if isinstance(weekly_hours, str) and not weekly_hours.isdigit():
                 return JsonResponse({"error": "weekly_hours must be a number"}, status=400)
@@ -269,11 +283,11 @@ class UserProfileViewSet(viewsets.ViewSet):
                 "weekly_hours": int(weekly_hours),
             }
 
-            # Create subcollections
+
             user_ref.collection("projects_created").document("init").set({"initialized": True})
             user_ref.collection("projects_joined").document("init").set({"initialized": True})
 
-            # Store user in Firestore
+
             user_ref.set(user_data)
 
             return JsonResponse({"message": "User profile created successfully", "user": user_data}, status=201)
@@ -302,16 +316,15 @@ class UserProfileViewSet(viewsets.ViewSet):
         except Exception as e:
             return Response({"error": str(e)}, status=400)
         
-        @api_view(['POST'])
-        def logout_user(request):
-            logout(request)
-            return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
 
-        @api_view(['GET'])
-        def check_authentication(request):
-            if request.user.is_authenticated:
-                return Response({"is_authenticated": True, "user": request.user.email})
-            return Response({"is_authenticated": False})
+    def logout_user(request):
+        logout(request)
+        return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
+
+    def check_authentication(request):
+        if request.user.is_authenticated:
+            return Response({"is_authenticated": True, "user": request.user.email})
+        return Response({"is_authenticated": False})
     @csrf_exempt
     def update(self, request, user_id):
          try:
@@ -376,36 +389,55 @@ class ProjectViewSet(viewsets.ViewSet):
             return Response(projects,status=200)
         except Exception as e:
             return Response({"error ": str(e)}, status=500)
-    def create(self,request):
+    def create(self, request):
         try:
             data = json.loads(request.body)
-            owner_netid = data.get("owner_netid") 
-            proj_ref = db.collection("Projects").document() 
+            print(f"Incoming data: {data}")  # Log incoming data for debugging
+
+            # Validate required fields
+            required_fields = ["name", "description", "category", "owner_netid"]
+            missing = [field for field in required_fields if field not in data]
+            if missing:
+                return Response({"error": f"Missing fields: {', '.join(missing)}"}, status=400)
+
+            owner_netid = data.get("owner_netid")
+            if not owner_netid:
+                return Response({"error": "Owner NetID is required"}, status=400)
+
+            # Create a new project document in the main Projects collection
+            proj_ref = db.collection("Projects").document()
             summary = self.generate_summary(data["description"])
             project_data = {
-                "id": proj_ref.id, 
+                "id": proj_ref.id,
                 "name": data["name"],
                 "description": data["description"],
                 "owner": data.get("owner", "defaultOwner"),
-                "owner_netid": data.get("owner_netid"),
+                "owner_netid": owner_netid,
                 "summary": summary,
                 "category": data["category"],
-                "weekly_hours": int(data.get("weekly_hours", 1)),  
-                "no_of_people": int(data.get("no_of_people", 1)),  
+                "weekly_hours": int(data.get("weekly_hours", 1)),
+                "no_of_people": int(data.get("no_of_people", 1)),
                 "start_date": data.get("start_date"),
                 "end_date": data.get("end_date"),
                 "image_url": data.get("image_url", ""),
                 "color": data.get("color", "blue"),
-                "looking_for": data.get("looking_for","No one")
+                "looking_for": data.get("looking_for", "No one")
             }
-            # proj_ref.set(project_data)
-            user_project_ref = db.collection("Users").document(owner_netid).collection("Projects_Created").document(project_ref.id)
+
+            # Save the project to the main Projects collection
+            proj_ref.set(project_data)
+
+            # Save the project to the user's Projects_Created subcollection
+            user_project_ref = db.collection("Users").document(owner_netid) \
+                .collection("Projects_Created").document(proj_ref.id)
             user_project_ref.set(project_data)
+
             return JsonResponse({"message": "Project created successfully", "project": project_data}, status=201)
         except json.JSONDecodeError:
             return Response({"error": "Invalid JSON format"}, status=400)
         except Exception as e:
-            return JsonResponse({"error":str(e)}, status=500)   
+            print(f"Error creating project: {e}")  # Log the error for debugging
+            return JsonResponse({"error": str(e)}, status=500)
 
         # return JsonResponse({"error": "Invalid request method"}, status=405)
     @csrf_exempt

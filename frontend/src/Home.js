@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import NoteCards from "./NoteCards";
 function Home() {
     const [projects, setProjects] = useState([]);
     const [selectedMajor, setSelectedMajor] = useState("All"); 
@@ -39,6 +39,7 @@ function Home() {
 
             if (response.ok) {
                 const data = await response.json();
+                console.log(data);
                 setProjects(data);
             } else {
                 throw new Error("Failed to fetch projects");
@@ -72,20 +73,7 @@ function Home() {
             {loading ? (
                 <p className="text-center">Loading projects...</p>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {projects.length > 0 ? (
-                        projects.map((project) => (
-                            <div key={project.id} className="bg-white shadow-md p-5 rounded-lg">
-                                <h3 className="text-xl font-semibold">{project.name}</h3>
-                                <p className="text-gray-700">{project.description}</p>
-                                <p className="text-sm text-gray-500">{project.start_date} - {project.end_date}</p>
-                                <p>Category: {project.category}</p>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-center">No projects available for this major.</p>
-                    )}
-                </div>
+                <NoteCards items = {projects} category ="Recommended" isProfilePage = {false}  />
             )}
         </div>
     );

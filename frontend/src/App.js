@@ -41,18 +41,6 @@ const cs_projects = [
   { id: 10, title: 'Project J', Name: 'Diana', description: 'Building an e-commerce platform with advanced search features', looking_for: "full-stack developers", skills_required: ["React", "Node.js", "GraphQL"], progress: "In Progress" }
 ];
 
-const film_projects = [
-  { id: 1, title: 'Short Film A', Name: 'Liam', description: 'Creating a sci-fi short film with practical effects', looking_for: "cinematographers", skills_required: ["Camera Operation", "Lighting", "Editing"], progress: "In Progress" },
-  { id: 2, title: 'Documentary B', Name: 'Sophia', description: 'Producing a documentary about climate change', looking_for: "researchers", skills_required: ["Interviewing", "Research", "Video Editing"], progress: "Completed" },
-  { id: 3, title: 'Animation C', Name: 'Noah', description: 'Developing a 2D animated short film', looking_for: "animators", skills_required: ["Adobe Animate", "Storyboarding", "Character Design"], progress: "In Progress" },
-  { id: 4, title: 'Feature Film D', Name: 'Olivia', description: 'Directing an indie drama film', looking_for: "actors", skills_required: ["Acting", "Screenwriting", "Directing"], progress: "Not Started" },
-  { id: 5, title: 'Experimental Film E', Name: 'James', description: 'Exploring avant-garde storytelling techniques', looking_for: "visual artists", skills_required: ["Abstract Filmmaking", "Color Grading", "Sound Design"], progress: "In Progress" },
-  { id: 6, title: 'Horror Film F', Name: 'Emma', description: 'Shooting a psychological horror short', looking_for: "makeup artists", skills_required: ["SFX Makeup", "Set Design", "Cinematography"], progress: "Completed" },
-  { id: 7, title: 'Music Video G', Name: 'Benjamin', description: 'Directing a music video for an indie band', looking_for: "editors", skills_required: ["Adobe Premiere", "After Effects", "Choreography"], progress: "In Progress" },
-  { id: 8, title: 'Comedy Sketch H', Name: 'Ava', description: 'Filming a series of short comedy sketches', looking_for: "writers", skills_required: ["Comedy Writing", "Improv", "Editing"], progress: "Not Started" },
-  { id: 9, title: 'Fantasy Film I', Name: 'Ethan', description: 'Creating a fantasy adventure short with CGI', looking_for: "VFX artists", skills_required: ["Blender", "Maya", "Compositing"], progress: "Completed" },
-  { id: 10, title: 'Thriller Film J', Name: 'Mia', description: 'Producing a suspenseful thriller with a twist ending', looking_for: "producers", skills_required: ["Budgeting", "Casting", "Production Management"], progress: "In Progress" }
-];
 
 function App() {
   const [isLight, setMode] = React.useState(true);
@@ -71,18 +59,19 @@ function App() {
           <Routes>
             <Route path="/" element={<>
               <Home />
-              <NoteCards items = {cs_projects} category ="Recommended"/>
-              <NoteCards items = {film_projects} category ="Film"/>
-              <NoteCards items = {cs_projects} category ="cs"/>
+              <NoteCards items = {cs_projects} category ="Recommended" isProfilePage={false}/>
+             
+              
             </>} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/profile/:userId" element={<UserProfile />} />
             <Route path="/create" element={<ProjectCreation />} />
             <Route path="/manage" element={<ProjectManagement />} />
             <Route path="/email" element={<Email />} />
             <Route path="/applicants" element={<Applicants />} />
               <Route path='/Profile' element = {<Profile/>}/>
               <Route path='/Apply' element= {<Apply/>}/>
+            <Route path = "/ApplicationForm" element = {<ApplicationForm/>}/>
           </Routes>
         </Router>
         

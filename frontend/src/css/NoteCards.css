@@ -19,19 +19,22 @@
     justify-content: space-between;  /* space-between or flex-start: Keep project boxes aligned to the left */
     align-items: center;  /* Vertically center the content */
     gap: 20px;  /* Space between project boxes */
-    width: 96%;
+    
     border: 10px solid;
     padding: 10px;
     margin: 10px;
     background-color: rgb(70, 71, 175);
     flex-wrap: nowrap;
-    flex: 1 1 20%;
+    min-width: 900px;
+    
 }
   .projects{
-    display: flex;
-    gap:70px;
+    display: grid;
+    align-items: stretch;
+    justify-items: stretch;
+    gap:20px;
     width: 100%;
-    
+    grid-template-columns: repeat(5, 1fr);
   }
   /*note preview*/
   .project-box {
@@ -42,18 +45,17 @@
     );
     border: 1px solid #1b1b1b;
     padding: 20px;
-    width: 100%;
+    
     cursor: pointer;
     transition: all 0.3s ease;
     border-radius: 20px;
     aspect-ratio: 1 / 1;
-    max-width: 15%;
+    
     display: flex;
     flex-direction: column;
     align-items: center;
    overflow: hidden;
-    height: 10%;
-    flex: 1 1 20%;
+    flex: 1 1 30%;
     line-height: 25px;
     font-size: 16px;
   }
@@ -68,11 +70,6 @@
     width: 35%;
     border-radius: 50%;
   }
-  
-  .project-box:hover {
-    background-color: #b9b850;
-  }
-
 
   .project-box p{
     margin-top: 10px;

@@ -10,26 +10,24 @@ function ProjectCreation() {
     const [color, setColor] = useState(null);
     const colorOptions = ['rgb(204, 83, 83)','rgb(245, 173, 66)','rgb(237, 215, 107)','rgb(122, 224, 124)','var(--box-background)','rgb(181, 122, 224)','rgb(230, 167, 192)','rgb(197, 197, 197)'];
     ///////////////////////////////////////////////////////////////////////
-    const [projectData, setProjectData] = useState({
-      owner_netid: "dfria006",
-      name: "david",
-      description: "no description right now",
-      category: "cs",
-      weekly_hours: 1,
-      summary:"working on games",
-      no_of_people: 1,
-      start_date: "2020-01-01", // Use YYYY-MM-DD format
-      end_date: "2021-01-01",   // Use YYYY-MM-DD format
-      image_url: "",
-      color: "blue",
-      looking_for: "noOne",
-  });
 
     // Handle form submission
-  const handleBackendSubmit = async () => {
-    
-
-
+  const handleBackendSubmit = async (e) => {
+    e.preventDefault();
+    const projectData = {
+      owner_netid: "test006", // Replace with dynamic value
+      name: createData.name,
+      description: createData.desc,
+      category: "cs", // Replace with dynamic value
+      weekly_hours: parseInt(createData.weeklyTime, 10),
+      summary: createData.desc, // Use description as summary for now
+      no_of_people: parseInt(createData.numPpl, 10),
+      start_date: startDate ? startDate.toISOString().split('T')[0] : "2020-01-01", 
+      end_date: endDate ? endDate.toISOString().split('T')[0] : "2021-01-01", 
+      image_url: "", 
+      color: color || "blue", 
+      looking_for: createData.location, 
+  };
     try {
       // Send the project data to the backend API
       const response = await fetch("http://localhost:8000/api/projects/", {
@@ -90,7 +88,7 @@ function ProjectCreation() {
        If there are no errors, submit the form. Otherwise, update the display to show the errors.
     */
     const handleSubmit = (e) => {
-      handleBackendSubmit();
+      
       setCreateData({ ...createData, [e.target.name]: e.target.value });
       checkProjImg(e);
       checkColor(e);
@@ -106,6 +104,7 @@ function ProjectCreation() {
       // If there are no errors, send the alert
       if(!(createError.projImgError || createError.colorError || createError.projNameError || createError.projDescError || createError.projDurError || createError.locationError))
           alert('Project created');
+      handleBackendSubmit(e);
     };
 
     // Sets projImgError to !projImgChanged.

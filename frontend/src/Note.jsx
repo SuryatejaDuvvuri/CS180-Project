@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import profileImage from "./assets/profile.png";
-
+import applyProj from "./ApplicationForm.js";
 
 //css
 import "./css/Note.css"
@@ -21,7 +21,7 @@ function Note({selectedProject, setSelectedProject}){
     const [applicants, setApplicants] = useState([]); 
     const [selectedOption, setSelectedOption] = useState("");
     const [applicantStatuses, setApplicantStatuses] = useState({});
-
+    const [error, setError] = useState(null);
 
     //closes the selected project and opens feedback
     const handleFeedback = () => {
@@ -38,6 +38,7 @@ function Note({selectedProject, setSelectedProject}){
 
     const handleApply= () =>{
         if(buttonText === "Apply"){
+            navigate(`/ApplicationForm`);
             setButtonText("Leave");
         }
         else{
@@ -46,9 +47,44 @@ function Note({selectedProject, setSelectedProject}){
     }
 
     //go to user profile
-    const goToProfile = () => {
-        navigate('/profile');
+    const goToProfile = (owner_netid) => {
+        navigate(`/profile/${owner_netid}`);
     }
+    ///////////////////////
+    const handleUpdate = async () => {
+        
+        try {
+            const response = await fetch(`http://localhost:8000/api/projects/update/${selectedProject.id}/`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(editedProject),
+        });
+    
+    
+            if (!response.ok) {
+                const errorMessage = `HTTP error! status: ${response.status}`;
+                console.error(errorMessage);
+                throw new Error(errorMessage);
+            }
+    
+            const data = await response.json();
+            console.log("Server Response:", data);
+    
+             // Update the selectedProject state with the new data
+             setSelectedProject(data);
+             
+            
+        } catch (err) {
+            console.error("Error submitting project:", err);
+            alert(`Error: ${err.message}`);
+            setError(err.message);
+        }
+    };
+
+
+    ////////////////
     //edit function
    const toggleEdit = () => {
     if (isEditing) {
@@ -56,10 +92,13 @@ function Note({selectedProject, setSelectedProject}){
         setSelectedProject(editedProject);
         //updateProject(editedProject);
         console.log("saving");
+        handleUpdate();
     } else {
         // Load current project details into edit state
         setEditedProject(selectedProject);
     }
+    //save change in here
+    
     setIsEditing(!isEditing);
 };
        // Handle input changes
@@ -101,32 +140,33 @@ function Note({selectedProject, setSelectedProject}){
            <div className="project-detail-overlay" >
                <div className="project-detail-box" onClick={(e) => e.stopPropagation()}>
                    <h2 className='title'>{isEditing?
-                        (<input type='text' name ="title" value={editedProject.title} onChange={handleInputChange}/>):(selectedProject.name)}
+                        (<input type='text' name ="name" value={editedProject.name} onChange={handleInputChange}/>):(selectedProject.name)}
                    </h2>
                    <div className="content">
-                       <img className="image" src={profileImage} alt="Profile"  onClick={goToProfile} style={{ cursor: 'pointer'}}/>
+                       <img className="image" src={profileImage} alt="Profile"  onClick={() => goToProfile(selectedProject.owner_netid)} style={{ cursor: 'pointer'}}/>
                        <div className="info">
                            <p><strong>Name:</strong>{" "}
-                                {isEditing ? (<input type="text" name="Name" value={editedProject.Name} onChange={handleInputChange}/>) : 
+                                {isEditing ? (<input type="text" name="owner" value={editedProject.owner} onChange={handleInputChange}/>) : 
                                 (selectedProject.owner)}
                             </p>
 
                            <p > <strong>Description:</strong>{" "}
                                     {isEditing ? (<textarea name="description" value={editedProject.description} onChange={handleInputChange}/>) : 
-                                    (selectedProject.summary)}
+                                    (selectedProject.description)}
                             </p>
                            <p ><strong>Looking for:</strong>{" "}
                                     {isEditing ? (<input type="text" name="looking_for" value={editedProject.looking_for}
                                      onChange={handleInputChange}/>) : 
                                      (selectedProject.looking_for)}
                             </p>
-                           <p ><strong>Skills required:</strong>{" "}
+                    
+                           <p ><strong>Weekly hours:</strong>{" "}
                                     {isEditing ? (
-                                        <input type="text" name="skills_required" value={editedProject.skills_required.join(", ")} onChange={(e) => setEditedProject((prev) => ({...prev,
+                                        <input type="text" name="weekly_hours" value={editedProject.weekly_hours} onChange={(e) => setEditedProject((prev) => ({...prev,
                                         skills_required: e.target.value.split(", "), }))}/>
                                     ) : (selectedProject.weekly_hours)}
                             </p>
-                           <p ><strong>Status:</strong> {selectedProject.progress}</p>
+                           <p ><strong>Category:</strong> {selectedProject.category}</p>
 
                         <p ><strong>Team:</strong>{applicants.map((app) =>(
                             <>
