@@ -32,6 +32,7 @@ import {Navigate} from "react-router-dom"
 function App() {
   // const [isLight, setMode] = React.useState(true);
   const [token, setTokenState] = useState(localStorage.getItem('authToken'));
+  const [selectedMajor, setSelectedMajor] = useState("All");
   const [user, setUser] = useState(null);
   // Triggers whenever the light/dark mode button is pressed
   // Switches the App's className
@@ -62,13 +63,18 @@ function App() {
         setIsLight((prevMode) => !prevMode);
     };
 
+    const handleMajorChange = (major) => {
+      console.log("Selected Major:", major);
+      setSelectedMajor(major);
+  };
+
   return (
     <Router>
     <div className={`min-h-screen ${isLight ? "bg-white text-black" : "bg-gray-900 text-white"}`}>
       
       <div className={`flex-1 w-full ${isLight ? "light" : "dark"}`}>
         
-            <Header method={toggleLightAndDarkMode} />
+            <Header method={toggleLightAndDarkMode} onMajorChange = {handleMajorChange} />
           {/* <Home/> */}
           {/* <NoteCards items={cs_projects} category="Recommended" />
           <NoteCards items={film_projects} category="Film" /> */}
@@ -113,7 +119,7 @@ function App() {
                 <Route path="/home" element={
 
                     <ProtectedRoute>
-                    <Dashboard />
+                    <Dashboard selectedMajor ={selectedMajor} />
                     </ProtectedRoute>
 
 

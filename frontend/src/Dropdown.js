@@ -6,9 +6,10 @@
 import React from 'react';
 import './Dropdown.css';
 import DropdownItem from './DropdownItem.js';
+import onSelect from "./Header.js"
 
 // The Dropdown menu. Consists of a button and several DropdownItems
-function Dropdown({ title, arr }) {
+function Dropdown({ title, arr, onSelect}) {
 
     const [isOpen, setIsOpen] = React.useState(false);
 
@@ -21,6 +22,11 @@ function Dropdown({ title, arr }) {
     function GetIsOpen() {
         return isOpen;
     }
+
+    const handleSelect = (major) => {
+        onSelect(major);  
+        setIsOpen(false);
+    };
 
     return (
         <div className="dropdown">
