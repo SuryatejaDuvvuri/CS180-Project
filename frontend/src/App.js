@@ -1,6 +1,6 @@
 // import logo from './logo.svg';
 // import './App.css';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 // import { createRoot } from 'react-dom/client';
 import React, {useState, useEffect} from 'react';
 import Header from './Header.js';
@@ -30,25 +30,45 @@ import { auth, monitorAuthState } from "./firebase";
 import {Navigate} from "react-router-dom"
 
 function App() {
-  const [isLight, setMode] = React.useState(true);
-  const [token, setTokenState] = useState(localStorage.getItem('authToken'))
+  // const [isLight, setMode] = React.useState(true);
+  const [token, setTokenState] = useState(localStorage.getItem('authToken'));
+  const [user, setUser] = useState(null);
   // Triggers whenever the light/dark mode button is pressed
   // Switches the App's className
-  function toggleLightAndDarkMode() {
-    setMode(!isLight);
-  }
-  // const [user, setUser] = useState(null);
+  const [isLight, setIsLight] = useState(() => {
+      return localStorage.getItem("theme") !== "dark";
+  });
 
-  // useEffect(() => {
-  //   monitorAuthState(setUser); 
-  // }, []);
+  useEffect(() => {
+      const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+          setUser(currentUser);
+      });
+
+      return () => unsubscribe();
+  }, []);
+
+    useEffect(() => {
+        if (isLight) {
+            document.documentElement.classList.remove("dark");
+            localStorage.setItem("theme", "light");
+        } else {
+            document.documentElement.classList.add("dark");
+            localStorage.setItem("theme", "dark");
+        }
+    }, [isLight]);
+
+
+    const toggleLightAndDarkMode = () => {
+        setIsLight((prevMode) => !prevMode);
+    };
 
   return (
-    <div className="w-screen flex flex-col w-full  bg-gray-50 justify-between">
+    <Router>
+    <div className={`min-h-screen ${isLight ? "bg-white text-black" : "bg-gray-900 text-white"}`}>
       
-      <div className={`flex-1 w-full ${isLight ? "App LightMode" : "App DarkMode"}`}>
+      <div className={`flex-1 w-full ${isLight ? "light" : "dark"}`}>
         
-            {/* <Header method={toggleLightAndDarkMode} /> */}
+            <Header method={toggleLightAndDarkMode} />
           {/* <Home/> */}
           {/* <NoteCards items={cs_projects} category="Recommended" />
           <NoteCards items={film_projects} category="Film" /> */}
@@ -59,52 +79,63 @@ function App() {
            <div className="text-center bg-websiteBackground">
            {/* <Header method={toggleLightAndDarkMode} /> */}
            <Routes>
-  
-            <Route element={<ProtectedRoute />}>
-              <Route path="/profile" element={
-              <UserProfile />} />
+           <Route path="/profile" element={
+             <ProtectedRoute>
+               <UserProfile />
+             </ProtectedRoute>
+           }
+              
+              />
                  <Route path="/create" element={
-                    <ProjectCreation />
-  
-
+                  <ProtectedRoute>
+                     <ProjectCreation />
+                  </ProtectedRoute>
+                   
                 } />
                 <Route path="/manage" element={
+                    <ProtectedRoute>
                     <ProjectManagement />
+                 </ProtectedRoute>
 
                 } />
-                <Route path="/email" element={
+                {/* <Route path="/email" element={
 
                     <Email />
 
-                } />
+                } /> */}
                 <Route path="/applicants" element={
 
+                    <ProtectedRoute>
                     <Applicants />
+                    </ProtectedRoute>
 
                 } />
                 <Route path="/home" element={
 
-                   token ? <Dashboard /> : <Navigate to="/login" replace />
+                    <ProtectedRoute>
+                    <Dashboard />
+                    </ProtectedRoute>
 
 
                 } />
                 <Route path='/apply' element={
-
+                  <ProtectedRoute>
                     <Apply />
+                  </ProtectedRoute>
 
                 } />
-            </Route>
       
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             
+             
            
           </Routes>
             </div>
       </div>
     </div>
-
+    </Router>
   );
 }
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Signup.css';
 import { useNavigate } from 'react-router-dom';
+import { signUpWithEmail } from "./firebase";
 
 function Signup() {
     const navigate = useNavigate(); 
@@ -38,6 +39,8 @@ function Signup() {
         };
 
         try {
+            const idToken = await signUpWithEmail(email, password);
+            if (!idToken) throw new Error("Failed to register user in Firebase");
             const response = await fetch("http://localhost:8000/api/users/", {
                 method: "POST",
                 headers: {

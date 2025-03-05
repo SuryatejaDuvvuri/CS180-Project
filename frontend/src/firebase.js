@@ -1,5 +1,15 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { 
+    getAuth, 
+    signInWithEmailAndPassword, 
+    onAuthStateChanged, 
+    signInWithPopup, 
+    GoogleAuthProvider, 
+    setPersistence, 
+    browserLocalPersistence, 
+    createUserWithEmailAndPassword,
+    signOut
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -10,24 +20,22 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_APP_ID,
 };
 
-const monitorAuthState = (callback) => {
-  return onAuthStateChanged(auth, (user) => {
-      if (user) {
-          user.getIdToken().then((token) => {
-              localStorage.setItem('authToken', token);
-              callback(user);
-          });
-      } else {
-          localStorage.removeItem('authToken');
-          callback(null);
-      }
-  });
-};
+console.log("Firebase Config:", {
+  apiKeyPresent: !!firebaseConfig.apiKey,
+  authDomainPresent: !!firebaseConfig.authDomain,
+  projectIdPresent: !!firebaseConfig.projectId,
+});
 
-
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+// Ensure persistence is set before any auth operations
+setPersistence(auth, browserLocalPersistence).then(() => {
+    console.log("Firebase auth persistence set to local");
+}).catch((error) => {
+    console.error("Error setting persistence:", error);
+});
+
 const googleProvider = new GoogleAuthProvider();
 
 // Google Sign-In
@@ -38,6 +46,7 @@ const signInWithGoogle = async () => {
     return idToken;
   } catch (error) {
     console.error("Google Sign-In Error:", error);
+    throw error;
   }
 };
 
@@ -49,15 +58,45 @@ const signUpWithEmail = async (email, password) => {
     return idToken;
   } catch (error) {
     console.error("Signup Error:", error.message);
+    throw error;
   }
 };
 
+// Email/Password Login
+const signInWithEmail = async (email, password) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const idToken = await userCredential.user.getIdToken();
+    return idToken;
+  } catch (error) {
+    console.error(`❌ Firebase Login Error: ${error.code} - ${error.message}`);
+    throw error;
+  }
+};
+
+// Logout function
 const logout = async () => {
   try {
     await signOut(auth);
+    localStorage.removeItem("authToken");
   } catch (error) {
     console.error("Logout Error", error);
   }
 };
 
-export { auth, signInWithGoogle, signUpWithEmail, monitorAuthState, logout };
+// Monitor auth state
+const monitorAuthState = (callback) => {
+  return onAuthStateChanged(auth, (user) => {
+    if (user) {
+      user.getIdToken().then((token) => {
+        localStorage.setItem('authToken', token);
+        callback(user);
+      });
+    } else {
+      localStorage.removeItem('authToken');
+      callback(null);
+    }
+  });
+};
+
+export { auth, signInWithGoogle, signUpWithEmail, signInWithEmail, monitorAuthState, logout };

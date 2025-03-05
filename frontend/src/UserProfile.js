@@ -1,3 +1,4 @@
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -9,15 +10,47 @@ export default function UserProfile()
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetchUserProfile();
+        const auth = getAuth();
+
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setFirebaseUser(user);
+                fetchUserProfile(user);
+            } else {
+                setError("You need to be logged in to view this profile.");
+                setLoading(false);
+            }
+        });
+
+        return () => unsubscribe(); 
     }, []);
+
+    // useEffect(() => {
+    //     fetchUserProfile();
+    // }, []);
 
     const fetchUserProfile = async () => {
         setLoading(true);
+        setError(null);
         try {
+            if (!firebaseUser) 
+            {
+                setError("User is not authenticated.");
+                setLoading(false);
+                return;
+            }
+            const token = await getIdToken(currentUser);
+            if (!currentUser) {
+                setError("You need to be logged in to view this profile.");
+                setLoading(false);
+                return;
+            }
+
             const response = await fetch(`http://localhost:8000/api/users/${userId}/`, {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json',
+                     Authorization: `Bearer ${token}`,
+                 }
             });
 
             if (!response.ok) {
@@ -35,7 +68,7 @@ export default function UserProfile()
     };
 
     return (
-        <div className="bg-gray-100 min-h-screen p-5">
+        <div className="bg-gray-100 min-h-screen p-5 flex flex-col items-center">
             <h1 className="text-3xl font-bold text-center mb-5">User Profile</h1>
 
             {error && <p className="text-red-500">{error}</p>}
@@ -43,30 +76,31 @@ export default function UserProfile()
                 <p className="text-center">Loading user profile...</p>
             ) : (
                 user && (
-                    <div className="max-w-2xl mx-auto bg-white p-6 shadow-lg rounded-lg">
+                    <div className="max-w-2xl w-full bg-white p-6 shadow-lg rounded-lg">
                         <h2 className="text-2xl font-bold">Name: {user.fullname}</h2>
                         <p className="text-gray-600">NetID: {user.net_id}</p>
-                        <p className="text-gray-600">Pronouns: {user.pronouns}</p>
-                        <p className="text-gray-600">Location: {user.location}</p>
-                        <p className="text-gray-600">Experience: {user.experience}</p>
-                        <p className="text-gray-600">Weekly Hours: {user.weekly_hours} hrs</p>
-                        
-                        <h3 className="text-xl font-bold mt-4">Skills & Interests</h3>
-                        <p className="text-gray-600">Skills: {user.skills.join(', ')}</p>
-                        <p className="text-gray-600">Interests: {user.interests.join(', ')}</p>
+                        <p className="text-gray-600">Pronouns: {user.pronouns || "Not specified"}</p>
+                        <p className="text-gray-600">Location: {user.location || "Not specified"}</p>
+                        <p className="text-gray-600">Experience: {user.experience || "No experience listed"}</p>
+                        <p className="text-gray-600">Weekly Hours: {user.weekly_hours || "Not specified"} hrs</p>
 
-                        <h3 className="text-xl font-bold mt-4">Projects</h3>
-                        <ul className="list-disc ml-5">
-                            {user.projects_created.length > 0 ? (
-                                user.projects_created.map((projectId) => (
-                                    <li key={projectId} className="text-blue-500 hover:underline">
-                                        <a href={`/projects/${projectId}`}>Project {projectId}</a>
-                                    </li>
-                                ))
-                            ) : (
-                                <li>No projects created.</li>
-                            )}
-                        </ul>
+                        <button 
+                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            onClick={() => navigate("/home")}
+                        >
+                            Back to Home
+                        </button>
+
+                        {/* Logout button */}
+                        <button 
+                            className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                            onClick={() => {
+                                signOut(getAuth());
+                                navigate("/login");
+                            }}
+                        >
+                            Logout
+                        </button>
                     </div>
                 )
             )}

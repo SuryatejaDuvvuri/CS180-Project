@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signInWithGoogle } from "../firebase";
+import { auth, signInWithGoogle, signInWithEmail } from "../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -12,22 +13,33 @@ export default function Login() {
     e.preventDefault();
     setError(null);
 
+    if (!email.trim() || !password.trim()) {
+      setError("Email and password are required.");
+      return;
+    }
+
     try {
+      const idToken = await signInWithEmail(email, password);
+      
       const response = await fetch("http://localhost:8000/api/login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, idToken }),
       });
-
+      
       const data = await response.json();
+      
       if (!response.ok) {
-        throw new Error(data.detail || "Login failed");
+        throw new Error(data.error || "Login failed");
       }
 
-      localStorage.setItem("authToken", data.token);
+      if(idToken)
+      {
+        localStorage.setItem("authToken", idToken);
+      }
       navigate("/home");
     } catch (err) {
-      setError(err.message);
+      setError("Invalid email or password.");
     }
   };
 
@@ -50,7 +62,7 @@ export default function Login() {
       }
 
       localStorage.setItem("authToken", data.token);
-      navigate("/dashboard");
+      navigate("/home");
     } catch (err) {
       setError(err.message);
     }
@@ -98,14 +110,12 @@ export default function Login() {
           Sign in with Google
         </button>
 
-        {/*  New Sign Up Button */}
         <button
           onClick={() => navigate("/signup")}
           className="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg"
         >
           Sign Up
         </button>
-
       </div>
     </div>
   );
