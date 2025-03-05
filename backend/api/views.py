@@ -479,20 +479,16 @@ class ProjectViewSet(viewsets.ViewSet):
             id_token = auth_header.split(" ")[1]
             decoded_token = auth.verify_id_token(id_token)
             firebase_email = decoded_token.get("email")
+            
+            if not data.get("name") or not data.get("category"):
+                return JsonResponse({"error": "Project name and category are required"}, status=400)
 
-            user_ref = db.collection("users").where("email", "==", firebase_email).stream()
-            user_docs = list(user_ref)
-            if not user_docs:
-                return Response({"error": "User not found"}, status=404)
-
-            user_doc = user_docs[0]
-            user_id = user_doc.id  
-
+            
             data = json.loads(request.body)
             summary = self.generate_summary(data.get("description", ""))
 
 
-            project_ref = db.collection("users").document(user_id).collection("projects_created").document()
+            project_ref = db.collection("users").document(firebase_email).collection("projects_created").document()
 
             project_data = {
                 "id": project_ref.id,
@@ -515,9 +511,9 @@ class ProjectViewSet(viewsets.ViewSet):
             applicants_ref = project_ref.collection("Applicants").document("init")
             feedback_ref = project_ref.collection("Feedback").document("init")
             
-            applicants_ref.set({"initialized": True})
-            feedback_ref.set({"initialized": True})
-
+            applicants_ref.set({})
+            feedback_ref.set({})
+            
             return JsonResponse({"message": "Project created successfully", "project": project_data}, status=201)
 
         except json.JSONDecodeError:

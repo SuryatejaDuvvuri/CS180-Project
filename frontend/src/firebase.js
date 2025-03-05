@@ -38,7 +38,7 @@ setPersistence(auth, browserLocalPersistence).then(() => {
 
 const googleProvider = new GoogleAuthProvider();
 
-// Google Sign-In
+
 const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
@@ -50,7 +50,7 @@ const signInWithGoogle = async () => {
   }
 };
 
-// Email/Password Signup
+
 const signUpWithEmail = async (email, password) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -69,12 +69,12 @@ const signInWithEmail = async (email, password) => {
     const idToken = await userCredential.user.getIdToken();
     return idToken;
   } catch (error) {
-    console.error(`❌ Firebase Login Error: ${error.code} - ${error.message}`);
+    console.error(`Firebase Login Error: ${error.code} - ${error.message}`);
     throw error;
   }
 };
 
-// Logout function
+
 const logout = async () => {
   try {
     await signOut(auth);
@@ -84,7 +84,7 @@ const logout = async () => {
   }
 };
 
-// Monitor auth state
+
 const monitorAuthState = (callback) => {
   return onAuthStateChanged(auth, (user) => {
     if (user) {

@@ -96,12 +96,12 @@ function App() {
                   </ProtectedRoute>
                    
                 } />
-                <Route path="/manage" element={
+                {/* <Route path="/manage" element={
                     <ProtectedRoute>
                     <ProjectManagement />
                  </ProtectedRoute>
 
-                } />
+                } /> */}
                 {/* <Route path="/email" element={
 
                     <Email />

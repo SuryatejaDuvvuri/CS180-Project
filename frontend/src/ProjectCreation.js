@@ -23,6 +23,7 @@ function ProjectCreation() {
         setError(null);
 
         const user = auth.currentUser;
+        console.log(user);
         if (!user) 
         {
             setError("You need to be logged in to create a project.");
@@ -38,20 +39,10 @@ function ProjectCreation() {
         try
         {
             const idToken = await user.getIdToken();
-            const response = await fetch("http://localhost:8000/api/projects/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${idToken}`,
-                },
-                body: JSON.stringify(projectData),
-            });
-
-          
-            const project = {
+            const projectData = {
               name:name,
               description: desc,
-              owner: auth.currentUser.name,
+              owner: user.email,
               start_date: startDate ? startDate.toISOString() : null,
               end_date: endDate ? endDate.toISOString() : null,
               no_of_people: val,
@@ -62,8 +53,17 @@ function ProjectCreation() {
               color:color,
               image_url: image ? URL.createObjectURL(image) : null, 
           };
-          
+            const response = await fetch("http://localhost:8000/api/projects/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${idToken}`,
+                },
+                body: JSON.stringify(projectData),
+            });
+
             const data = await response.json();
+            console.log(data)
             if (!response.ok) {
                 throw new Error(data.error || "Failed to create project.");
             }
@@ -83,7 +83,7 @@ function ProjectCreation() {
              <br/>
             
                   <h1>New Project</h1>
-                  <form onSubmit={(e) => {e.preventDefault(); alert("Working")} } className = "form-container">
+                  <form onSubmit={(e) => handleSubmit} className = "form-container">
             
                     <label className="form-label">Project Image: 
                       <input type = "file" onChange={(e) => setImage(e.target.files[0])} className="form-input"/>
@@ -159,7 +159,10 @@ function ProjectCreation() {
                       />
                     </label>
                     <br/>        
-                    <input type = "submit" value = "Submit" onSubmit={handleSubmit}/>
+                    <div className = "buttons">
+                      <button type = "submit">{"Add"}</button>
+                      <button type = "button" onClick = {cancel}>Cancel</button>
+                    </div>
                   </form>
         </div>
     );
