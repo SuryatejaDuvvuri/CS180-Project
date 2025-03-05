@@ -377,18 +377,51 @@ class ProjectViewSet(viewsets.ViewSet):
             return summary
         except Exception as e:
             return "No summary available"
-    def list(self,request):
+    def list(self, request):
         try:
-            proj_ref = db.collection("Projects").stream()
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return Response({"error": "Missing or invalid Authorization token"}, status=401)
             
-            category_filter = request.GET.get("category", None)
-            if category_filter and category_filter != "All":
-                proj_ref = proj_ref.where("category", "==", category_filter)
+            id_token = auth_header.split(" ")[1]
+            decoded_token = auth.verify_id_token(id_token)
+            
+            email = decoded_token.get("email")
+            user_ref = db.collection("users").where("email", "==", email).stream()
+            # user_docs = list(user_ref)
+            # user_doc = user_docs[0] 
+            
+            user_projects_ref = db.collection("users").stream()
+            projects = []
+            for user_doc in user_projects_ref:
+                user_data = user_doc.to_dict()
+                if user_data.get("email") == email:
+                    continue  
+                created_projects_ref = db.collection("users").document(user_doc.id).collection("projects_created").stream()
+                created_projects = [{**proj.to_dict(), "id": proj.id} for proj in created_projects_ref]
                 
-            projects = [{**proj.to_dict(), "id": proj.id} for proj in proj_ref]
-            return Response(projects,status=200)
+                joined_projects_ref = db.collection("users").document(user_doc.id).collection("projects_joined").stream()
+                joined_projects = [{**proj.to_dict(), "id": proj.id} for proj in joined_projects_ref]
+                projects.extend(created_projects + joined_projects)
+            # proj_ref = db.collection("Projects")
+            category_filter = request.GET.get("category", None)
+            
+            if category_filter and category_filter != "All":
+                created_projects = [proj for proj in created_projects if proj.get("category") == category_filter]
+                joined_projects = [proj for proj in joined_projects if proj.get("category") == category_filter]
+
+            # projects = [{**proj.to_dict(), "id": proj.id} for proj in proj_ref.stream()]
+            # projects = {
+            #     "projects_created": created_projects,
+            #     "projects_joined": joined_projects
+            # }
+            
+            # print(projects)
+            
+            return Response(projects, status=200)
+        
         except Exception as e:
-            return Response({"error ": str(e)}, status=500)
+            return Response({"error": str(e)}, status=500)
     def create(self,request):
         try:
             data = json.loads(request.body)
@@ -546,7 +579,7 @@ class ProjectUpdateView(RetrieveUpdateAPIView):
 class ProjectRecommendationViewSet(viewsets.ViewSet):
      def list(self, request):
         """ API endpoint to get project recommendations for a user. """
-        user_email = request.query_params.get("email")  # Get user email from request
+        user_email = request.query_params.get("email")
         if not user_email:
             return Response({"error": "Email parameter is required"}, status=400)
 

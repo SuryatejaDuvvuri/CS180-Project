@@ -35,17 +35,35 @@ function NoteCards({ items = [], category }) {
                                 key={item.id}
                                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
                             >
+                                 {item.image_url && (
+                                    <img
+                                        src={item.image_url}
+                                        alt={item.name}
+                                        className="w-full h-40 object-cover"
+                                    />
+                                )}
                                 <div className="p-6">
                                     <h3 className="text-xl font-semibold mb-2">{item.name}</h3>
                                     <p className="text-gray-600 mb-4 line-clamp-2">{item.description}</p>
                                     <div className="flex flex-wrap gap-2 mb-4">
-                                        {item.skills_required?.map((skill, index) => (
-                                            <span key={index} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                                                {skill}
-                                            </span>
-                                        ))}
+                                        <span className="text-sm text-gray-500">
+                                            Summary: {item.summary}
+                                        </span>
+                                        <span className="text-sm text-gray-500">
+                                            Category: {item.category}
+                                        </span>
+                                        <span className="text-sm text-gray-500">
+                                             Looking For: {item.looking_for}
+                                        </span>
+                                        <span className="text-sm text-gray-500">Team Size: {item.number_of_people}</span>
                                     </div>
-                                    <div className="flex justify-between items-center">
+                                    
+                                    <button
+                                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm transition-colors duration-300"
+                                    >
+                                        View Details
+                                    </button>
+                                    {/* <div className="flex justify-between items-center">
                                         <span className="text-sm text-gray-500">Team Size: {item.team_size}</span>
                                         <button
                                             onClick={() => navigate(`/apply/${item.id}`)}
@@ -53,7 +71,7 @@ function NoteCards({ items = [], category }) {
                                         >
                                             Apply Now
                                         </button>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         ))}

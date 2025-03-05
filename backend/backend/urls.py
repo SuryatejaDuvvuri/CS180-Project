@@ -30,7 +30,7 @@ urlpatterns = [
     path("api/projects/update/<str:project_id>/", ProjectUpdateView.as_view(), name="update_project"),
     path("api/projects/delete/<str:project_id>/", ProjectDeleteView.as_view(), name="delete_project"),
     path("api/users/", UserProfileViewSet.as_view({"get": "list", "post": "create"})),
-    path("api/users/<str:user_id>/", UserProfileViewSet.as_view({"get": "retrieve", "put": "update", "delete": "delete"})),
+    path("api/users/<str:email>/", UserProfileViewSet.as_view({"get": "retrieve", "put": "update", "delete": "delete"})),
 
     path("api/recommend-projects/", ProjectRecommendationViewSet.as_view({"get": "list"}), name="recommend_projects"),
 ]

@@ -1,11 +1,13 @@
-import React from "react";
+import React, {useEffect,useState} from "react";
 import Header from "../Header";
 import NoteCards from "../NoteCards";
 import { useNavigate } from "react-router-dom";
+import {auth} from "../firebase";
 export default function Dashboard({ selectedMajor }) {
     const [projects, setProjects] = React.useState([]);
     const [error, setError] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
+    const [recommendedProjects, setRecommendedProjects] = useState([]); 
 
     const cs_projects = [
       { id: 1, title: 'Project A', Name: 'John', description: 'Working on 2D platformer game', looking_for: "college students", skills_required: ["C++", "Unity", "Game Design"], progress: "In Progress" },
@@ -40,9 +42,11 @@ export default function Dashboard({ selectedMajor }) {
             if (selectedMajor !== "All") {
                 url += `?category=${encodeURIComponent(selectedMajor)}`;
             }
+            const user = auth.currentUser;
+            const idToken = await user.getIdToken();
             const response = await fetch(url, {
                 method: "GET",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${idToken}`, },
             });
 
             if (response.ok) {
@@ -63,9 +67,50 @@ export default function Dashboard({ selectedMajor }) {
         }
     }
 
-    const getProjectsByCategory = (category) => {
-      return projects.filter(project => project.category === category);
-    };
+    const fetchRecommendedProjects = async () => {
+        setLoading(true);
+        try
+        {
+            setLoading(true);
+            const user = auth.currentUser;
+            if (!user) 
+            {
+                console.error("No authenticated user found.");
+                return;
+            }
+
+            const idToken = await user.getIdToken();
+            const email = user.email;
+
+            const response = await fetch(`http://localhost:8000/api/recommend-projects/`, {
+                method: "GET",
+                headers: { 
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${idToken}`,
+                },
+            });
+
+            if (!response.ok) 
+            {
+                throw new Error("Failed to fetch recommended projects");
+            }
+
+            const data = await response.json();
+            setRecommendedProjects(data);
+        }
+        catch(err)
+        {
+            console.error("Error fetching recommended projects:", err);
+        }
+        finally
+        {
+            setLoading(false);
+        }
+    }
+
+    // const getProjectsByCategory = (category) => {
+    //   return projects.filter(project => project.category === category);
+    // };
     React.useEffect(() => {
         getProjects();
     }, [selectedMajor]);
@@ -87,15 +132,15 @@ export default function Dashboard({ selectedMajor }) {
                     </div>
                 ) : (
                     <div className="space-y-10">
-                        <section>
+                         <section>
                             <h2 className="text-2xl font-semibold mb-4">Recommended Projects</h2>
-                            <NoteCards items={projects.slice(0, 6)} category="Recommended" />
-                        </section>
+                             <NoteCards items={recommendedProjects} category="Recommended" />
+                         </section>
 
                         <section>
                             <h2 className="text-2xl font-semibold mb-4">Computer Science Projects</h2>
                             <NoteCards 
-                                items={cs_projects} 
+                                items={projects.length > 0 ? projects.filter(proj => proj.category === "computer science".toLowerCase()) : cs_projects}
                                 category="Computer Science" 
                             />
                         </section>
@@ -103,7 +148,7 @@ export default function Dashboard({ selectedMajor }) {
                         <section>
                             <h2 className="text-2xl font-semibold mb-4">Film Projects</h2>
                             <NoteCards 
-                                items={film_projects} 
+                                items={projects.length > 0 ? projects.filter(proj => proj.category === "Film".toLowerCase()) : film_projects}
                                 category="Film" 
                             />
                         </section>
@@ -111,7 +156,7 @@ export default function Dashboard({ selectedMajor }) {
                         <section>
                             <h2 className="text-2xl font-semibold mb-4">Engineering Projects</h2>
                             <NoteCards 
-                                items={getProjectsByCategory("Engineering")} 
+                               items={projects.filter(proj => proj.category === "Engineering")}
                                 category="Engineering" 
                             />
                         </section>
