@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import './ProjectCreation.css';
 import DatePicker from "react-datepicker";
+import { useMajors } from "./GetMajors"; 
 import "react-datepicker/dist/react-datepicker.css";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +13,7 @@ function ProjectCreation() {
     const [startDate, endDate] = range;
     const [error,setError] = useState(null);
     const [val, setVal] = useState(0);
+    const [isLight, setMode] = useState(true);
     const [category, setCategory] = useState('');
     const [location, setLocation] = useState('');
     const [weeklyHours, setWeeklyHours] = useState(0);
@@ -20,6 +22,7 @@ function ProjectCreation() {
     const [looking_for, setLooking_for] = useState('');
     const colorOptions = ['red','orange','yellow','green','blue','purple'];
     const navigate = useNavigate();
+    const majors = useMajors();
     
     const handleSubmit = async (e) => 
     {
@@ -83,7 +86,6 @@ function ProjectCreation() {
             });
 
             const data = await response.json();
-            console.log(data);
             if (!response.ok) {
                 throw new Error(data.error || "Failed to create project.");
             }
@@ -96,8 +98,17 @@ function ProjectCreation() {
             setError(err.message);
             console.error("Error creating project:", err);
         }
-
     }
+
+     useEffect(() => {
+            if (isLight) {
+                document.documentElement.classList.remove("dark");
+                localStorage.setItem("theme", "light");
+            } else {
+                document.documentElement.classList.add("dark");
+                localStorage.setItem("theme", "dark");
+            }
+        }, [isLight]);
 
  
      
@@ -164,13 +175,10 @@ function ProjectCreation() {
                     <label className="form-label">
                     Categories:
                         <select value={category} onChange={(e) => setCategory(e.target.value)} className="form-input">
-                            <option value="">Select a category</option>
-                            <option value="Computer Science">Computer Science</option>
-                            <option value="Medicine">Medicine</option>
-                            <option value="Filmmaking">Filmmaking</option>
-                            <option value="Art">Art</option>
-                            <option value="Psychology">Psychology</option>
-                            <option value="History">History</option>
+                            <option value="Select a category">Select a category</option>
+                            {majors.map((category, index) => (
+                            <option key={index} value={category}>{category}</option>
+                        ))}
                         </select>
                     </label>
 

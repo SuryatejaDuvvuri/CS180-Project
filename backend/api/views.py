@@ -471,6 +471,8 @@ class ProjectViewSet(viewsets.ViewSet):
 
     def create(self,request):
         try:
+            if not request.body:
+                return JsonResponse({"error": "Empty request body"}, status=400)
             auth_header = request.headers.get("Authorization")
             if not auth_header or not auth_header.startswith("Bearer "):
                 return Response({"error": "Missing or invalid Authorization token"}, status=401)
@@ -478,16 +480,24 @@ class ProjectViewSet(viewsets.ViewSet):
             id_token = auth_header.split(" ")[1]
             decoded_token = auth.verify_id_token(id_token)
             firebase_email = decoded_token.get("email")
+            firebase_uid = decoded_token.get("uid") 
 
-            
-            data = json.loads(request.body)
-            
+            print(firebase_email)
+            data = json.loads(request.body.decode("utf-8"))
             if not data.get("name") or not data.get("category"):
                 return JsonResponse({"error": "Project name and category are required"}, status=400)
             summary = self.generate_summary(data.get("description", ""))
 
+            user_query = db.collection("users").where("email", "==", firebase_email).stream()
+            user_docs = list(user_query)
+            if not user_docs:
+                return JsonResponse({"error": "User not found"}, status=404)
 
-            project_ref = db.collection("users").document(firebase_email).collection("projects_created").document()
+            user_doc = user_docs[0]
+            user_id = user_doc.id 
+            print(f"User ID: {user_id}")
+  
+            project_ref = db.collection("users").document(user_id).collection("projects_created").document()
 
             project_data = {
                 "id": project_ref.id,
