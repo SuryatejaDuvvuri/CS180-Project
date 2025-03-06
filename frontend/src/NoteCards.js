@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './css/NoteCards.css';
+import Note from './Note';
 
 function NoteCards({ items = [], category }) {
     const navigate = useNavigate();
-    const [projects, setProjects] = useState(items);
+    const [projects, setProjects] = useState(Array.isArray(items) ? items : []);
     const [selectedProject, setSelectedProject] = useState(null);
     const [scrollIndex, setScrollIndex] = useState(0);
     const maxVisible = 3; 
@@ -20,6 +21,9 @@ function NoteCards({ items = [], category }) {
             Math.min(prev + 1, Math.max(0, projects.length - maxVisible))
         );
     };
+
+    const openModal = (project) => setSelectedProject(project);
+    const closeModal = () => setSelectedProject(null);
 
     return (
         <>
@@ -60,6 +64,7 @@ function NoteCards({ items = [], category }) {
                                     </div>
                                     
                                     <button
+                                        onClick={() => openModal(item)}
                                         className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm transition-colors duration-300"
                                     >
                                         View Details
@@ -82,6 +87,10 @@ function NoteCards({ items = [], category }) {
                     </button>
                 </div>
             </div>
+
+            {selectedProject && (
+                <Note selectedProject={selectedProject} setSelectedProject={setSelectedProject} />
+            )}
         </>
     );
 }

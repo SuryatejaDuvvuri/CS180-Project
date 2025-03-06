@@ -24,80 +24,12 @@ import ollama
 import requests
 from google.cloud import storage
 import uuid
-from .recommendation import recommend_projects
+from .recommendations import recommend_projects
+from .sendEmail import sendEmail
 
 User = get_user_model()
 # db = firestore.client()
-
-@csrf_exempt
-@require_http_methods(["POST"])
-def send_email(request):
-    try:
-        load_dotenv()
-        api_key = os.getenv("SENDGRID_API_KEY")
-        sender_email = os.getenv("EMAIL")
-        if not api_key:
-            return JsonResponse({
-                "message": "SendGrid API key not configured",
-                "status": 500
-            }, status=500)
-            
-        if not sender_email:
-            return JsonResponse({
-                "message": "Sender email not configured",
-                "status": 500
-            }, status=500)
-        data = json.loads(request.body)
-        print("Parsed JSON:", data)
-        email = data.get("email")
-        name = data.get("name")
-        subject = data.get("subject")
-        email_type = data.get("type")
-        frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
-        if not email or not name or not subject or not email_type:
-            return JsonResponse({"message": "Missing required fields", "status": 400}, status=400)
-        
-        email_temps = {
-             "accept": f"""
-                <p>Dear {name},</p>
-                <p>Congratulations! We are pleased to inform you that you have been accepted.</p>
-                 <p>We’re excited to have you on the team! Click below to visit your project dashboard:</p>
-                <a href="{frontend_url}/dashboard" style="display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 15px; text-decoration: none; font-weight: bold; border-radius: 5px;">
-                    Welcome to the team!
-                </a>
-                <p>Looking forward to working with you!</p>
-                <p>Best Regards,<br>Team</p>
-            """,
-            "reject": f"""
-                <p>Dear {name},</p>
-                <p>Thank you for your application. Unfortunately, we regret to inform you that you have not been selected.</p>
-                <p>We appreciate your effort and encourage you to apply again in the future.</p>
-                <p>Best Regards,<br>Team</p>
-            """,
-            "thanks": f"""
-                <p>Dear {name},</p>
-                <p>Thank you for applying! We appreciate your interest and will get back to you soon.</p>
-                <p>Best Regards,<br>Team</p>
-            """
-        }
-        
-        email_content = email_temps.get(email_type)
-        if not email_content:
-            return JsonResponse({"message": "Invalid email type", "status": 400}, status=400)
-        
-        message = Mail(
-            from_email=sender_email,
-            to_emails=email,
-            subject=subject,
-            html_content=email_content
-        )
-        
-        sendGrid = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
-        response = sendGrid.send(message)
-        
-        return JsonResponse({"message": "Email sent successfully", "status": response.status_code})
-    except Exception as e:
-        return JsonResponse({"message": str(e), "status": 500})
+OLLAMA_URL = "http://127.0.0.1:11434"
 
 class FeedBackViewSet(viewsets.ViewSet):
     def list(self,request):
@@ -156,39 +88,39 @@ class ApplicantViewSet(viewsets.ViewSet):
             return JsonResponse({"applicants": applicants}, status=200)
         except Exception as e:
             return JsonResponse({"error":str(e)},status=500)
-    def create(self, request):
-        try:
-            data = json.loads(request.body)
-            required_fields = ["name", "email", "project_id"]
-            missing = [field for field in required_fields if field not in data]
-            if missing:
-                return Response({"error": f"Missing fields: {', '.join(missing)}"}, status=400)
+    # def create(self, request):
+    #     try:
+    #         data = json.loads(request.body)
+    #         required_fields = ["name", "email", "project_id"]
+    #         missing = [field for field in required_fields if field not in data]
+    #         if missing:
+    #             return Response({"error": f"Missing fields: {', '.join(missing)}"}, status=400)
 
-            applicant_ref = db.collection("Applicants").document()
-            applicant_data = {
-                "name": data["name"],
-                "email": data["email"],
-                "project_id": data["project_id"],
-                "position":data["position"],
-                "status": data.get("status", "pending"),
-                "submission_date": data.get("submission_date", None),
-            }
+    #         applicant_ref = db.collection("Applicants").document()
+    #         applicant_data = {
+    #             "name": data["name"],
+    #             "email": data["email"],
+    #             "project_id": data["project_id"],
+    #             "position":data["position"],
+    #             "status": data.get("status", "pending"),
+    #             "submission_date": data.get("submission_date", None),
+    #         }
 
-            applicant_ref.set(applicant_data) 
+    #         applicant_ref.set(applicant_data) 
 
-            print("Applicant successfully added:", applicant_data) 
+    #         print("Applicant successfully added:", applicant_data) 
 
-            return JsonResponse(
-                {"message": "Applicant created successfully", "applicant": applicant_data},
-                status=201
-            )
+    #         return JsonResponse(
+    #             {"message": "Applicant created successfully", "applicant": applicant_data},
+    #             status=201
+    #         )
 
-        except json.JSONDecodeError:
-            print("Invalid JSON format received!")
-            return Response({"error": "Invalid JSON format"}, status=400)
+    #     except json.JSONDecodeError:
+    #         print("Invalid JSON format received!")
+    #         return Response({"error": "Invalid JSON format"}, status=400)
 
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+    #     except Exception as e:
+    #         return JsonResponse({"error": str(e)}, status=500)
     def delete(self, request, applicant_id=None):
         try:
             if not applicant_id:
@@ -204,6 +136,135 @@ class ApplicantViewSet(viewsets.ViewSet):
             applicant_ref.delete()
 
             return Response({"message": f"Applicant {applicant_id} deleted successfully"}, status=200)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+    @csrf_exempt
+    def apply_to_project(self, request, project_id):
+        try:
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return Response({"error": "Missing or invalid Authorization token"}, status=401)
+
+            id_token = auth_header.split(" ")[1]
+            decoded_token = auth.verify_id_token(id_token)
+            applicant_email = decoded_token.get("email") 
+
+
+            data = json.loads(request.body)
+            project_id = data.get("project_id")
+            owner_email = data.get("owner_email")
+            position = data.get("position")
+            cv_base64 = data.get("cv", None)
+
+            applicant_query = db.collection("users").where("email", "==", applicant_email).stream()
+            applicant_data = None
+
+            for doc in applicant_query:
+                applicant_data = doc.to_dict()
+                break  
+            print(applicant_data)
+            if not applicant_data:
+                return JsonResponse({"error": "Applicant profile not found"}, status=404)
+
+            # user_docs = list(user_ref)
+            # if not user_docs:
+            #     return Response({"error": "User not found"}, status=404)
+            # user_doc = user_docs[0]
+            # user_id = user_doc.id  
+            
+            project_ref = db.collection("users").document(owner_email).collection("projects_created").document(project_id)
+            application_ref = project_ref.collection("Applicants").document(applicant_email)
+
+            if application_ref.get().exists:
+                return JsonResponse({"error": "You have already applied to this project"}, status=400)
+            
+            project_doc = project_ref.get()
+            if not project_doc.exists:
+                return JsonResponse({"error": "Project not found"}, status=404)
+
+            project_data = project_doc.to_dict() 
+            print(f"Project Data Retrieved: {project_data}") 
+            
+            application_data = {
+                    "email": applicant_email,
+                    "fullname": data.get("fullname", "Unknown"),
+                    "pronouns": data.get("pronouns", ""),
+                    "skills": data.get("skills", []),
+                    "interests": data.get("interests", []),
+                    "experience": data.get("experience", ""),
+                    "github": data.get("github", ""),
+                    "linkedin": data.get("linkedin", ""),
+                    "resume": data.get("resume",None),
+                    "cv": cv_base64,
+                    "position": position,
+                    "status": "Pending", 
+                    "applied_at": firestore.SERVER_TIMESTAMP
+                }
+
+            application_ref.set(application_data)
+            sendEmail(
+                recipient_email=owner_email,  
+                name=project_data["owner"],
+                subject=f"New Applicant for {project_data['name']}",
+                email_type="new_application",
+                project_name=project_data["name"],
+                applicant_name=application_data["fullname"],
+                position=position,
+                applicant_email=applicant_email,
+                linkedin=application_data.get("linkedin", "N/A"),
+                github=application_data.get("github", "N/A")
+            )
+
+
+            sendEmail(
+                recipient_email=applicant_email,
+                name=application_data["fullname"],
+                subject=f"Application Confirmation for {project_data['name']}",
+                email_type="thanks",
+                project_name=project_data["name"]
+            )
+
+            return JsonResponse({"message": "Application submitted successfully"}, status=201)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    
+
+        
+    def modify(self, request, project_id, applicant_email):
+        try:
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return Response({"error": "Unauthorized"}, status=401)
+
+            id_token = auth_header.split(" ")[1]
+            decoded_token = auth.verify_id_token(id_token)
+            owner_email = decoded_token.get("email")
+
+            project_ref = db.collection("projects").document(project_id)
+            project_doc = project_ref.get()
+
+            if not project_doc.exists:
+                return Response({"error": "Project not found"}, status=404)
+
+            project_data = project_doc.to_dict()
+
+            if project_data.get("owner") != owner_email:
+                return Response({"error": "You are not authorized to manage applications"}, status=403)
+
+            data = request.data
+            new_status = data.get("status")
+
+            if new_status not in ["Accepted", "Rejected"]:
+                return Response({"error": "Invalid status. Choose 'Accepted' or 'Rejected'"}, status=400)
+
+            applicants_ref = project_ref.collection("Applicants").document(applicant_email)
+            applicants_ref.update({"status": new_status})
+
+            return Response({"message": f"Applicant {applicant_email} has been {new_status}"}, status=200)
 
         except Exception as e:
             return Response({"error": str(e)}, status=500)
@@ -532,79 +593,6 @@ class ProjectViewSet(viewsets.ViewSet):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
-    @csrf_exempt
-    def join_project(request):
-        if request.method == 'POST':
-            try:
-                data = json.loads(request.body)
-                user_netid = data.get("user_netid") 
-                project_id = data.get("project_id") 
-                owner_netid = data.get("owner_netid")
-
-                if not user_netid or not project_id:
-                    return JsonResponse({"error": "User NetID and Project ID are required"}, status=400)
-
-                applicants_ref = db.collection("Users").document(owner_netid).collection("Projects_Created") \
-                .document(project_id).collection("Applicants").document(user_netid)
-                applicant_data = applicants_ref.get()
-                if not applicant_data.exists or "Accepted" not in applicant_data.to_dict().get("Status", []):
-                    return JsonResponse({"error": "User has not been accepted into the project"}, status=403)
-                project_ref = db.collection("Projects").document(project_id)
-                project_data = project_ref.get().to_dict()
-
-                if not project_data:
-                    return JsonResponse({"error": "Project not found"}, status=404)
-
-                user_joined_ref = db.collection("Users").document(user_netid).collection("Projects_Joined").document(project_id)
-                user_joined_ref.set(project_data)
-
-                return JsonResponse({"message": f"User {user_netid} joined project {project_id}"}, status=200)
-
-            except Exception as e:
-                return JsonResponse({"error": str(e)}, status=500)
-
-        return JsonResponse({"error": "Invalid request method"}, status=405)
-    @csrf_exempt
-    def apply_to_project(self, request, project_id):
-        try:
-            auth_header = request.headers.get("Authorization")
-            if not auth_header or not auth_header.startswith("Bearer "):
-                return Response({"error": "Missing or invalid Authorization token"}, status=401)
-
-            id_token = auth_header.split(" ")[1]
-            decoded_token = auth.verify_id_token(id_token)
-            firebase_email = decoded_token.get("email")
-
-            data = json.loads(request.body)
-            position = data.get("position", "Not Specified")
-            cv_link = data.get("cv", None)
-
-            user_ref = db.collection("users").where("email", "==", firebase_email).stream()
-            user_docs = list(user_ref)
-            if not user_docs:
-                return Response({"error": "User not found"}, status=404)
-            user_doc = user_docs[0]
-            user_id = user_doc.id  
-            
-            project_ref = db.collection("users").document(user_id).collection("projects_created").document(project_id)
-            application_ref = project_ref.collection("Applicants").document(user_id)
-            application_data = {
-                "user_id": user_id,
-                "email": firebase_email,
-                "name": data.get("name", "Unnamed User"),
-                "position": position,
-                "cv": cv_link,
-                "status": "Pending"  # Default status until project manager reviews
-            }
-
-            application_ref.set(application_data)
-            return JsonResponse({"message": "Application submitted successfully"}, status=201)
-
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON format"}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
 
 
 class ProjectDeleteView(DestroyAPIView):
@@ -666,144 +654,13 @@ class ProjectUpdateView(RetrieveUpdateAPIView):
 
 
 class ProjectRecommendationViewSet(viewsets.ViewSet):
-     def list(self, request):
+     def list(self, request, email=None):
         """ API endpoint to get project recommendations for a user. """
-        user_email = request.query_params.get("email")
-        if not user_email:
+        if not email:
             return Response({"error": "Email parameter is required"}, status=400)
+        print("🔍 Received email:", email)
 
-        recommended_projects = recommend_projects(user_email)
+
+        recommended_projects = recommend_projects(email)
         return JsonResponse(recommended_projects, safe=False)
-     def recommend_projects(user_email):  
-        if not user_email:
-            return {"error": "Email is required"}
-
-        try:
-            # 1. Get the requesting user doc (by email)
-            user_query = db.collection("users").where("email", "==", user_email).stream()
-            user_doc_id = None
-            user_data = None
-
-            for user_doc in user_query:
-                user_data = user_doc.to_dict()
-                user_doc_id = user_doc.id
-                break
-
-            if not user_data:
-                print("No user found for email:", user_email)
-                return {"recommended_projects": []}
-
-            # Extract user's skills/interests from the doc
-            user_skills = user_data.get("skills", [])
-            user_interests = user_data.get("interests", [])
-
-            print(f"User Email: {user_email}")
-            print(f"User Skills: {user_skills}")
-            print(f"User Interests: {user_interests}")
-
-            # 2. Build a set of project IDs the user has created or joined (exclude these)
-            excluded_projects = set()
-            if user_doc_id:
-                created_docs = db.collection("users") \
-                                .document(user_doc_id) \
-                                .collection("projects_created").stream()
-                joined_docs = db.collection("users") \
-                                .document(user_doc_id) \
-                                .collection("projects_joined").stream()
-
-                for doc in created_docs:
-                    excluded_projects.add(doc.id)  # doc.id is "project-th0g" or similar
-                for doc in joined_docs:
-                    excluded_projects.add(doc.id)
-
-            print(f"Excluded projects (Created or Joined): {excluded_projects}")
-
-            # 3. Gather all projects from all other users' subcollections.
-            #    We'll check each for potential recommendation via Ollama.
-            recommended_projects = []
-
-            all_users = db.collection("users").stream()
-            for other_user_doc in all_users:
-                if other_user_doc.id == user_doc_id:
-                    # Skip the same user (we don't want to recommend their own projects)
-                    continue
-
-                # 3a. Check that user’s projects_created
-                other_created_ref = db.collection("users") \
-                                    .document(other_user_doc.id) \
-                                    .collection("projects_created") \
-                                    .stream()
-
-                for project_doc in other_created_ref:
-                    # Skip if user has already created or joined the same project ID
-                    if project_doc.id in excluded_projects:
-                        continue
-
-                    project_data = project_doc.to_dict()
-                    project_name = project_data.get("name", "")
-                    project_description = project_data.get("description", "")
-
-                    # AI Matching using Ollama
-                    prompt = f"""
-                    The user has these skills: {user_skills}
-                    and is interested in: {user_interests}.
-                    Should this project be recommended?
-                    Project name: {project_name}
-                    Description: {project_description}
-                    Answer only 'yes' or 'no'.
-                    """
-
-                    response = ollama.chat(model="llama3", messages=[{"role": "user", "content": prompt}])
-                    decision = response['message']['content'].strip().lower()
-
-                    if "yes" in decision:
-                        recommended_projects.append({
-                            "project_id": project_doc.id,  # or project_name
-                            "name": project_name,
-                            "description": project_description
-                        })
-                    else:
-                        print(f"AI skipped project: {project_name}")
-
-                # 3b. Check that user’s projects_joined
-                other_joined_ref = db.collection("users") \
-                                    .document(other_user_doc.id) \
-                                    .collection("projects_joined") \
-                                    .stream()
-
-                for project_doc in other_joined_ref:
-                    if project_doc.id in excluded_projects:
-                        continue
-
-                    project_data = project_doc.to_dict()
-                    project_name = project_data.get("name", "")
-                    project_description = project_data.get("description", "")
-
-                    prompt = f"""
-                    The user has these skills: {user_skills}
-                    and is interested in: {user_interests}.
-                    Should this project be recommended?
-                    Project name: {project_name}
-                    Description: {project_description}
-                    Answer only 'yes' or 'no'.
-                    """
-
-                    response = ollama.chat(model="llama3", messages=[{"role": "user", "content": prompt}])
-                    decision = response['message']['content'].strip().lower()
-
-                    if "yes" in decision:
-                        recommended_projects.append({
-                            "project_id": project_doc.id,
-                            "name": project_name,
-                            "description": project_description
-                        })
-                    else:
-                        print(f"AI skipped project: {project_name}")
-
-            print("Final recommended projects:", recommended_projects)
-            return {"recommended_projects": recommended_projects}
-
-        except Exception as e:
-            print(f"Error in recommendation: {e}")
-            return {"error": "Internal server error", "details": str(e)}
-
+     

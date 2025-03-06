@@ -18,6 +18,7 @@ function ProjectCreation() {
     const [location, setLocation] = useState('');
     const [weeklyHours, setWeeklyHours] = useState(0);
     const [image, setImage] = useState(null);
+    const [skills, setSkills] = useState([]);
     const [color, setColor] = useState(null);
     const [looking_for, setLooking_for] = useState('');
     const colorOptions = ['red','orange','yellow','green','blue','purple'];
@@ -170,6 +171,9 @@ function ProjectCreation() {
                     </label>
                     <label name = "name" className="form-label"> 
                       Looking For: <input type = "text" value = {looking_for} className="form-input" onChange={(e) => setLooking_for(e.target.value)}/>
+                    </label>
+                    <label name = "name" className="form-label"> 
+                      Looking For: <input type = "text" value = {skills} className="form-input" onChange={(e) => setSkills(e.target.value)}/>
                     </label>
                     <label>Number of people: <input type="number" value = {val} onChange = {(e) => setVal(e.target.value)} className="form-input"/></label>
                     <label className="form-label">

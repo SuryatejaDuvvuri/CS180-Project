@@ -90,6 +90,8 @@ function App() {
            }
               
               />
+
+                <Route path="/profile/:email" element={<UserProfile />} />
                  <Route path="/create" element={
                   <ProtectedRoute>
                      <ProjectCreation />
@@ -117,17 +119,16 @@ function App() {
                 <Route path="/home" element={
 
                     <ProtectedRoute>
-                    <Dashboard selectedMajor ={selectedMajor} />
+                      <Dashboard selectedMajor ={selectedMajor} />
                     </ProtectedRoute>
 
 
                 } />
-                <Route path='/apply' element={
-                  <ProtectedRoute>
-                    <Apply />
-                  </ProtectedRoute>
-
-                } />
+                 <Route path="/:projectId/apply/" element={
+                   <ProtectedRoute>
+                      <ApplicationForm />
+                   </ProtectedRoute>
+                  } />
       
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />

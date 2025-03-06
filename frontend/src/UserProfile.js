@@ -6,12 +6,17 @@ import { useParams, useNavigate} from 'react-router-dom';
 export default function UserProfile()
 {
     const navigate = useNavigate();
+    const { email } = useParams();
     const [user, setUser] = useState(null);
     const [projectsCreated, setProjectsCreated] = useState([]);
     const [projectsJoined, setProjectsJoined] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    useEffect(() => {
+        if (email) {
+            fetchUserProfile(email);
+        }
+    }, [email]);
     useEffect(() => {
         const auth = getAuth();
 
@@ -78,7 +83,7 @@ export default function UserProfile()
         setLoading(true);
         try
         {
-            const response = await fetch(`http://localhost:8000/api/users/${userId}/projects/`, {
+            const response = await fetch(`http://localhost:8000/api/users/${userId}/projects`, {
 
                     method: 'GET',
                     headers: {
@@ -86,15 +91,15 @@ export default function UserProfile()
                         Authorization: `Bearer ${token}`,
                 },
             });
-            console.log(response);
             if(response.ok)
             {
                 const data = await response.json();
-                if (!Array.isArray(data)) {
+
+                if (!Array.isArray(data.projects_created)) {
                     throw new Error("Invalid response format: projects is not an array.");
                 }
-                console.log("Fetched Projects:", data);
-                setProjectsCreated(data);
+                console.log("Fetched Projects:", data.projects_created);
+                setProjectsCreated(data.projects_created);
                 
             }
             else
@@ -102,19 +107,19 @@ export default function UserProfile()
                 throw new Error("Failed to fetch projects");
             }
 
-            const joinedResponse = await fetch(`http://localhost:8000/api/users/${userId}/projects_joined/`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            if (joinedResponse.ok) {
-                const joinedProjects = await joinedResponse.json();
-                setProjectsJoined(joinedProjects);
-            } else {
-                throw new Error("Failed to fetch joined projects.");
-            }
+            // const joinedResponse = await fetch(`http://localhost:8000/api/users/${userId}/projects_joined/`, {
+            //     method: 'GET',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         Authorization: `Bearer ${token}`,
+            //     },
+            // });
+            // if (joinedResponse.ok) {
+            //     const joinedProjects = await joinedResponse.json();
+            //     setProjectsJoined(joinedProjects);
+            // } else {
+            //     throw new Error("Failed to fetch joined projects.");
+            // }
 
         }
         catch(err)
@@ -147,8 +152,8 @@ export default function UserProfile()
                         <p className="text-gray-600">Experience: {user.experience || "No experience listed"}</p>
                         <p className="text-gray-600">Weekly Hours: {user.weekly_hours || "Not specified"} hrs</p>
                         <h3 className="text-xl font-bold mt-4">Skills & Interests</h3>
-                        {/* <p className="text-gray-600">Skills: {user.skills.join(', ')}</p>
-                        <p className="text-gray-600">Interests: {user.interests.join(', ')}</p> */}
+                        <p className="text-gray-600">Skills: {user.skills.join(', ')}</p>
+                        <p className="text-gray-600">Interests: {user.interests.join(', ')}</p>
                         <h3 className="text-xl font-bold mt-4">Resume</h3>
                         {user.resume ? (
                             <iframe src={user.resume} className="w-full h-64 border rounded-lg"></iframe>
@@ -165,17 +170,33 @@ export default function UserProfile()
                         </p>
 
                         <h3 className="text-xl font-bold mt-4">Projects Created</h3>
-                        <ul className="list-disc ml-5">
-                            {projectsCreated.length > 0 ? (
-                                projectsCreated.map((project) => (
-                                    <li key={project.id} className="text-blue-500 hover:underline">
-                                        <a href={`/projects/${project.id}`}>{project.name}</a>
-                                    </li>
-                                ))
-                            ) : (
-                                <li>No projects created.</li>
-                            )}
-                        </ul>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {projectsCreated.length > 0 ? (
+                    projectsCreated
+                    .filter((project) => 
+                        project.id !== "init" 
+                    ).map((project) => (
+                            <div key={project.id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                                {project.image && (
+                                    <img src={project.image} alt={project.name} className="w-full h-48 object-cover rounded-t-lg" />
+                                )}
+                                <div className="p-4">
+                                    <h2 className="text-xl font-semibold">{project.name}</h2>
+                                    <p className="text-gray-600">{project.description}</p>
+                                    <p className="text-gray-600">
+                                        <strong>Deadline:</strong> {project.end_date ? new Date(project.end_date).toDateString() : "N/A"}
+                                    </p>
+                                    <p className="text-sm text-gray-500"><strong>Looking for:</strong> {project.looking_for || "Not specified"}</p>
+                                    <a href={`/projects/${project.id}`} className="text-blue-500 hover:underline mt-2 inline-block">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        ))
+                ) : (
+                    <p className="text-gray-500 text-center col-span-3">No projects created yet.</p>
+                )}
+            </div>
 
                         <h3 className="text-xl font-bold mt-4">Projects Joined</h3>
                         <ul className="list-disc ml-5">
