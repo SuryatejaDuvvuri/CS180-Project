@@ -7,14 +7,17 @@ export default function UserProfile()
 {
     const navigate = useNavigate();
     const { email } = useParams();
+    console.log("Extracted Email from URL:", email);
     const [user, setUser] = useState(null);
     const [projectsCreated, setProjectsCreated] = useState([]);
     const [projectsJoined, setProjectsJoined] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const auth = getAuth();
+    console.log("Logged-in User Email:", auth.currentUser?.email);
  
     useEffect(() => {
-        const auth = getAuth();
+        
 
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -27,7 +30,7 @@ export default function UserProfile()
         });
 
         return () => unsubscribe(); 
-    }, []);
+    }, [email]);
 
     // useEffect(() => {
     //     fetchUserProfile();
@@ -52,6 +55,8 @@ export default function UserProfile()
                 setLoading(false);
                 return;
             }
+
+            console.log(email)
 
             const response = await fetch(`http://localhost:8000/api/users/${email}/`, {
                 method: 'GET',
@@ -127,7 +132,6 @@ export default function UserProfile()
                 if (!Array.isArray(data.projects_created)) {
                     throw new Error("Invalid response format: projects is not an array.");
                 }
-                console.log("Fetched Projects:", data.projects_created);
                 setProjectsCreated(data.projects_created);
                 setProjectsJoined(data.projects_joined);
                 
@@ -220,6 +224,9 @@ export default function UserProfile()
                                                             <a href={`/${user.email}/${project.id}/applicants/`} className="text-blue-500 hover:underline mt-2 inline-block">
                                                                 View Applicants
                                                             </a>
+                                                            <a href={`/${project.id}/feedback/`} className="text-blue-500 hover:underline mt-2 inline-block">
+                                                                View Feedbacks
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 ))
@@ -272,6 +279,12 @@ export default function UserProfile()
                                     <p className="text-gray-500 text-center col-span-3">No projects joined yet.</p>
                                 )}
                             </div>
+
+                            {auth.currentUser?.email === email && (
+                                <button className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+                                    Edit Profile
+                                </button>
+                            )}
                     </div>
                 )
             )}

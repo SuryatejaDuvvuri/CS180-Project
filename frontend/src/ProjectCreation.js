@@ -21,7 +21,8 @@ function ProjectCreation() {
     const [looking_for, setLookingFor] = useState('');
     const navigate = useNavigate();
     const majors = useMajors();
-    const colorOptions = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'];
+
+    const colorOptions = ['#FF5733', '#FFBD33', '#33FF57', '#33A1FF', '#8A33FF', '#FF33A8'];
 
     const [projectData, setProjectData] = useState({
         name: '',
@@ -34,7 +35,7 @@ function ProjectCreation() {
         category: '',
         location: '',
         weekly_hours: 0,
-        color: '',
+        color: '#FFFFFF', // Default white
         image: null
     });
 
@@ -110,88 +111,68 @@ function ProjectCreation() {
     };
 
     return (
-        <div className="ProjectCreation">
-            <br/>
-            <h1>Create a New Project</h1>
-            <form onSubmit={handleSubmit} className="form-container">
-                {/* Project Name */}
-                <label className="form-label">Project Name:
-                    <input type="text" name="name" value={projectData.name} onChange={handleChange} className="form-input" required />
-                </label>
-
-                {/* Project Description */}
-                <label className="form-label">Project Description:
-                    <textarea name="description" value={projectData.description} onChange={handleChange} rows={4} className="form-textarea" required />
-                </label>
-
-                {/* Project Duration */}
-                <label className="form-label">Project Duration:
-                    <DatePicker
-                        selectsRange={true}
-                        startDate={startDate}
-                        endDate={endDate}
-                        onChange={(update) => setRange(update)}
-                        isClearable={true}
-                        className="date-picker"
-                    />
-                </label>
-
-                {/* Looking For */}
-                <label className="form-label">Looking For:
-                    <input type="text" name="looking_for" value={looking_for} onChange={(e) => setLookingFor(e.target.value)} className="form-input" />
-                </label>
-
-                {/* Required Skills */}
-                <label className="form-label">Required Skills:
-                    <input type="text" name="skills" value={skills.join(', ')} onChange={(e) => setSkills(e.target.value.split(','))} className="form-input" />
-                </label>
-
-                {/* Number of People */}
-                <label className="form-label">Number of People:
-                    <input type="number" min="1" value={val} onChange={(e) => setVal(e.target.value)} className="form-input" required />
-                </label>
-
-                {/* Category Dropdown */}
-                <label className="form-label">Category:
-                    <select name="category" value={category} onChange={handleChange} className="form-input" required>
-                        <option value="">Select a category</option>
-                        {majors.map((major, index) => (
-                            <option key={index} value={major}>{major}</option>
-                        ))}
-                    </select>
-                </label>
-
-                {/* Location */}
-                <label className="form-label">Location:
-                    <input type="text" name="location" value={projectData.location} onChange={handleChange} className="form-input" />
-                </label>
-
-                {/* Weekly Time Commitment */}
-                <label className="form-label">Weekly Time Commitment (hours):
-                    <input type="number" min="1" max="168" name="weekly_hours" value={weeklyHours} onChange={(e) => setWeeklyHours(e.target.value)} className="form-input" required />
-                </label>
-
-                {/* Image Upload */}
-                <label className="form-label">Upload Image:
-                    <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} className="form-input" />
-                </label>
-
-                {/* Color Selection */}
-                <label className="form-label">Project Color:
-                    <div className="color-row">
-                        {colorOptions.map((c) => (
-                            <div key={c} onClick={() => setProjectData({ ...projectData, color: c })} className={`color-circle ${projectData.color === c ? 'selected' : ''}`} style={{ backgroundColor: c }} />
-                        ))}
-                    </div>
-                </label>
-
-                {/* Submit Button */}
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-4">Create Project</button>
-            </form>
-
-            {error && <p className="text-red-500 mt-4">{error}</p>}
+        <div className="ProjectCreation flex justify-center items-center min-h-screen">
+            <div className="form-container p-6 rounded-lg shadow-lg w-full max-w-3xl" 
+                style={{ backgroundColor: projectData.color || "#ffffff" }}> 
+                
+                <h1 className="text-2xl font-semibold text-center mb-4">Create a New Project</h1>
+                
+                <form onSubmit={handleSubmit}>
+                    <label className="form-label">Project Name:
+                        <input type="text" name="name" value={projectData.name} onChange={handleChange} className="form-input" required />
+                    </label>
+    
+                    <label className="form-label">Project Description:
+                        <textarea name="description" value={projectData.description} onChange={handleChange} rows={4} className="form-textarea" required />
+                    </label>
+    
+                    <label className="form-label">Project Duration:
+                        <DatePicker
+                            selectsRange={true}
+                            startDate={startDate}
+                            endDate={endDate}
+                            onChange={(update) => setRange(update)}
+                            isClearable={true}
+                            className="date-picker"
+                        />
+                    </label>
+    
+                    <label className="form-label">Looking For:
+                        <input type="text" name="looking_for" value={looking_for} onChange={(e) => setLookingFor(e.target.value)} className="form-input" />
+                    </label>
+    
+                    <label className="form-label">Category:
+                        <select name="category" value={category} onChange={handleChange} className="form-input" required>
+                            <option value="">Select a category</option>
+                            {majors.map((major, index) => (
+                                <option key={index} value={major}>{major}</option>
+                            ))}
+                        </select>
+                    </label>
+    
+                    <label className="form-label">Upload Image:
+                        <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} className="form-input" />
+                    </label>
+    
+                    {/* Color Selection */}
+                    <label className="form-label">Project Card Color:
+                        <div className="color-row flex gap-2 mt-2">
+                            {colorOptions.map((c) => (
+                                <div key={c}
+                                    onClick={() => setProjectData({ ...projectData, color: c })}
+                                    className={`color-circle ${projectData.color === c ? 'border-2 border-black' : ''}`}
+                                    style={{ backgroundColor: c, width: "30px", height: "30px", borderRadius: "50%", cursor: "pointer" }}
+                                />
+                            ))}
+                        </div>
+                    </label>
+    
+                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-4 w-full">Create Project</button>
+                </form>
+    
+                {error && <p className="text-red-500 mt-4">{error}</p>}
+            </div>
         </div>
     );
 }
-
 export default ProjectCreation;

@@ -38,6 +38,10 @@ function NoteCards({ items = [], category }) {
                             <div
                                 key={item.id}
                                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
+                                // style={{
+                                //     backgroundColor: item.color || "#ffffff",  // ✅ Set card background color
+                                //     borderLeft: `5px solid ${item.color || "#ccc"}`, // Optional styling
+                                // }}
                             >
                                  {item.image_url && (
                                     <img

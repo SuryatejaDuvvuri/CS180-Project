@@ -442,8 +442,8 @@ class UserProfileViewSet(viewsets.ViewSet):
             is_self = firebase_email == email
             is_project_owner = db.collection("projects").where("owner", "==", firebase_email).limit(1).stream()
 
-            if not is_self and not any(is_project_owner):
-                return Response({"error": "Unauthorized access"}, status=403)
+            # if not is_self and not any(is_project_owner):
+            #     return Response({"error": "Unauthorized access"}, status=403)
 
             users_query = db.collection("users").where("email", "==", email).stream()
             user_doc = next(users_query, None)

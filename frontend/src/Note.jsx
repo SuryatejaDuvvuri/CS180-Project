@@ -67,8 +67,8 @@ function Note({ selectedProject, setSelectedProject, updateProject }) {
                         Authorization: `Bearer ${idToken}`,
                     },
                     body: JSON.stringify({
-                        position: "Developer", 
-                        cv: null,
+                        // position: "Developer", 
+                        // cv: null,
                     }),
                 });
     
@@ -127,7 +127,7 @@ function Note({ selectedProject, setSelectedProject, updateProject }) {
                          <p className="info">
                                 <strong>Owner:</strong>{" "}
                                 <Link 
-                                    to={`/profile/${selectedProject.owner}`} 
+                                    to={`/${selectedProject.owner}/profile/`} 
                                     className="text-blue-500 hover:underline"
                                 >
                                     {selectedProject.owner}

@@ -84,18 +84,19 @@ function App() {
            {/* <Header method={toggleLightAndDarkMode} /> */}
            <Routes>
 
-              <Route path="/profile/:email" element={<UserProfile />} />
-                 <Route path="/create" element={
-                  <ProtectedRoute>
-                     <ProjectCreation />
-                  </ProtectedRoute>
-                   
-                } />
+              <Route path="/:email/profile/" element={<UserProfile />} />
                
               <Route path=":email/:projectId/applicants/" element={
                     <ProtectedRoute>
                         <Applicants />
                     </ProtectedRoute>
+                } />
+
+            <Route path="/create" element={
+                  <ProtectedRoute>
+                     <ProjectCreation />
+                  </ProtectedRoute>
+                   
                 } />
                 <Route path="/home" element={
 

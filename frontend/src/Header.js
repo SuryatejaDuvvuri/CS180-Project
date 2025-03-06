@@ -78,7 +78,7 @@ function Header({method, onMajorChange}) {
                         </button>
                     <button 
                         className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-                        onClick={() => navigate("/profile/:email")}>
+                        onClick={() => navigate(":email/profile/")}>
                         View Profile
                     </button>
                     <button 
