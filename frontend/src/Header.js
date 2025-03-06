@@ -9,10 +9,9 @@ import { logout } from "./firebase.js";
 
 // The header for the website. Consists of a "View profile" button, a "Create project" button,
 //    a "Filter" button to filter by majors, and a search bar.
-function Header({method}) {
+function Header() {
 
     const navigate = useNavigate();
-    // const [isLight, setMode] = useState(true);
     // const [showProjectCreation, setShowProjectCreation] = React.useState(false);
     const majors = useMajors();
     
@@ -21,7 +20,6 @@ function Header({method}) {
         localStorage.removeItem("authToken"); 
         navigate("/"); 
     };
-
 
     // Triggers whenever the light/dark mode button is pressed
     // Calls App.toggleLightAndDarkMode() to switch the App's className, then

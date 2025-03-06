@@ -4,6 +4,7 @@ import profileImage from "./assets/profile.png";
 import "./css/Note.css";
 import Feedback from "./Feedback";
 
+
 function Note({ selectedProject, setSelectedProject, updateProject }) {
     const [selectedFeedback, setselectedFeedback] = useState(false);
     const [lastProj, setlastProj] = useState(null);

@@ -8,11 +8,12 @@ import './Dropdown.css';
 import DropdownItem from './DropdownItem.js';
 
 // The Dropdown menu. Consists of a button and several DropdownItems
-function Dropdown({ title, arr }) {
+function Dropdown({ title, arr, addChosenElem, removeChosenElem }) {
 
     const [isOpen, setIsOpen] = React.useState(false);
 
     // Triggers whenever the dropdown button is pressed
+    // Calls the openChecker() function, which comes from ProjectCreation
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     }
@@ -35,7 +36,13 @@ function Dropdown({ title, arr }) {
             </button>
             {/*Dropdown items*/}
             <div className="dropdown-content">
-                {arr.map((arr) => <DropdownItem text={arr} method={GetIsOpen} />)}
+                {arr.map((arr) =>
+                    <DropdownItem text={arr}
+                        getIsOpenMethod={GetIsOpen}
+                        addChosenElem={addChosenElem}
+                        removeChosenElem={removeChosenElem}
+                    />)
+                }
             </div>
         </div>
     );
