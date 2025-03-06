@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import './Signup.css';
+import { useNavigate } from 'react-router-dom';
+import { signUpWithEmail } from "./firebase";
 
 function Signup() {
-
+    const navigate = useNavigate(); 
     const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
     const [netId, setNetId] = useState('');
     const [skills, setSkills] = useState('');
     const [pronouns, setPronouns] = useState('');
@@ -14,6 +17,50 @@ function Signup() {
     const [weeklyHours, setWeeklyHours] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (password !== confirmPassword) {
+            alert("Passwords do not match");
+            return;
+        }
+
+        const formData = {
+            fullname: name,
+            email: email,
+            net_id: netId,
+            skills: skills.split(","), 
+            pronouns: pronouns,
+            interests: interests.split(","),
+            experience: experience,
+            location: location,
+            weekly_hours: parseInt(weeklyHours, 10),
+            password: password,
+        };
+
+        try {
+            const idToken = await signUpWithEmail(email, password);
+            if (!idToken) throw new Error("Failed to register user in Firebase");
+            const response = await fetch("http://localhost:8000/api/users/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                alert("Account created successfully");
+                navigate("/home");
+            } else {
+                const data = await response.json();
+                alert(data.error || "Failed to create account");
+            }
+        } catch (err) {
+            alert("Failed to create account");
+            console.error("Error:", err);
+        }
+    }
 
 
     return (
@@ -29,6 +76,17 @@ function Signup() {
                         onChange={(e) => setName(e.target.value)}
                         className="form-input"
                         required
+                    />
+                </label>
+                <label className="form-label">
+                    Email
+                    <input
+                        type="text"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="form-input"
+                        required
+                        placeholder="e.g. abco45@gmail.com"
                     />
                 </label>
 
@@ -87,6 +145,7 @@ function Signup() {
                         onChange={(e) => setInterests(e.target.value)}
                         className="form-input"
                         required
+                        placeholder="e.g. Machine Learning, Web Development, etc."
                     />
                 </label>
 
@@ -98,6 +157,7 @@ function Signup() {
                         onChange={(e) => setExperience(e.target.value)}
                         className="form-input"
                         required
+                        placeholder = "e.g. 2 years of web development experience"
                     />
                 </label>
 
@@ -122,6 +182,7 @@ function Signup() {
                         onChange={(e) => setWeeklyHours(e.target.value)}
                         className="form-input"
                         required
+                        placeholder="e.g. 10 hours"
                     />
                 </label>
                 <label className="form-label">
@@ -146,7 +207,7 @@ function Signup() {
                 </label>
 
 
-                <input type="submit" value="Submit" className="form-submit" />
+                <input type="submit" value="Submit" className="form-submit" onClick={(e) => handleSubmit(e)} />
 
 
             </form>

@@ -137,6 +137,7 @@ function ProjectManagement() {
                         <p className="text-gray-700">{project.description}</p>
                         <p className="text-gray-700">{project.summary}</p>
                         <p className="text-sm text-gray-500">{project.start_date} - {project.end_date}</p>
+                        <p>{project.owner}</p>
                         <p>{project.no_of_people}</p>
                         <p>{project.category}</p>
                         <p>{project.image_url}</p>
@@ -193,6 +194,8 @@ const ProjectForm = ({project, submit, cancel}) => {
           description: "",
           start_date: "",
           end_date: "",
+          owner: "",
+          owner_netid: "",
           no_of_people: 1,
           category: "",
           image_url: "",
@@ -223,6 +226,8 @@ const ProjectForm = ({project, submit, cancel}) => {
           <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Description" required />
           <input type="date" name="start_date" value={formData.start_date} onChange={handleChange} required />
           <input type="date" name="end_date" value={formData.end_date} onChange={handleChange} required />
+          <input type = "text" name = "owner" value = {formData.owner} onChange = {handleChange} placeholder = "Owner" required />
+          <input type = "text" name = "netid" value = {formData.netid} onChange = {handleChange} placeholder = "NetID" required />
           <input type="number" name="no_of_people" value={formData.no_of_people} onChange={handleChange} placeholder="Team Size" required />
           <input type="text" name="category" value={formData.category} onChange={handleChange} placeholder="Category" required />
           <input type="url" name="image_url" value={formData.image_url} onChange={handleChange} placeholder="Image URL" />
