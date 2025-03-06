@@ -39,7 +39,7 @@ export default function Dashboard({ selectedMajor }) {
     // ];
 
     const categorizedProjects = majors.reduce((acc, major) => {
-        const filteredProjects = projects.filter(proj => proj.category.toLowerCase() === major.toLowerCase());
+        const filteredProjects = projects.filter(proj => (proj.category?.toLowerCase() || "") === major.toLowerCase());
         if (filteredProjects.length > 0) {
             acc.push({ category: major, projects: filteredProjects });
         }

@@ -21,7 +21,7 @@ def sendEmail(recipient_email, name, subject, email_type, project_name=None, app
 
         email_templates = {
             "accept": f"""
-                <p>Dear {name},</p>
+                <p>Dear {applicant_name},</p>
                 <p>Congratulations! We are pleased to inform you that you have been accepted.</p>
                 <p>We’re excited to have you on the team! Click below to visit your project dashboard:</p>
                 <a href="{frontend_url}/dashboard" style="display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 15px; text-decoration: none; font-weight: bold; border-radius: 5px;">

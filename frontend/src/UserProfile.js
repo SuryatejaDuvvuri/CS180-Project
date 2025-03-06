@@ -100,6 +100,7 @@ export default function UserProfile()
                 }
                 console.log("Fetched Projects:", data.projects_created);
                 setProjectsCreated(data.projects_created);
+                setProjectsJoined(data.projects_joined);
                 
             }
             else
@@ -187,8 +188,8 @@ export default function UserProfile()
                                         <strong>Deadline:</strong> {project.end_date ? new Date(project.end_date).toDateString() : "N/A"}
                                     </p>
                                     <p className="text-sm text-gray-500"><strong>Looking for:</strong> {project.looking_for || "Not specified"}</p>
-                                    <a href={`/projects/${project.id}`} className="text-blue-500 hover:underline mt-2 inline-block">
-                                        View Details
+                                    <a href={`/${user.email}/${project.id}/applicants/`} className="text-blue-500 hover:underline mt-2 inline-block">
+                                        View Applicants
                                     </a>
                                 </div>
                             </div>

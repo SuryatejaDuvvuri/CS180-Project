@@ -109,12 +109,10 @@ function App() {
                     <Email />
 
                 } /> */}
-                <Route path="/applicants" element={
-
+              <Route path=":email/:projectId/applicants/" element={
                     <ProtectedRoute>
-                    <Applicants />
+                        <Applicants />
                     </ProtectedRoute>
-
                 } />
                 <Route path="/home" element={
 

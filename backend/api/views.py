@@ -30,6 +30,13 @@ from .sendEmail import sendEmail
 User = get_user_model()
 # db = firestore.client()
 OLLAMA_URL = "http://127.0.0.1:11434"
+def get_user_id_by_email(email):
+        users_query = db.collection("users").where("email", "==", email).stream()
+        
+        for user_doc in users_query:
+            return user_doc.id 
+    
+        return None 
 
 class FeedBackViewSet(viewsets.ViewSet):
     def list(self,request):
@@ -81,10 +88,30 @@ class FeedBackViewSet(viewsets.ViewSet):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 class ApplicantViewSet(viewsets.ViewSet):
-    def list(self,request):
+    def list(self,request,project_id,email):
         try:
-            applicants_ref = db.collection("Applicants").stream()
-            applicants = [{**applicant.to_dict(),"id": applicant.id} for applicant in applicants_ref]
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return Response({"error": "Missing or invalid Authorization token"}, status=401)
+
+            id_token = auth_header.split(" ")[1]
+            decoded_token = auth.verify_id_token(id_token)
+            firebase_email = decoded_token.get("email")
+
+            if firebase_email != email:
+                return Response({"error": "Unauthorized access"}, status=403)
+
+            users_query = db.collection("users").where("email", "==", email).stream()
+            user_doc = next(users_query, None)
+            
+            user_id = get_user_id_by_email(firebase_email)
+
+            if not user_doc or not user_doc.exists:
+                return Response({"error": "User not found"}, status=404)
+
+            applicants_ref = db.collection("users").document(user_id).collection("projects_created").document(project_id).collection("Applicants").stream()
+            applicants = [{**applicant.to_dict(), "id": applicant.id} for applicant in applicants_ref]
+
             return JsonResponse({"applicants": applicants}, status=200)
         except Exception as e:
             return JsonResponse({"error":str(e)},status=500)
@@ -150,35 +177,35 @@ class ApplicantViewSet(viewsets.ViewSet):
             decoded_token = auth.verify_id_token(id_token)
             applicant_email = decoded_token.get("email") 
 
-
             data = json.loads(request.body)
             project_id = data.get("project_id")
             owner_email = data.get("owner_email")
             position = data.get("position")
             cv_base64 = data.get("cv", None)
-
             applicant_query = db.collection("users").where("email", "==", applicant_email).stream()
+            owner_user_id = get_user_id_by_email(owner_email)
             applicant_data = None
 
             for doc in applicant_query:
                 applicant_data = doc.to_dict()
                 break  
-            print(applicant_data)
+
             if not applicant_data:
                 return JsonResponse({"error": "Applicant profile not found"}, status=404)
 
-            # user_docs = list(user_ref)
+            
+            # user_docs = list(applicant_query)
             # if not user_docs:
             #     return Response({"error": "User not found"}, status=404)
             # user_doc = user_docs[0]
             # user_id = user_doc.id  
             
-            project_ref = db.collection("users").document(owner_email).collection("projects_created").document(project_id)
+            
+            project_ref = db.collection("users").document(owner_user_id).collection("projects_created").document(project_id)
             application_ref = project_ref.collection("Applicants").document(applicant_email)
 
             if application_ref.get().exists:
                 return JsonResponse({"error": "You have already applied to this project"}, status=400)
-            
             project_doc = project_ref.get()
             if not project_doc.exists:
                 return JsonResponse({"error": "Project not found"}, status=404)
@@ -188,14 +215,14 @@ class ApplicantViewSet(viewsets.ViewSet):
             
             application_data = {
                     "email": applicant_email,
-                    "fullname": data.get("fullname", "Unknown"),
-                    "pronouns": data.get("pronouns", ""),
-                    "skills": data.get("skills", []),
-                    "interests": data.get("interests", []),
-                    "experience": data.get("experience", ""),
-                    "github": data.get("github", ""),
-                    "linkedin": data.get("linkedin", ""),
-                    "resume": data.get("resume",None),
+                    "fullname": applicant_data.get("fullname", "Unknown"),
+                    "pronouns": applicant_data.get("pronouns", ""),
+                    "skills": applicant_data.get("skills", []),
+                    "interests": applicant_data.get("interests", []),
+                    "experience": applicant_data.get("experience", ""),
+                    "github": applicant_data.get("github", ""),
+                    "linkedin": applicant_data.get("linkedin", ""),
+                    "resume": applicant_data.get("resume",None),
                     "cv": cv_base64,
                     "position": position,
                     "status": "Pending", 
@@ -209,17 +236,17 @@ class ApplicantViewSet(viewsets.ViewSet):
                 subject=f"New Applicant for {project_data['name']}",
                 email_type="new_application",
                 project_name=project_data["name"],
-                applicant_name=application_data["fullname"],
+                applicant_name=applicant_data.get("fullname"),
                 position=position,
                 applicant_email=applicant_email,
-                linkedin=application_data.get("linkedin", "N/A"),
-                github=application_data.get("github", "N/A")
+                linkedin=applicant_data.get("linkedin", "N/A"),
+                github=applicant_data.get("github", "N/A")
             )
 
 
             sendEmail(
                 recipient_email=applicant_email,
-                name=application_data["fullname"],
+                name=applicant_data["fullname"],
                 subject=f"Application Confirmation for {project_data['name']}",
                 email_type="thanks",
                 project_name=project_data["name"]
@@ -243,10 +270,11 @@ class ApplicantViewSet(viewsets.ViewSet):
             id_token = auth_header.split(" ")[1]
             decoded_token = auth.verify_id_token(id_token)
             owner_email = decoded_token.get("email")
+            owner_id = get_user_id_by_email(owner_email)
 
-            project_ref = db.collection("projects").document(project_id)
+            project_ref = db.collection("users").document(owner_id).collection("projects_created").document(project_id)
             project_doc = project_ref.get()
-
+            
             if not project_doc.exists:
                 return Response({"error": "Project not found"}, status=404)
 
@@ -262,9 +290,33 @@ class ApplicantViewSet(viewsets.ViewSet):
                 return Response({"error": "Invalid status. Choose 'Accepted' or 'Rejected'"}, status=400)
 
             applicants_ref = project_ref.collection("Applicants").document(applicant_email)
-            applicants_ref.update({"status": new_status})
+            applicant_doc = applicants_ref.get()
 
-            return Response({"message": f"Applicant {applicant_email} has been {new_status}"}, status=200)
+            if not applicant_doc.exists:
+                return Response({"error": "Applicant not found"}, status=404)
+            
+            applicant_data = applicant_doc.to_dict()
+            applicant_name = applicant_data.get("fullname", "Applicant")
+            
+            if new_status == "Rejected":
+                applicants_ref.delete()
+                return Response({"message": f"Applicant {applicant_email} has been rejected and removed."}, status=200)
+            else:
+                applicants_ref.update({"status": new_status})
+                return Response({"message": f"Applicant {applicant_email} has been {new_status}"}, status=200)
+            
+            subject = f"Application Update for {project_data['name']}"
+            email_type = "accept" if new_status == "Accepted" else "reject"
+
+            sendEmail(
+                recipient_email=applicant_email,
+                name=applicant_name,
+                subject=subject,
+                email_type=email_type,
+                project_name=project_data["name"]
+            )
+
+            return Response({"message": f"Applicant {applicant_name} has been {new_status}"}, status=200)
 
         except Exception as e:
             return Response({"error": str(e)}, status=500)
