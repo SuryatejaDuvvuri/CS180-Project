@@ -1,3 +1,5 @@
+@import './css/Colors.css';
+
 :root {
     --hover-color: #f5ad42;
     --white: #ffffff;
@@ -21,16 +23,15 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #fff;
+    background-color: var(--button-color);
     font-family: 'Poppins', sans-serif;
     width: auto;
     color: #000;
-    border: 1px solid #000;
+    border: 1px solid var(--acc-color);
     padding: 5px 20px;
     cursor: pointer;
     font-size: 16px;
     border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .Button i {

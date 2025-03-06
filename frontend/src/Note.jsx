@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Feedback from "./Feedback";
 import {auth} from "./firebase";
 
+
 function Note({ selectedProject, setSelectedProject, updateProject }) {
     const [selectedFeedback, setselectedFeedback] = useState(false);
     const [lastProj, setlastProj] = useState(null);

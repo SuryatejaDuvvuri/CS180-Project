@@ -4,7 +4,9 @@ import './Dropdown.css';
 
 // A single element in the dropdown menu
 class DropdownItem extends React.Component {
-    /* this.props.method: assigned the GetIsOpen() function from Dropdown; is used to toggle the display of the DropdownItems
+    /* this.props.getIsOpenMethod: assigned the GetIsOpen() function from Dropdown; is used to toggle the display of the DropdownItems
+       this.props.addChosenElem: assigned the addCategory() function from ProjectCreation; is used to update the array in ProjectCreation if an item is checked
+       this.props.removeChosenElem: assigned the removeCategory() function from ProjectCreation; is used to update the array in ProjectCreation if an item is unchecked
        this.state.checkmark: toggles betwee [] and [✓]
        this.state.isOpen: keeps track of whether the dropdown menu is open
     */
@@ -21,6 +23,10 @@ class DropdownItem extends React.Component {
     handleItemClick = () => {
         this.state.clicked ? this.setState({ checkmark: "[✓]" }) : this.setState({ checkmark: "[]" });
         this.setState({ clicked: !this.state.clicked });
+        if(this.state.checkmark != "[✓]")
+            this.props.addChosenElem(this.props.text);
+        else
+            this.props.removeChosenElem(this.props.text);
     }
 
     /* Triggers at the beginning of the program.
@@ -32,9 +38,9 @@ class DropdownItem extends React.Component {
         this.setState({ clicked: !this.state.clicked });
     }
 
-    // Returns this.props.method(), which calls Dropdown.GetIsOpen().
+    // Returns this.props.getIsOpenMethod(), which calls Dropdown.GetIsOpen().
     getIsOpenValue() {
-        return this.props.method();
+        return this.props.getIsOpenMethod();
     }
 
     render() {

@@ -1,4 +1,5 @@
-// import logo from './logo.svg';
+
+//import logo from './logo.svg';
 // import './App.css';
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 // import { createRoot } from 'react-dom/client';
@@ -107,25 +108,30 @@ function App() {
                       <ApplicationForm />
                    </ProtectedRoute>
                   } />
-
-                  <Route path = "/:projectId/feedback/" element= {
+                   <Route path = "/:projectId/feedback/" element= {
                     <ProtectedRoute>
                         <Feedback/>
                     </ProtectedRoute>
                   } />
-      
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
-            
-             
+
            
           </Routes>
-            </div>
+           </div>
       </div>
     </div>
     </Router>
   );
+  /*return(
+    <div className={isLight ? "App LightMode" : "App DarkMode"}>
+      <Router>
+        <Header/>
+      </Router>
+      <ApplicationForm/>
+    </div>
+  );*/
 }
 
 export default App;

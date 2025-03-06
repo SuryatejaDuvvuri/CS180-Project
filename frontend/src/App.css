@@ -1,13 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import './css/Colors.css';
 /* .container {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
   padding: 20px;
 } */
-
 /* 
 :root{
    --website-background: #C1D4F1;
@@ -61,7 +61,7 @@
 .App {
   text-align: center;
   background-color: var(--website-background);
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .App-logo {
