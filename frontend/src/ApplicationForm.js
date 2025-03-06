@@ -40,7 +40,6 @@ const ApplicationForm = () => {
                 });
             }  
             const owner_email = project.owner_email || project.owner;
-            console.log(owner_id);
             const projectId = project.project_id || project.id;
             const response = await fetch(`http://localhost:8000/api/projects/${project.id}/apply/`, {
                 method: "POST",

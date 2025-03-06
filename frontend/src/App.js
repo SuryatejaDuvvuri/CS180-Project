@@ -24,7 +24,6 @@ import ProtectedRoute from "./ProtectedRoute";
 import NoteCards from "./NoteCards.js";
 import Apply from "./apply.jsx";
 import NavBar from './NavBar.jsx';
-import Profile from './Profile.jsx';
 import Note from './Note.jsx';
 import { auth, monitorAuthState } from "./firebase";
 import {Navigate} from "react-router-dom"
@@ -83,32 +82,15 @@ function App() {
            <div className="text-center bg-websiteBackground">
            {/* <Header method={toggleLightAndDarkMode} /> */}
            <Routes>
-           <Route path="/profile" element={
-             <ProtectedRoute>
-               <UserProfile />
-             </ProtectedRoute>
-           }
-              
-              />
 
-                <Route path="/profile/:email" element={<UserProfile />} />
+              <Route path="/profile/:email" element={<UserProfile />} />
                  <Route path="/create" element={
                   <ProtectedRoute>
                      <ProjectCreation />
                   </ProtectedRoute>
                    
                 } />
-                {/* <Route path="/manage" element={
-                    <ProtectedRoute>
-                    <ProjectManagement />
-                 </ProtectedRoute>
-
-                } /> */}
-                {/* <Route path="/email" element={
-
-                    <Email />
-
-                } /> */}
+               
               <Route path=":email/:projectId/applicants/" element={
                     <ProtectedRoute>
                         <Applicants />
@@ -119,13 +101,17 @@ function App() {
                     <ProtectedRoute>
                       <Dashboard selectedMajor ={selectedMajor} />
                     </ProtectedRoute>
-
-
                 } />
                  <Route path="/:projectId/apply/" element={
                    <ProtectedRoute>
                       <ApplicationForm />
                    </ProtectedRoute>
+                  } />
+
+                  <Route path = "/:projectId/feedback/" element= {
+                    <ProtectedRoute>
+                        <Feedback/>
+                    </ProtectedRoute>
                   } />
       
             <Route path="/" element={<Home />} />

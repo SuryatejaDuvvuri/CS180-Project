@@ -26,6 +26,7 @@ from google.cloud import storage
 import uuid
 from .recommendations import recommend_projects
 from .sendEmail import sendEmail
+import datetime
 
 User = get_user_model()
 # db = firestore.client()
@@ -38,54 +39,125 @@ def get_user_id_by_email(email):
     
         return None 
 
+def serialize_firestore_data(document):
+    """
+    Convert Firestore document to a JSON-serializable format.
+    """
+    data = document.to_dict()
+    for key, value in data.items():
+        if isinstance(value, firestore.SERVER_TIMESTAMP) or isinstance(value, datetime.datetime):
+            data[key] = value.isoformat()  # Convert timestamp to ISO format
+    return data
+
 class FeedBackViewSet(viewsets.ViewSet):
-    def list(self,request):
-        try:
-            feedbacks_ref = db.collection("Feedback").stream()
-            feedbacks = [{**feedback.to_dict(),"id": feedback.id} for feedback in feedbacks_ref]
-            return JsonResponse({"feedbacks": feedbacks}, status=200)
-        except Exception as e:
-            return JsonResponse({"error":str(e)},status=500)
-    def create(self,request,project_id):
+    def list(self,request,project_id):
         try:
             auth_header = request.headers.get("Authorization")
             if not auth_header or not auth_header.startswith("Bearer "):
-                return Response({"error": "Missing or invalid Authorization token"}, status=401)
+                return JsonResponse({"error": "Unauthorized"}, status=401)
 
             id_token = auth_header.split(" ")[1]
             decoded_token = auth.verify_id_token(id_token)
-            firebase_email = decoded_token.get("email")
+            user_email = decoded_token.get("email")
+            print(f"🔹 Authenticated User Email: {user_email}")
 
-            data = json.loads(request.body)
-            feedback = data.get("feedback","")
-            user_ref = db.collection("users").where("email", "==", firebase_email).stream()
-            user_docs = list(user_ref)
-            if not user_docs:
-                return Response({"error": "User not found"}, status=404)
+            users_ref = db.collection("users").stream()
+            owner_email = None
+            owner_id = None
 
-            user_doc = user_docs[0]
-            user_id = user_doc.id  
-            proj_ref = db.collection("users").document(user_id).collection("projects_created").document(project_id)
-            feedback_ref = db.collection("feedback").document()
+            for user_doc in users_ref:
+                user_projects_ref = db.collection("users").document(user_doc.id).collection("projects_created").document(project_id)
+                if user_projects_ref.get().exists:
+                    owner_email = user_doc.get("email")  
+                    owner_id = user_doc.id
+                    print(f"✅ Found Project Owner: {owner_email}")
+                    break
+            if not owner_email:
+                return JsonResponse({"error": "Project not found"}, status=404)
+            
+            feedbacks_ref = db.collection("users").document(owner_id).collection("projects_created").document(project_id).collection("Feedback").stream()
+            feedbacks = [{**feedback.to_dict(), "id": feedback.id} for feedback in feedbacks_ref]
+            return JsonResponse({"feedback": feedbacks}, status=200)
+        except Exception as e:
+            return JsonResponse({"error":str(e)},status=500)
+    def create(self, request, project_id):
+        try:
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return JsonResponse({"error": "Missing or invalid Authorization token"}, status=401)
+
+            id_token = auth_header.split(" ")[1]
+            decoded_token = auth.verify_id_token(id_token)
+            user_email = decoded_token.get("email")
+            user_name = decoded_token.get("name", "Anonymous")
+            owner_id = None
+            owner_email = None
+
+            users_ref = db.collection("users").stream()
+            for user_doc in users_ref:
+                user_projects_ref = db.collection("users").document(user_doc.id).collection("projects_created").document(project_id)
+                if user_projects_ref.get().exists:
+                    owner_email = user_doc.get("email")
+                    owner_id = user_doc.id
+                   
+                    break
+
+            if not owner_email or not owner_id:
+                return JsonResponse({"error": "Project not found"}, status=404)
+
+
+            user_query = db.collection("users").where("email", "==", user_email).stream()
+            user_doc = next(user_query, None)
+
+            if not user_doc:
+                return JsonResponse({"error": "User not found"}, status=404)
+
+            user_id = user_doc.id 
+            print(f"✅ Found Firestore User ID: {user_id}")
+
+            joined_projects_ref = db.collection("users").document(user_id).collection("projects_joined").document(project_id)
+            joined_doc = joined_projects_ref.get()
+
+            if not joined_doc.exists:
+                return JsonResponse({"error": "User is not a member of this project"}, status=403)
+
+            try:
+                data = json.loads(request.body)
+                experience = data.get("experience", "").strip()
+                improvements = data.get("improvements", "").strip()
+            except json.JSONDecodeError:
+                return JsonResponse({"error": "Invalid JSON format"}, status=400)
+
+            if not experience or not improvements:
+                return JsonResponse({"error": "Feedback fields cannot be empty"}, status=400)
+
+            feedback_collection_path = f"users/{owner_id}/projects_created/{project_id}/Feedback"
+
+            feedback_ref = db.collection("users").document(owner_id).collection("projects_created").document(project_id).collection("Feedback").document()
+
             feedback_data = {
-                "name": data["name"],
-                "email": data["email"],
-                "experience": data["experience"],
-                "improvements": data["improvements"],
-                "date_submitted": data.get("date_submitted", None),
+                "name": user_name,
+                "email": user_email,
+                "experience": experience,
+                "improvements": improvements,
+                "date_submitted": firestore.SERVER_TIMESTAMP, 
             }
 
-            feedback_ref.set(feedback_data) 
+            try:
+                feedback_ref.set(feedback_data)
+                print(f"Feedback successfully added: {feedback_data}")
+            except Exception as firestore_error:
 
-            print("Feedback successfully added:", feedback_data)
+                return JsonResponse({"error": str(firestore_error)}, status=500)
+            stored_feedback = feedback_ref.get().to_dict()
 
             return JsonResponse(
-                {"message": "Feedback submitted successfully", "feedback": feedback_data},
+                {"message": "Feedback submitted successfully", "feedback": stored_feedback},
                 status=201
             )
-        except json.JSONDecodeError:
-            return Response({"error": "Invalid JSON format"}, status=400)
+
         except Exception as e:
+            print(f"ERROR: {str(e)}")
             return JsonResponse({"error": str(e)}, status=500)
 class ApplicantViewSet(viewsets.ViewSet):
     def list(self,request,project_id,email):
@@ -271,7 +343,6 @@ class ApplicantViewSet(viewsets.ViewSet):
             decoded_token = auth.verify_id_token(id_token)
             owner_email = decoded_token.get("email")
             owner_id = get_user_id_by_email(owner_email)
-
             project_ref = db.collection("users").document(owner_id).collection("projects_created").document(project_id)
             project_doc = project_ref.get()
             
@@ -298,23 +369,49 @@ class ApplicantViewSet(viewsets.ViewSet):
             applicant_data = applicant_doc.to_dict()
             applicant_name = applicant_data.get("fullname", "Applicant")
             
+            # subject = f"Application Update for {project_data['name']}"
+            # email_type = "accept" if new_status == "Accepted" else "reject"
+
+            # sendEmail(
+            #     recipient_email=applicant_email,
+            #     name=applicant_name,
+            #     subject=subject,
+            #     email_type=email_type,
+            #     project_name=project_data["name"]
+            # )
+            
+            print(new_status)
             if new_status == "Rejected":
                 applicants_ref.delete()
                 return Response({"message": f"Applicant {applicant_email} has been rejected and removed."}, status=200)
             else:
                 applicants_ref.update({"status": new_status})
-                return Response({"message": f"Applicant {applicant_email} has been {new_status}"}, status=200)
+                new_team_size = project_data.get("number_of_people", 0) + 1
+                project_ref.update({"number_of_people": new_team_size})
+                if applicant_doc:
+                    applicant_id = applicant_doc.id
+                    applicant_uid = get_user_id_by_email(applicant_id)
+                    joined_ref = db.collection("users").document(applicant_uid).collection("projects_joined").document(project_id)
+                    # joined_ref.set({"name": project_data.get("name", "Unnamed Project"), "status": "Accepted"})
+                    joined_doc = joined_ref.get()
+                    if not joined_ref.get().exists:
+                        
+                        joined_ref.set({
+                            "name": project_data.get("name", "Unnamed Project"),
+                            "status": "Accepted",
+                            "owner": project_data.get("owner", ""),
+                            "category": project_data.get("category", "N/A"),
+                            "looking_for": project_data.get("looking_for", "N/A"),
+                            "weekly_hours": project_data.get("weekly_hours", 0),
+                            "team_size": project_data.get("team_size", 1),
+                            "start_date": project_data.get("start_date", ""),
+                            "end_date": project_data.get("end_date", ""),
+                            "role": applicant_data.get("position") 
+                        })
+                    
+                    return Response({**joined_ref.get().to_dict(), "id": joined_ref.id}, status=200)
             
-            subject = f"Application Update for {project_data['name']}"
-            email_type = "accept" if new_status == "Accepted" else "reject"
-
-            sendEmail(
-                recipient_email=applicant_email,
-                name=applicant_name,
-                subject=subject,
-                email_type=email_type,
-                project_name=project_data["name"]
-            )
+           
 
             return Response({"message": f"Applicant {applicant_name} has been {new_status}"}, status=200)
 
@@ -340,15 +437,21 @@ class UserProfileViewSet(viewsets.ViewSet):
             id_token = auth_header.split(" ")[1]
             decoded_token = auth.verify_id_token(id_token)
             firebase_email = decoded_token.get("email")
-            if firebase_email != email:
+
+            is_self = firebase_email == email
+            is_project_owner = db.collection("projects").where("owner", "==", firebase_email).limit(1).stream()
+
+            if not is_self and not any(is_project_owner):
                 return Response({"error": "Unauthorized access"}, status=403)
+
             users_query = db.collection("users").where("email", "==", email).stream()
             user_doc = next(users_query, None)
 
-            if not user_doc.exists:
+            if not user_doc:
                 return Response({"error": "User not found"}, status=404)
 
             return Response({**user_doc.to_dict(), "id": user_doc.id}, status=200)
+
         except Exception as e:
             return Response({"error": str(e)}, status=500)
     @csrf_exempt
@@ -432,7 +535,7 @@ class UserProfileViewSet(viewsets.ViewSet):
             auth_header = request.headers.get("Authorization")
             if not auth_header or not auth_header.startswith("Bearer "):
                 return Response({"error": "Missing or invalid Authorization token"}, status=401)
-
+            
             id_token = auth_header.split(" ")[1]
             decoded_token = auth.verify_id_token(id_token)
             firebase_uid = decoded_token.get("uid")
@@ -451,6 +554,8 @@ class UserProfileViewSet(viewsets.ViewSet):
             joined_projects = [
                 {**proj.to_dict(), "id": proj.id} for proj in joined_projects_ref
             ]
+            
+            print(created_projects)
 
             return Response({
                 "projects_created": created_projects,
@@ -648,22 +753,37 @@ class ProjectViewSet(viewsets.ViewSet):
 
 
 class ProjectDeleteView(DestroyAPIView):
-    lookup = "project_id"
-    def delete(self,request,*args, **kwargs):
+    def delete(self,request, project_id):
         try:
-            proj_id = kwargs.get("project_id")  
-            if not proj_id:
-                return Response({"error": "Project ID is required"}, status=400)
-            proj_ref = db.collection("Projects").document(proj_id)
-            proj_data = proj_ref.get()
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return JsonResponse({"error": "Unauthorized"}, status=401)
 
-            if not proj_data.exists:
-                return Response({"error": "Project not found in Firestore"}, status=404)
+            id_token = auth_header.split(" ")[1]
+            decoded_token = auth.verify_id_token(id_token)
+            user_email = decoded_token.get("email")
 
-            print(f"Deleting project: {proj_id}, Data: {proj_data.to_dict()}")
+            user_ref = db.collection("users").where("email", "==", user_email).stream()
+            user_doc = next(user_ref, None)
 
-            proj_ref.delete()
-            return Response({"message": f"Project {proj_id} deleted successfully"}, status=200)
+            if not user_doc:
+                return JsonResponse({"error": "User not found"}, status=404)
+
+            user_id = user_doc.id
+
+            db.collection("users").document(user_id).collection("projects_joined").document(project_id).delete()
+            users_ref = db.collection("users").stream()
+            for user_doc in users_ref:
+                user_projects_ref = db.collection("users").document(user_doc.id).collection("projects_created").document(project_id)
+                if user_projects_ref.get().exists:
+                    owner_email = user_doc.get("email")
+                    owner_id = user_doc.id
+                    break
+            applicant_ref = db.collection("users").document(owner_id).collection("projects_created").document(project_id).collection("Applicants").document(user_email)
+        
+            if applicant_ref.get().exists:
+                applicant_ref.delete()
+                return JsonResponse({"message": "Successfully left the project"}, status=200)
         except Exception as e:
             return Response({"error": str(e)}, status=400)
 

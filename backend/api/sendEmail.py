@@ -31,13 +31,13 @@ def sendEmail(recipient_email, name, subject, email_type, project_name=None, app
                 <p>Best Regards,<br>Team</p>
             """,
             "reject": f"""
-                <p>Dear {name},</p>
+                <p>Dear {applicant_name},</p>
                 <p>Thank you for your application. Unfortunately, we regret to inform you that you have not been selected.</p>
                 <p>We appreciate your effort and encourage you to apply again in the future.</p>
                 <p>Best Regards,<br>Team</p>
             """,
             "thanks": f"""
-                <p>Dear {name},</p>
+                <p>Dear {applicant_name},</p>
                 <p>Thank you for applying! We appreciate your interest and will get back to you soon.</p>
                 <p>Best Regards,<br>Team</p>
             """,
