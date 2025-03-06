@@ -25,7 +25,6 @@ import ProtectedRoute from "./ProtectedRoute";
 import NoteCards from "./NoteCards.js";
 import Apply from "./apply.jsx";
 import NavBar from './NavBar.jsx';
-import Profile from './Profile.jsx';
 import Note from './Note.jsx';
 import { auth, monitorAuthState } from "./firebase";
 import {Navigate} from "react-router-dom"
@@ -33,6 +32,7 @@ import {Navigate} from "react-router-dom"
 function App() {
   // const [isLight, setMode] = React.useState(true);
   const [token, setTokenState] = useState(localStorage.getItem('authToken'));
+  const [selectedMajor, setSelectedMajor] = useState("All");
   const [user, setUser] = useState(null);
   // Triggers whenever the light/dark mode button is pressed
   // Switches the App's className
@@ -63,13 +63,16 @@ function App() {
         setIsLight((prevMode) => !prevMode);
     };
 
+    const handleMajorChange = (major) => {
+      console.log("Selected Major:", major);
+      setSelectedMajor(major);
+  };
+
   return (
     <Router>
     <div className={`min-h-screen ${isLight ? "bg-white text-black" : "bg-gray-900 text-white"}`}>
-      
+       <Header method={toggleLightAndDarkMode} onMajorChange = {handleMajorChange} />
       <div className={`flex-1 w-full ${isLight ? "light" : "dark"}`}>
-        
-            <Header method={toggleLightAndDarkMode} />
           {/* <Home/> */}
           {/* <NoteCards items={cs_projects} category="Recommended" />
           <NoteCards items={film_projects} category="Film" /> */}
@@ -80,51 +83,36 @@ function App() {
            <div className="text-center bg-websiteBackground">
            {/* <Header method={toggleLightAndDarkMode} /> */}
            <Routes>
-           <Route path="/profile" element={
-             <ProtectedRoute>
-               <UserProfile />
-             </ProtectedRoute>
-           }
-              
-              />
+
+              <Route path="/profile/:email" element={<UserProfile />} />
                  <Route path="/create" element={
                   <ProtectedRoute>
                      <ProjectCreation />
                   </ProtectedRoute>
                    
                 } />
-                <Route path="/manage" element={
+               
+              <Route path=":email/:projectId/applicants/" element={
                     <ProtectedRoute>
-                    <ProjectManagement />
-                 </ProtectedRoute>
-
-                } />
-                {/* <Route path="/email" element={
-
-                    <Email />
-
-                } /> */}
-                <Route path="/applicants" element={
-
-                    <ProtectedRoute>
-                    <Applicants />
+                        <Applicants />
                     </ProtectedRoute>
-
                 } />
                 <Route path="/home" element={
 
                     <ProtectedRoute>
-                    <Dashboard />
+                      <Dashboard selectedMajor ={selectedMajor} />
                     </ProtectedRoute>
-
-
                 } />
-                <Route path='/apply' element={
-                  <ProtectedRoute>
-                    <Apply />
-                  </ProtectedRoute>
-
-                } />
+                 <Route path="/:projectId/apply/" element={
+                   <ProtectedRoute>
+                      <ApplicationForm />
+                   </ProtectedRoute>
+                  } />
+                   <Route path = "/:projectId/feedback/" element= {
+                    <ProtectedRoute>
+                        <Feedback/>
+                    </ProtectedRoute>
+                  } />
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />

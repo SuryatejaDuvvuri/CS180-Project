@@ -13,12 +13,12 @@ const getData = async (apiUrl) => {
 };
 
 // Custom Hook to get majors
-function useMajors() {
+export function useMajors() {
     const [majors, setMajors] = useState([]);
 
     useEffect(() => {
         async function fetchMajors() {
-            const fileContents = await getData("/Major-Categories.txt");  // Ensure correct file path
+            const fileContents = await getData("/Major-Categories.txt");  
             setMajors(fileContents.split(", ").map((major) => major.trim()));
         }
 
@@ -29,7 +29,8 @@ function useMajors() {
 }
 
 // Function that returns majors
-export const GetMajors = async () => {
+export async function GetMajors()
+{
     const fileContents = await getData("/Major-Categories.txt");
     return fileContents.split(", ").map((major) => major.trim());
 };
