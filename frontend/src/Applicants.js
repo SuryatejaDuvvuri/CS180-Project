@@ -86,7 +86,7 @@ function Applicants()
             );
 
             const data = await response.json();
-            
+
             if (!response.ok) {
                 throw new Error(data.error || "Failed to reject applicant.");
             }
@@ -109,6 +109,7 @@ function Applicants()
 
     return (
         <div className="bg-gray-100 min-h-screen p-5">
+            <Header theme={theme} toggleTheme={toggleTheme} onMajorChange = {handleMajorChange} />
             <h1 className="text-3xl font-bold text-center mb-5">Applicants for Project</h1>
 
             {error && <p className="text-red-500">{error}</p>}

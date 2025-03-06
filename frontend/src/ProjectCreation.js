@@ -22,7 +22,7 @@ function ProjectCreation() {
     const navigate = useNavigate();
     const majors = useMajors();
 
-    const colorOptions = ['#FF5733', '#FFBD33', '#33FF57', '#33A1FF', '#8A33FF', '#FF33A8'];
+    const colorOptions = ['#FF5D5D', '#FFC785', '#A0D683', '#578FCA', '#A294F9', '#FDB7EA'];
 
     const [projectData, setProjectData] = useState({
         name: '',
@@ -35,7 +35,7 @@ function ProjectCreation() {
         category: '',
         location: '',
         weekly_hours: 0,
-        color: '#FFFFFF', // Default white
+        color: '#FF5D5D', // Default white
         image: null
     });
 
@@ -112,6 +112,7 @@ function ProjectCreation() {
 
     return (
         <div className="ProjectCreation flex justify-center items-center min-h-screen">
+            <Header theme={theme} toggleTheme={toggleTheme} onMajorChange = {handleMajorChange} />
             <div className="form-container p-6 rounded-lg shadow-lg w-full max-w-3xl" 
                 style={{ backgroundColor: projectData.color || "#ffffff" }}> 
                 

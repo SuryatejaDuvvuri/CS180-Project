@@ -36,9 +36,7 @@ function App() {
   const [user, setUser] = useState(null);
   // Triggers whenever the light/dark mode button is pressed
   // Switches the App's className
-  const [isLight, setIsLight] = useState(() => {
-      return localStorage.getItem("theme") !== "dark";
-  });
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
   useEffect(() => {
       const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -49,19 +47,15 @@ function App() {
   }, []);
 
     useEffect(() => {
-        if (isLight) {
-            document.documentElement.classList.remove("dark");
-            localStorage.setItem("theme", "light");
-        } else {
-            document.documentElement.classList.add("dark");
-            localStorage.setItem("theme", "dark");
-        }
-    }, [isLight]);
+      document.documentElement.classList.remove("light", "dark");
+      document.documentElement.classList.add(theme);
+      localStorage.setItem("theme", theme);
+  }, [theme]);
 
 
-    const toggleLightAndDarkMode = () => {
-        setIsLight((prevMode) => !prevMode);
-    };
+    const toggleTheme = () => {
+      setTheme(theme === "light" ? "dark" : "light");
+  };
 
     const handleMajorChange = (major) => {
       console.log("Selected Major:", major);
@@ -70,9 +64,8 @@ function App() {
 
   return (
     <Router>
-    <div className={`min-h-screen ${isLight ? "bg-white text-black" : "bg-gray-900 text-white"}`}>
-       <Header method={toggleLightAndDarkMode} onMajorChange = {handleMajorChange} />
-      <div className={`flex-1 w-full ${isLight ? "light" : "dark"}`}>
+    <div className={`min-h-screen ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
+      <div  className="container mx-auto p-4">
           {/* <Home/> */}
           {/* <NoteCards items={cs_projects} category="Recommended" />
           <NoteCards items={film_projects} category="Film" /> */}

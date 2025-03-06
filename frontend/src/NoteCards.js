@@ -38,19 +38,23 @@ function NoteCards({ items = [], category }) {
                             <div
                                 key={item.id}
                                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
-                                // style={{
-                                //     backgroundColor: item.color || "#ffffff",  // ✅ Set card background color
-                                //     borderLeft: `5px solid ${item.color || "#ccc"}`, // Optional styling
-                                // }}
+                                style={{
+                                    backgroundColor: item.color,
+                                }}
                             >
-                                 {item.image_url && (
-                                    <img
-                                        src={item.image_url}
-                                        alt={item.name}
-                                        className="w-full h-40 object-cover"
-                                    />
-                                    // <img src={project.image_base64} alt="Project" className="w-full h-48 object-cover rounded-lg" />
-                                )}
+                                 {item.image_url || item.image ? (
+                                            <img
+                                                src={item.image_url || item.image}
+                                                alt={item.name || "Project Image"}
+                                                className="w-full h-48 object-contain rounded-lg shadow-md"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded-lg">
+                                                <span className="text-gray-500">No Image</span>
+                                            </div>
+                                        )}
+
+
                                 <div className="p-6">
                                     <h3 className="text-xl font-semibold mb-2">{item.name}</h3>
                                     <p className="text-gray-600 mb-4 line-clamp-2">{item.description}</p>

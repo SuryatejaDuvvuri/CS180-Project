@@ -198,6 +198,7 @@ function Feedback() {
 
     return (
         <div>
+            <Header theme={theme} toggleTheme={toggleTheme} onMajorChange = {handleMajorChange} />
             {isMember && !isOwner && (
                 <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
                     <h2 className="text-2xl font-semibold text-center mb-4">Project Feedback</h2>
