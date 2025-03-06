@@ -10,10 +10,20 @@ function HelloWorld()
   return (<h1 className="greeting">Hello, world!</h1>);
 };
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const rootElement = document.getElementById('root');
+
+if (!rootElement) {
+  throw new Error("Root element not found! Ensure index.html contains <div id='root'></div>");
+}
+
+const root = ReactDOM.createRoot(rootElement);
+
 root.render(
-  <React.StrictMode>
-    <App />
+  <React.StrictMode> 
+    {/* <BrowserRouter> */}
+      <App />
+    {/* </BrowserRouter> */}
+    
   </React.StrictMode>
 );
 

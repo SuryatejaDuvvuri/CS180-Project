@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signInWithGoogle } from "../firebase";
+import { auth, signInWithGoogle, signInWithEmail } from "../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -12,22 +13,33 @@ export default function Login() {
     e.preventDefault();
     setError(null);
 
+    if (!email.trim() || !password.trim()) {
+      setError("Email and password are required.");
+      return;
+    }
+
     try {
-      const response = await fetch("http://127.0.0.1:8000/auth/login/", {
+      const idToken = await signInWithEmail(email, password);
+      
+      const response = await fetch("http://localhost:8000/api/login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, idToken }),
       });
-
+      
       const data = await response.json();
+      
       if (!response.ok) {
-        throw new Error(data.detail || "Login failed");
+        throw new Error(data.error || "Login failed");
       }
 
-      localStorage.setItem("authToken", data.token);
-      navigate("/dashboard");
+      if(idToken)
+      {
+        localStorage.setItem("authToken", idToken);
+      }
+      navigate("/home");
     } catch (err) {
-      setError(err.message);
+      setError("Invalid email or password.");
     }
   };
 
@@ -38,7 +50,7 @@ export default function Login() {
         throw new Error("Failed to retrieve Firebase ID token.");
       }
 
-      const response = await fetch("http://127.0.0.1:8000/auth/google-login/", {
+      const response = await fetch("http://localhost:8000/api/google-login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),
@@ -50,14 +62,14 @@ export default function Login() {
       }
 
       localStorage.setItem("authToken", data.token);
-      navigate("/dashboard");
+      navigate("/home");
     } catch (err) {
       setError(err.message);
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="flex justify-center items-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
         <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
@@ -98,14 +110,12 @@ export default function Login() {
           Sign in with Google
         </button>
 
-        {/*  New Sign Up Button */}
         <button
           onClick={() => navigate("/signup")}
           className="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg"
         >
           Sign Up
         </button>
-
       </div>
     </div>
   );

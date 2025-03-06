@@ -1,6 +1,6 @@
 @import './css/Colors.css';
 
-.form-container {
+/* .form-container {
     width: 300px;
     padding: 20px;
     border: 1px solid var(--acc-color);
@@ -11,7 +11,14 @@
     padding: 0px 0px 15px 0px;
     font-size: 22px;
     color: var(--acc-color);
-}
+} */
+/* .form-container {
+    width: 300px;
+    padding: 20px;
+    border: 1px solid black;
+    background-color: #f9f9f9;
+} */
+
 
 .input-field {
     width: 100%;

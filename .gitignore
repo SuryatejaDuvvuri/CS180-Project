@@ -117,3 +117,8 @@ CMakeLists.txt.user*
 *.dll
 *.exe
 
+frontend/.env
+backend/collabhub-28a6c-firebase-adminsdk-fbsvc-7bf7d23b3d.json
+backend/firebase.py
+frontend/package-lock.json
+frontend/postcss.config.js
