@@ -4,6 +4,7 @@ from django.shortcuts import render
 
 import os
 import random
+import re
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -369,16 +370,16 @@ class ApplicantViewSet(viewsets.ViewSet):
             applicant_data = applicant_doc.to_dict()
             applicant_name = applicant_data.get("fullname", "Applicant")
             
-            # subject = f"Application Update for {project_data['name']}"
-            # email_type = "accept" if new_status == "Accepted" else "reject"
+            subject = f"Application Update for {project_data['name']}"
+            email_type = "accept" if new_status == "Accepted" else "reject"
 
-            # sendEmail(
-            #     recipient_email=applicant_email,
-            #     name=applicant_name,
-            #     subject=subject,
-            #     email_type=email_type,
-            #     project_name=project_data["name"]
-            # )
+            sendEmail(
+                recipient_email=applicant_email,
+                name=applicant_name,
+                subject=subject,
+                email_type=email_type,
+                project_name=project_data["name"]
+            )
             
             print(new_status)
             if new_status == "Rejected":
@@ -539,6 +540,16 @@ class UserProfileViewSet(viewsets.ViewSet):
             id_token = auth_header.split(" ")[1]
             decoded_token = auth.verify_id_token(id_token)
             firebase_uid = decoded_token.get("uid")
+            email_pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+            if re.match(email_pattern, user_id):
+                # Convert email to Firestore ID
+                user_query = db.collection("users").where("email", "==", user_id).stream()
+                user_doc = next(user_query, None)
+
+                if not user_doc:
+                    return Response({"error": "User not found"}, status=404)
+
+                user_id = user_doc.id 
             user_ref = db.collection("users").document(user_id)
             user_doc = user_ref.get()
 
@@ -555,7 +566,7 @@ class UserProfileViewSet(viewsets.ViewSet):
                 {**proj.to_dict(), "id": proj.id} for proj in joined_projects_ref
             ]
             
-            print(created_projects)
+
 
             return Response({
                 "projects_created": created_projects,
@@ -644,6 +655,7 @@ class ProjectViewSet(viewsets.ViewSet):
             return summary
         except Exception as e:
             return "No summary available"
+        
     def list(self, request):
         try:
             auth_header = request.headers.get("Authorization")
@@ -686,7 +698,38 @@ class ProjectViewSet(viewsets.ViewSet):
         
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+    def retrieve(self, request, project_id):
+        try:
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                return JsonResponse({"error": "Missing or invalid Authorization token"}, status=401)
 
+            id_token = auth_header.split(" ")[1]
+            decoded_token = auth.verify_id_token(id_token)
+            user_email = decoded_token.get("email")
+
+            print(f"🔹 Request for project ID: {project_id} by {user_email}")
+
+            # 🔍 Debugging: Print all projects
+            projects_ref = db.collection("users").stream()
+            found_project = None
+
+            for user_doc in projects_ref:
+                project_ref = db.collection("users").document(user_doc.id).collection("projects_created").document(project_id)
+                project_doc = project_ref.get()
+                if project_doc.exists:
+                    found_project = project_doc.to_dict()
+                    found_project["id"] = project_id
+                    print(f"✅ Found project: {found_project}")
+                    break
+            
+            if not found_project:
+                return JsonResponse({"error": "Project not found"}, status=404)
+
+            return JsonResponse(found_project, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
     def create(self,request):
         try:
             if not request.body:
