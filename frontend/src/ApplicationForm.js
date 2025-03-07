@@ -90,7 +90,7 @@ const ApplicationForm = () => {
 
     return (
         <div className="container mx-auto p-6">
-            <Header theme={theme} toggleTheme={toggleTheme} onMajorChange = {handleMajorChange} />
+
             <h1 className="text-2xl font-bold">Apply for {project?.name}</h1>
             <form onSubmit={handleApply} className="mt-4">
                 {/* Full Name */}

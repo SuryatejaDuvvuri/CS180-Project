@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {auth} from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
-function Home() {
+function Home({theme, toggleTheme}) {
     const [projects, setProjects] = useState([]); 
     const [selectedMajor, setSelectedMajor] = useState("All"); 
     const [loading, setLoading] = useState(false);
@@ -82,9 +82,9 @@ function Home() {
     };
 
     return (
-        <div className="w-screen min-h-screen flex flex-col items-center dark:bg-gray-900 bg-gray-100">
+        <div className={`w-screen h-screen flex flex-col items-center ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
             {/* Header Section */}
-            <header className="w-full flex flex-wrap justify-between items-center px-6 py-4 bg-white dark:bg-gray-800 shadow-md">
+            <header className={`w-full flex justify-between items-center px-6 py-4 ${theme === "dark" ? "bg-gray-800 shadow-md" : "bg-white shadow-md"}`}>
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">ProjectHub</h1>
                 <div className="flex gap-4">
                     <button 
@@ -94,7 +94,7 @@ function Home() {
                         Sign Up
                     </button>
                     <button 
-                        className="border-2 border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-500 hover:text-white transition"
+                        className="border-2 border-blue-500 text-white px-4 py-2 rounded hover:bg-blue-500 hover:text-white transition"
                         onClick={() => navigate('/login')}
                     >
                         Login

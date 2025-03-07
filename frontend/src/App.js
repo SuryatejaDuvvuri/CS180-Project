@@ -64,8 +64,7 @@ function App() {
 
   return (
     <Router>
-    <div className={`min-h-screen ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
-      <div  className="container mx-auto p-4">
+    <div className={`w-screen flex justify-center items-center min-h-screen  ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
           {/* <Home/> */}
           {/* <NoteCards items={cs_projects} category="Recommended" />
           <NoteCards items={film_projects} category="Film" /> */}
@@ -73,48 +72,48 @@ function App() {
           {/* <div className="bg-gradient-to-r from-gradientLeftLight to-gradientRightLight bg-clip-text text-transparent font-bold text-3xl">
             TEXT TEST
           </div> */}
-           <div className="text-center bg-websiteBackground">
-           {/* <Header method={toggleLightAndDarkMode} /> */}
+           <div className="text-center">
+            {user &&  <Header darkMode = {theme} toggleDarkMode={toggleTheme} onMajorChange={handleMajorChange}/>}
+          
            <Routes>
 
-              <Route path="/:email/profile/" element={<UserProfile />} />
+              <Route path=":email/profile/" element={<UserProfile darkMode = {theme} toggleDarkMode={toggleTheme} />} />
                
               <Route path=":email/:projectId/applicants/" element={
                     <ProtectedRoute>
-                        <Applicants />
+                        <Applicants darkMode = {theme} toggleDarkMode={toggleTheme} />
                     </ProtectedRoute>
                 } />
 
             <Route path="/create" element={
                   <ProtectedRoute>
-                     <ProjectCreation />
+                     <ProjectCreation darkMode = {theme} toggleDarkMode={toggleTheme} />
                   </ProtectedRoute>
                    
                 } />
                 <Route path="/home" element={
 
                     <ProtectedRoute>
-                      <Dashboard selectedMajor ={selectedMajor} />
+                      <Dashboard darkMode = {theme} toggleDarkMode={toggleTheme} selectedMajor ={selectedMajor} />
                     </ProtectedRoute>
                 } />
                  <Route path="/:projectId/apply/" element={
                    <ProtectedRoute>
-                      <ApplicationForm />
+                      <ApplicationForm darkMode = {theme} toggleDarkMode={toggleTheme} />
                    </ProtectedRoute>
                   } />
                    <Route path = "/:projectId/feedback/" element= {
                     <ProtectedRoute>
-                        <Feedback/>
+                        <Feedback darkMode = {theme} toggleDarkMode={toggleTheme}/>
                     </ProtectedRoute>
                   } />
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Home darkMode = {theme} toggleDarkMode={toggleTheme} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
 
            
           </Routes>
            </div>
-      </div>
     </div>
     </Router>
   );

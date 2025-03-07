@@ -4,7 +4,7 @@ import NoteCards from "../NoteCards";
 import { useMajors } from "../GetMajors"; 
 import { useNavigate } from "react-router-dom";
 import {auth} from "../firebase";
-export default function Dashboard({ selectedMajor }) {
+export default function Dashboard({ theme, toggleTheme, selectedMajor }) {
     const [projects, setProjects] = React.useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
     const [error, setError] = React.useState(null);
@@ -145,8 +145,8 @@ export default function Dashboard({ selectedMajor }) {
 
 
     return (
-      <div className="w-screen flex flex-col items-center justify-center">
-        <main className = "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className={`w-screen ${theme === "dark" ? "bg-gray-900 text-white"  : "bg-gray-100 text-black"}`}>
+        <main className = {`w-full ${theme === "dark" ? "bg-gray-800 shadow-md" : "bg-white shadow-md"}`}>
         <h1 className="text-3xl font-bold mb-8">Welcome to CollabHub🎉</h1>
         {loading ? (
                     <div className="flex justify-center items-center h-64">

@@ -2,8 +2,8 @@ import React, {useState, useEffect} from 'react';
 import Email from './Email.js';
 import { auth } from './firebase';
 import { useNavigate, useParams } from 'react-router-dom'
-
-function Applicants()
+import Header from './Header.js';
+function Applicants({theme, toggleTheme, handleMajorChange})
 {
     const [applicants, setApplicants] = useState([]);
     const {email, projectId } = useParams();
@@ -108,8 +108,7 @@ function Applicants()
     }
 
     return (
-        <div className="bg-gray-100 min-h-screen p-5">
-            <Header theme={theme} toggleTheme={toggleTheme} onMajorChange = {handleMajorChange} />
+        <div className="bg-gray-100 p-5">
             <h1 className="text-3xl font-bold text-center mb-5">Applicants for Project</h1>
 
             {error && <p className="text-red-500">{error}</p>}

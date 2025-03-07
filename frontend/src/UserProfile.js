@@ -3,18 +3,18 @@ import React, { useState, useEffect } from 'react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { useParams, useNavigate} from 'react-router-dom';
 
-export default function UserProfile()
+export default function UserProfile({darkMode, toggleDarkMode})
 {
     const navigate = useNavigate();
     const { email } = useParams();
-    console.log("Extracted Email from URL:", email);
     const [user, setUser] = useState(null);
     const [projectsCreated, setProjectsCreated] = useState([]);
     const [projectsJoined, setProjectsJoined] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const auth = getAuth();
-    console.log("Logged-in User Email:", auth.currentUser?.email);
+    const [isOwner, setIsOwner] = useState(true);
+    const [isMember, setIsMember] = useState(false);
  
     useEffect(() => {
         
@@ -32,10 +32,6 @@ export default function UserProfile()
         return () => unsubscribe(); 
     }, [email]);
 
-    // useEffect(() => {
-    //     fetchUserProfile();
-    // }, []);
-
     const fetchUserProfile = async (user) => {
         setLoading(true);
         setError(null);
@@ -47,18 +43,15 @@ export default function UserProfile()
                 return;
             }
             const token = await user.getIdToken();
-            const email = user.email;
-            console.log(user);
+            const userEmail = email && email.includes("@") ? email :  user.email;
 
             if (!user) {
                 setError("You need to be logged in to view this profile.");
                 setLoading(false);
                 return;
             }
-
-            console.log(email)
-
-            const response = await fetch(`http://localhost:8000/api/users/${email}/`, {
+       
+            const response = await fetch(`http://localhost:8000/api/users/${userEmail}/`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json',
                      Authorization: `Bearer ${token}`,
@@ -72,6 +65,37 @@ export default function UserProfile()
             const data = await response.json();
             setUser(data);
             getProjects(data.id, token);
+            const responseTwo = await fetch(`http://localhost:8000/api/users/${user.email}/`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json',
+                     Authorization: `Bearer ${token}`,
+                 }
+            });
+
+            if (!responseTwo.ok) {
+                throw new Error("User not found");
+            }
+
+            const dataTwo = await responseTwo.json();
+            const createdProjs = Array.isArray(dataTwo.projects_created) ? dataTwo.projects_created : [];
+            const joinedProjs = Array.isArray(dataTwo.projects_joined) ? dataTwo.projects_joined : [];
+            if (user.email === userEmail) {
+                setIsOwner(true);
+                setIsMember(true);
+                return;
+            }
+            const isUserOwner = projectsCreated.some(proj => 
+                createdProjs.some(proj2 => proj.id === proj2.id)
+            );
+
+            const isUserMember = projectsJoined.some(proj => 
+                joinedProjs.some(proj2 => proj.id === proj2.id)
+            );
+            setIsOwner(isUserOwner);
+            console.log(isOwner);
+            setIsMember(isUserMember);
+    
+           
         } catch (err) {
             setError(err.message);
             console.error("Error fetching user profile:", err);
@@ -141,20 +165,6 @@ export default function UserProfile()
                 throw new Error("Failed to fetch projects");
             }
 
-            // const joinedResponse = await fetch(`http://localhost:8000/api/users/${userId}/projects_joined/`, {
-            //     method: 'GET',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         Authorization: `Bearer ${token}`,
-            //     },
-            // });
-            // if (joinedResponse.ok) {
-            //     const joinedProjects = await joinedResponse.json();
-            //     setProjectsJoined(joinedProjects);
-            // } else {
-            //     throw new Error("Failed to fetch joined projects.");
-            // }
-
         }
         catch(err)
         {
@@ -170,7 +180,7 @@ export default function UserProfile()
 
 
     return (
-        <div className="bg-gray-100 min-h-screen p-5 flex flex-col items-center">
+        <div className={`dark:bg-gray-900${darkMode === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
             <h1 className="text-3xl font-bold text-center mb-5">User Profile</h1>
 
             {error && <p className="text-red-500">{error}</p>}
@@ -178,7 +188,7 @@ export default function UserProfile()
                 <p className="text-center">Loading user profile...</p>
             ) : (
                 user && (
-                    <div className="max-w-2xl w-full bg-white p-6 shadow-lg rounded-lg">
+                    <div className="w-full bg-white shadow-lg rounded-lg">
                         <h2 className="text-2xl font-bold">Name: {user.fullname}</h2>
                         <p className="text-gray-600">NetID: {user.net_id}</p>
                         <p className="text-gray-600">Pronouns: {user.pronouns || "Not specified"}</p>
@@ -221,12 +231,28 @@ export default function UserProfile()
                                                                 <strong>Deadline:</strong> {project.end_date ? new Date(project.end_date).toDateString() : "N/A"}
                                                             </p>
                                                             <p className="text-sm text-gray-500"><strong>Looking for:</strong> {project.looking_for || "Not specified"}</p>
-                                                            <a href={`/${user.email}/${project.id}/applicants/`} className="text-blue-500 hover:underline mt-2 inline-block">
-                                                                View Applicants
-                                                            </a>
-                                                            <a href={`/${project.id}/feedback/`} className="text-blue-500 hover:underline mt-2 inline-block">
-                                                                View Feedbacks
-                                                            </a>
+                                                                
+                                                            {isOwner && (
+                                                                     <a 
+                                                                     href={`/${user.email}/${project.id}/applicants/`} 
+                                                                         className={`text-blue-500 hover:underline mt-2 inline-block `}
+                                                                 >
+                                                                 View Applicants
+                                                                 </a>
+                                                                 
+                                                            )} 
+
+                                                            {isOwner && (
+                                                                  <a 
+                                                                  href={`/${project.id}/feedback/`} 
+                                                                  className={`text-blue-500 hover:underline mt-2 inline-block ${isMember ? '' : 'hidden'}`}
+                                                                  >
+                                                                  View Feedbacks
+                                                                  </a>
+                                                            )}
+                                                               
+
+                                                              
                                                         </div>
                                                     </div>
                                                 ))
@@ -256,21 +282,25 @@ export default function UserProfile()
                                                     <strong>Role:</strong> {project.role || "N/A"}
                                                 </p>
                                                 <div className="flex justify-between mt-3">
-                                                    {/* Leave Button */}
-                                                    <button
+                                                   
+                                                   {isMember && (
+                                                        <button
                                                         onClick={() => leaveProject(project.id)}
                                                         className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
-                                                    >
-                                                        Leave
-                                                    </button>
-                                                    {/* Give Feedback Button :email/:projectId/feedback/*/}
-                                                    <button
+                                                        >
+                                                            Leave
+                                                        </button>
+                                                   )} 
+                                                   
+                                                    {isMember && (
+                                                        <button
                                                     
                                                         onClick={() => navigate(`/${project.id}/feedback/`)}
                                                         className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
                                                     >
                                                         Give Feedback
                                                     </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

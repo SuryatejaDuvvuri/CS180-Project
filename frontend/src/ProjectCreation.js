@@ -112,7 +112,7 @@ function ProjectCreation() {
 
     return (
         <div className="ProjectCreation flex justify-center items-center min-h-screen">
-            <Header theme={theme} toggleTheme={toggleTheme} onMajorChange = {handleMajorChange} />
+          
             <div className="form-container p-6 rounded-lg shadow-lg w-full max-w-3xl" 
                 style={{ backgroundColor: projectData.color || "#ffffff" }}> 
                 
