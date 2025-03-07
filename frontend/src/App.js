@@ -27,6 +27,7 @@ import Apply from "./apply.jsx";
 import NavBar from './NavBar.jsx';
 import Note from './Note.jsx';
 import { auth, monitorAuthState } from "./firebase";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import {Navigate} from "react-router-dom"
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
 
   useEffect(() => {
       const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+       
           setUser(currentUser);
       });
 
@@ -65,13 +67,7 @@ function App() {
   return (
     <Router>
     <div className={`w-screen flex justify-center items-center min-h-screen  ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
-          {/* <Home/> */}
-          {/* <NoteCards items={cs_projects} category="Recommended" />
-          <NoteCards items={film_projects} category="Film" /> */}
-          {/* <Note /> */}
-          {/* <div className="bg-gradient-to-r from-gradientLeftLight to-gradientRightLight bg-clip-text text-transparent font-bold text-3xl">
-            TEXT TEST
-          </div> */}
+   
            <div className="text-center">
            {user &&  <Header darkMode = {theme} toggleDarkMode={toggleTheme} onMajorChange={handleMajorChange}/>}
           
