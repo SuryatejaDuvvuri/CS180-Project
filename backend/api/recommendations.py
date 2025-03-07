@@ -89,7 +89,7 @@ def recommend_projects(user_email):
                 try:
                     response = requests.post(
                         f"{OLLAMA_URL}/api/generate",
-                        json={"model": "mistral", "prompt": prompt},
+                        json={"model": "llama3.2", "prompt": prompt},
                         headers={"Content-Type": "application/json"},
                         timeout=10  # Avoid hanging API calls
                     )
