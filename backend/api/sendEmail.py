@@ -21,7 +21,7 @@ def sendEmail(recipient_email, name, subject, email_type, project_name=None, app
 
         email_templates = {
             "accept": f"""
-                <p>Dear {applicant_name},</p>
+                <p>Dear {name},</p>
                 <p>Congratulations! We are pleased to inform you that you have been accepted.</p>
                 <p>We’re excited to have you on the team! Click below to visit your project dashboard:</p>
                 <a href="{frontend_url}/dashboard" style="display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 15px; text-decoration: none; font-weight: bold; border-radius: 5px;">
@@ -31,13 +31,13 @@ def sendEmail(recipient_email, name, subject, email_type, project_name=None, app
                 <p>Best Regards,<br>Team</p>
             """,
             "reject": f"""
-                <p>Dear {applicant_name},</p>
+                <p>Dear {name},</p>
                 <p>Thank you for your application. Unfortunately, we regret to inform you that you have not been selected.</p>
                 <p>We appreciate your effort and encourage you to apply again in the future.</p>
                 <p>Best Regards,<br>Team</p>
             """,
             "thanks": f"""
-                <p>Dear {applicant_name},</p>
+                <p>Dear {name},</p>
                 <p>Thank you for applying! We appreciate your interest and will get back to you soon.</p>
                 <p>Best Regards,<br>Team</p>
             """,
