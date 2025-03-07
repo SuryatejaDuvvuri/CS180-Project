@@ -76,7 +76,7 @@ function Applicants({darkMode, toggleDarkMode, handleMajorChange})
             const idToken = await user.getIdToken();
 
             const response = await fetch(
-                `http://localhost:8000/api/projects/${projectId}/applicants/${applicantEmail}/`,
+                `${API_BASE_URL}/api/projects/${projectId}/applicants/${applicantEmail}/`,
                 {
                     method: "PUT",
                     headers: {

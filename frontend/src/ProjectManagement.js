@@ -8,7 +8,8 @@ function ProjectManagement() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const id = uuidv4();
-
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  
     const [editProj, setEditProj] = useState(null);
     const [showForm, setShowForm] = useState(false);
 
@@ -16,7 +17,7 @@ function ProjectManagement() {
         setLoading(true);
         try
         {
-            const response = await fetch("http://localhost:8000/api/projects/", {
+            const response = await fetch(`http://${API_BASE_URL}/api/projects/`, {
 
                     method: 'GET',
                     headers: {
@@ -54,7 +55,7 @@ function ProjectManagement() {
     {
         try
         {
-            const response = await fetch(`localhost:8000/api/projects/delete/${id}/`, {
+            const response = await fetch(`${API_BASE_URL}/api/projects/delete/${id}/`, {
                 method: 'DELETE'
             });
 
@@ -73,8 +74,8 @@ function ProjectManagement() {
     const handleFormSubmit = async (project) => {
         const method = editProj ? "PUT" : "POST";
         const url = editProj
-            ? `http://localhost:8000/api/projects/update/${editProj.id}/`
-            : "http://localhost:8000/api/projects/";
+            ? `${API_BASE_URL}/api/projects/update/${editProj.id}/`
+            : `${API_BASE_URL}/api/projects/`;
     
         try {
             const response = await fetch(url, {
