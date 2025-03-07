@@ -31,7 +31,21 @@ test('Null validation', () => {
     expect(screen.getByText(/email and password are required/i)).toBeInTheDocument();
 });
 
-test('successful login with correct credentials', () => {
+test('invalid information', async () => {
+    renderLogin();
+
+    const emailInput = document.querySelector('input[type="email"]');
+    const passwordInput = document.querySelector('input[type="password"]');
+
+    fireEvent.change(emailInput, { target: { value: 'test@ucr.edu' } });
+    fireEvent.change(passwordInput, { target: { value: '1234' } });
+
+    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+
+    expect(await screen.findByText(/Invalid email or password/i)).toBeInTheDocument();
+});
+
+test('successful login with correct credentials', async () => {
     renderLogin();
 
     const emailInput = document.querySelector('input[type="email"]');
@@ -40,7 +54,7 @@ test('successful login with correct credentials', () => {
     fireEvent.change(emailInput, { target: { value: 'test@ucr.edu' } });
     fireEvent.change(passwordInput, { target: { value: 'password' } });
 
-    fireEvent.click( screen.getByRole('button', { name: /login/i }));
+    fireEvent.click(screen.getByRole('button', { name: /login/i }));
 
-    expect(screen.queryByText(/email and password are required/i)).not.toBeInTheDocument();
+    expect(await screen.queryByText(/email and password are required/i)).not.toBeInTheDocument();
 });
