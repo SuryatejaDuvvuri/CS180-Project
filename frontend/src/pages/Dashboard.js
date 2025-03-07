@@ -95,7 +95,7 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
             const idToken = await user.getIdToken();
             const email = user.email;
 
-            const response = await fetch(`http://${API_BASE_URL}/api/recommend-projects/${email}/`, {
+            const response = await fetch(`${API_BASE_URL}/api/recommend-projects/${email}/`, {
                 method: "GET",
                 headers: { 
                     "Content-Type": "application/json",

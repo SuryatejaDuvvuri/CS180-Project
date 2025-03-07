@@ -61,7 +61,7 @@ function Note({ darkMode, toggleDarkMode, selectedProject, setSelectedProject, u
     
             if (buttonText === "Apply") 
                 {
-                const response = await fetch(`http://${API_BASE_URL}/api/projects/${projectId}/apply/`, {
+                const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/apply/`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

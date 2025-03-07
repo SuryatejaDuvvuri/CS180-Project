@@ -169,7 +169,7 @@ function Feedback({darkMode, toggleDarkMode}) {
             }
 
             const idToken = await user.getIdToken();
-            const response = await fetch(`http://${API_BASE_URL}/api/projects/${projectId}/feedback/`, {
+            const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/feedback/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
