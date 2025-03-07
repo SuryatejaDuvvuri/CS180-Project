@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import '@testing-library/jest-dom';
-import Signup from './Signup';
+import Signup from '../Signup';
 
 const renderSignup = () => {
     render(
