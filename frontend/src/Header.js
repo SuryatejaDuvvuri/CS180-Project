@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Dropdown from './Dropdown.js';
-import { useMajors } from "./GetMajors"; 
+import { useMajors } from "./GetMajors.js"; 
 import { useNavigate } from "react-router-dom"; 
 import lightLogo from "./assets/light mode logo.png";
 import darkLogo from "./assets/dark mode logo.png";
-import ProjectCreation from "./ProjectCreation";
+import ProjectCreation from "./ProjectCreation.js";
 import { auth, logout } from "./firebase.js";
 
 // The header for the website. Consists of a "View profile" button, a "Create project" button,
