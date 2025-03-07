@@ -30,7 +30,6 @@ function ProjectManagement() {
                 if (!Array.isArray(data)) {
                     throw new Error("Invalid response format: projects is not an array.");
                 }
-                console.log("Fetched Projects:", data);
                 setProjects(data);
                 
             }
@@ -86,7 +85,6 @@ function ProjectManagement() {
                 body: JSON.stringify(project),
         });
     
-            console.log("Raw Response:", response); 
     
           
             if (!response.ok) {
@@ -96,7 +94,6 @@ function ProjectManagement() {
             }
     
             const data = await response.json();
-            console.log("Server Response:", data);
     
             if (editProj) {
                 setProjects(projects.map((proj) => (proj.id === editProj.id ? data : proj)));
