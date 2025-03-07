@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import './ProjectCreation.css';
 import DatePicker from "react-datepicker";
-import { useMajors } from "./GetMajors"; 
+import { useMajors } from "./GetMajors.js"; 
 import "react-datepicker/dist/react-datepicker.css";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
