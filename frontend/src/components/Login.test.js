@@ -30,3 +30,17 @@ test('Null validation', () => {
 
     expect(screen.getByText(/email and password are required/i)).toBeInTheDocument();
 });
+
+test('successful login with correct credentials', () => {
+    renderLogin();
+
+    const emailInput = document.querySelector('input[type="email"]');
+    const passwordInput = document.querySelector('input[type="password"]');
+
+    fireEvent.change(emailInput, { target: { value: 'test@ucr.edu' } });
+    fireEvent.change(passwordInput, { target: { value: 'password' } });
+
+    fireEvent.click( screen.getByRole('button', { name: /login/i }));
+
+    expect(screen.queryByText(/email and password are required/i)).not.toBeInTheDocument();
+});
