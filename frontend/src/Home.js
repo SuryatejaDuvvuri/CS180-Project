@@ -28,7 +28,7 @@ function Home({darkMode, toggleDarkMode}) {
     const fetchProjects = async (user) => {
         setLoading(true);
         try {
-            let url = `http://${API_BASE_URL}/api/projects/`;
+            let url = `${API_BASE_URL}/api/projects/`;
           
 
             const headers = { "Content-Type": "application/json" };

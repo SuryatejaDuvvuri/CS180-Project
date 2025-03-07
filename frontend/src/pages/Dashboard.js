@@ -44,7 +44,7 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
     const getProjects = async () => {
         setLoading(true);
         try {
-            let url = `http://${API_BASE_URL}/api/projects/`;
+            let url = `${API_BASE_URL}/api/projects/`;
             // if (selectedMajor !== "All") {
             //     url += `?category=${encodeURIComponent(selectedMajor)}`;
             // }
