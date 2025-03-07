@@ -69,7 +69,7 @@ function Signup({darkMode, toggleDarkMode}) {
             const idToken = await signUpWithEmail(formData.email, formData.password);
             if (!idToken) throw new Error("Failed to register user in Firebase");
 
-            const response = await fetch(`http://${API_BASE_URL}/api/users/`, {
+            const response = await fetch(`${API_BASE_URL}/api/users/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(userData),

@@ -89,7 +89,7 @@ function ProjectCreation({darkMode, toggleDarkMode}) {
                 image: imageBase64
             };
 
-            const response = await fetch(`http://${API_BASE_URL}/api/projects/`, {
+            const response = await fetch(`${API_BASE_URL}/api/projects/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

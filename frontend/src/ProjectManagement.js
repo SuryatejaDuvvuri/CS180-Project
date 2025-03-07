@@ -54,7 +54,7 @@ function ProjectManagement() {
     {
         try
         {
-            const response = await fetch(`http://localhost:8000/api/projects/delete/${id}/`, {
+            const response = await fetch(`localhost:8000/api/projects/delete/${id}/`, {
                 method: 'DELETE'
             });
 

@@ -52,7 +52,7 @@ export default function UserProfile({darkMode, toggleDarkMode})
                 return;
             }
        
-            const response = await fetch(`http://${API_BASE_URL}/api/users/${userEmail}/`, {
+            const response = await fetch(`${API_BASE_URL}/api/users/${userEmail}/`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json',
                      Authorization: `Bearer ${token}`,
@@ -66,7 +66,7 @@ export default function UserProfile({darkMode, toggleDarkMode})
             const data = await response.json();
             setUser(data);
             getProjects(data.id, token);
-            const responseTwo = await fetch(`http://${API_BASE_URL}/api/users/${user.email}/`, {
+            const responseTwo = await fetch(`${API_BASE_URL}/api/users/${user.email}/`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json',
                      Authorization: `Bearer ${token}`,
@@ -118,7 +118,7 @@ export default function UserProfile({darkMode, toggleDarkMode})
     
             const idToken = await user.getIdToken();
     
-            const response = await fetch(`http://${API_BASE_URL}/api/projects/delete/${projectId}/`, {
+            const response = await fetch(`${API_BASE_URL}/api/projects/delete/${projectId}/`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -142,7 +142,7 @@ export default function UserProfile({darkMode, toggleDarkMode})
         setLoading(true);
         try
         {
-            const response = await fetch(`http://${API_BASE_URL}/api/users/${userId}/projects`, {
+            const response = await fetch(`${API_BASE_URL}/api/users/${userId}/projects`, {
 
                     method: 'GET',
                     headers: {

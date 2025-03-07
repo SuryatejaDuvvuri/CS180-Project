@@ -10,7 +10,7 @@ function Email({email,name,projName,type})
 
         try
         {
-            const response = await fetch(`http://${API_BASE_URL}/api/send_email/`, {
+            const response = await fetch(`${API_BASE_URL}/api/send_email/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

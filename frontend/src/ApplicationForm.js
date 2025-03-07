@@ -60,7 +60,7 @@ const ApplicationForm = ({darkMode, toggleDarkMode}) => {
             const owner_email = project.owner_email || project.owner;
             const projectId = project.project_id || project.id;
 
-            const response = await fetch(`http://${API_BASE_URL}/api/projects/${projectId}/apply/`, {
+            const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/apply/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
