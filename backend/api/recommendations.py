@@ -6,12 +6,15 @@ from django.http import JsonResponse
 OLLAMA_URL = os.getenv("OLLAMA_API_URL", "http://127.0.0.1:11434")
 
 
-def recommend_projects(user_email):  
+
+def recommend_projects(user_email):
+    """Fetches recommended projects for a user based on their skills and interests."""
+    
     if not user_email:
         return {"error": "Email is required"}
 
     try:
-        # Fetch user document from Firestore
+
         user_query = db.collection("users").where("email", "==", user_email).stream()
         user_doc_id = None
         user_data = None
@@ -28,11 +31,11 @@ def recommend_projects(user_email):
         user_skills = user_data.get("skills", [])
         user_interests = user_data.get("interests", [])
 
-        print(f"🔍 User Email: {user_email}")
-        print(f"🔹 Skills: {user_skills}")
-        print(f"🔹 Interests: {user_interests}")
+        print(f"✅ User Email: {user_email}")
+        print(f"🔹 User Skills: {user_skills}")
+        print(f"🔹 User Interests: {user_interests}")
 
-        # Exclude projects the user has created or joined
+    
         excluded_projects = set()
         if user_doc_id:
             created_docs = db.collection("users").document(user_doc_id).collection("projects_created").stream()
@@ -43,9 +46,9 @@ def recommend_projects(user_email):
             for doc in joined_docs:
                 excluded_projects.add(doc.id)
 
-        print(f"🔻 Excluded projects (Created or Joined): {excluded_projects}")
+        print(f"🔹 Excluded Projects (Created or Joined): {excluded_projects}")
 
-        # Gather all projects from all users
+
         recommended_projects = []
         all_users = db.collection("users").stream()
 
@@ -53,86 +56,76 @@ def recommend_projects(user_email):
             if other_user_doc.id == user_doc_id:
                 continue  # Skip self
 
-            # Check user's created projects
-            other_created_ref = db.collection("users").document(other_user_doc.id).collection("projects_created").stream()
 
-            for project_doc in other_created_ref:
+            created_projects = db.collection("users").document(other_user_doc.id).collection("projects_created").stream()
+
+            for project_doc in created_projects:
                 if project_doc.id in excluded_projects:
-                    continue
+                    continue  
 
                 project_data = project_doc.to_dict()
-                if process_project(project_data, user_skills, user_interests, project_doc.id):
-                    recommended_projects.append(format_project_data(project_doc, project_data))
+                project_name = project_data.get("name", "")
+                project_description = project_data.get("description", "")
 
-            # Check user's joined projects
-            other_joined_ref = db.collection("users").document(other_user_doc.id).collection("projects_joined").stream()
+                prompt = f"""
+                You are a recommendation system that helps users find projects based on their skills and interests.
 
-            for project_doc in other_joined_ref:
-                if project_doc.id in excluded_projects:
-                    continue
+                ### User Information:
+                - **Skills:** {', '.join(user_skills) if user_skills else "None specified"}
+                - **Interests:** {', '.join(user_interests) if user_interests else "None specified"}
 
-                project_data = project_doc.to_dict()
-                if process_project(project_data, user_skills, user_interests, project_doc.id):
-                    recommended_projects.append(format_project_data(project_doc, project_data))
+                ### Project Information:
+                - **Project Name:** {project_name}
+                - **Description:** {project_description}
 
-        print("✅ Final recommended projects:", recommended_projects)
+                ### Decision Criteria:
+                1. If the project **aligns** with the user's skills **or** interests, respond `"yes"`.
+                2. If the project **does not** match the user's skills/interests, respond `"no"`.
+                3. Do **not** add any explanation or extra text—only reply with `"yes"` or `"no"`.
+
+                ### Answer:
+                """
+
+                try:
+                    response = requests.post(
+                        f"{OLLAMA_URL}/api/generate",
+                        json={"model": "mistral", "prompt": prompt},
+                        headers={"Content-Type": "application/json"},
+                        timeout=10  # Avoid hanging API calls
+                    )
+
+                    if response.status_code != 200:
+                        print(f"Ollama API Error: {response.status_code} - {response.text}")
+                        continue
+
+                    try:
+                        response_data = response.json()
+                        decision = response_data.get("message", {}).get("content", "").strip().lower()
+                    except requests.exceptions.JSONDecodeError:
+                        print(f"Invalid JSON response from Ollama: {response.text}")
+                        continue
+
+                    print(f"Ollama Decision: {decision}")
+
+                    if "yes" in decision:
+                        recommended_projects.append({
+                            "project_id": project_doc.id,
+                            "name": project_name,
+                            "description": project_description
+                        })
+                    else:
+                        print(f"AI skipped project: {project_name}")
+
+                except requests.exceptions.RequestException as e:
+                    print(f"Error calling Ollama API: {e}")
+                    continue  # Continue checking other projects
+
+        print("✅ Final Recommended Projects:", recommended_projects)
         return {"recommended_projects": recommended_projects}
 
     except Exception as e:
-        print(f"❌ Error in recommendation: {e}")
+        print(f"Error in recommendation function: {e}")
         return {"error": "Internal server error", "details": str(e)}
-
-
-def process_project(project_data, user_skills, user_interests, project_id):
-    """Check if the project matches user skills and interests using Ollama"""
-    project_name = project_data.get("name", "")
-    project_description = project_data.get("description", "")
-
-    prompt = f"""
-    You are a recommendation system that helps users find projects based on their skills and interests.
-
-    ### User Information:
-    - **Skills:** {', '.join(user_skills) if user_skills else "None specified"}
-    - **Interests:** {', '.join(user_interests) if user_interests else "None specified"}
-
-    ### Project Information:
-    - **Project Name:** {project_name}
-    - **Description:** {project_description}
-
-    ### Decision Criteria:
-    1. If the project **aligns** with the user's skills **or** interests, respond `"yes"`.
-    2. If the project **does not** match the user's skills/interests, respond `"no"`.
-    3. Do **not** add any explanation or extra text—only reply with `"yes"` or `"no"`.
-
-    ### Answer:
-    """
-
-    try:
-        response = requests.post(
-            f"{OLLAMA_URL}/api/generate",
-            json={"model": "llama3.2", "prompt": prompt},
-            headers={"Content-Type": "application/json"},
-            timeout=10
-        )
-
-        if response.status_code == 403:
-            print(f"⚠️ Ollama API rejected request: {response.text}")
-            return False
-
-        if response.status_code != 200:
-            print(f"❌ Error from Ollama API: {response.status_code} - {response.text}")
-            return False
-
-        response_data = response.json()
-        decision = response_data.get("message", {}).get("content", "").strip().lower()
-
-        print(f"🔍 Ollama Decision for {project_name}: {decision}")
-
-        return "yes" in decision
-
-    except requests.exceptions.RequestException as e:
-        print(f"❌ Request error while calling Ollama: {e}")
-        return False
 
 
 def format_project_data(project_doc, project_data):
