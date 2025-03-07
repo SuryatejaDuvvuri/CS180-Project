@@ -113,7 +113,7 @@ def recommend_projects(user_email):
                                 .document(other_user_doc.id) \
                                 .collection("projects_joined") \
                                 .stream()
-
+     
             for project_doc in other_joined_ref:
                 if project_doc.id in excluded_projects:
                     continue
@@ -143,7 +143,7 @@ def recommend_projects(user_email):
                 
                 response = requests.post(
                     f"{OLLAMA_URL}/api/generate",
-                    json={"model": "mistral", "prompt": prompt}
+                    json={"model": "llama3.2", "prompt": prompt}
                 ).json()
 
                 decision = response.get("message", {}).get("content", "").strip().lower()
