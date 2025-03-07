@@ -60,7 +60,6 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
                 if (!Array.isArray(data)) {
                     throw new Error("Invalid response format: projects is not an array.");
                 }
-                console.log("Fetched Projects:", data);
                 const userEmail = user.email;
                 const filteredProjects = data.filter(project => project.owner !== userEmail);
                 
@@ -110,7 +109,6 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
             }
 
             const data = await response.json();
-            console.log("Recommended Projects Response:", data.recommended_projects);
 
             if (Array.isArray(data.recommended_projects)) {
                 setRecommendedProjects(data.recommended_projects);

@@ -169,7 +169,6 @@ function Feedback({darkMode, toggleDarkMode}) {
             }
 
             const idToken = await user.getIdToken();
-            console.log(projectId);
             const response = await fetch(`http://${API_BASE_URL}/api/projects/${projectId}/feedback/`, {
                 method: "POST",
                 headers: {

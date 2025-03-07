@@ -38,7 +38,7 @@ function Applicants({darkMode, toggleDarkMode, handleMajorChange})
                 }
 
                 const idToken = await user.getIdToken();
-                const response = await fetch(`http:/${API_BASE_URL}/api/users/${email}/projects/${projectId}/applicants/`, {
+                const response = await fetch(`http://${API_BASE_URL}/api/users/${email}/projects/${projectId}/applicants/`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -51,7 +51,7 @@ function Applicants({darkMode, toggleDarkMode, handleMajorChange})
                 }
 
                 const data = await response.json();
-                console.log(data);
+
                 setApplicants(data.applicants || []);
             } catch (err) {
                 setError(err.message);

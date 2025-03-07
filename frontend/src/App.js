@@ -61,7 +61,7 @@ function App() {
   };
 
     const handleMajorChange = (major) => {
-      console.log("Selected Major:", major);
+
       setSelectedMajor(major);
   };
 
