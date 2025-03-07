@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {auth} from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
-function Home({theme, toggleTheme}) {
+function Home({darkMode, toggleDarkMode}) {
     const [projects, setProjects] = useState([]); 
     const [selectedMajor, setSelectedMajor] = useState("All"); 
     const [loading, setLoading] = useState(false);
@@ -11,6 +11,7 @@ function Home({theme, toggleTheme}) {
     const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0); 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
+
 
     const features = [
         { title: "Find Your Dream Project", description: "Browse through hundreds of projects across different disciplines" },
@@ -82,10 +83,9 @@ function Home({theme, toggleTheme}) {
     };
 
     return (
-        <div className={`w-screen h-screen flex flex-col items-center ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
-            {/* Header Section */}
-            <header className={`w-full flex justify-between items-center px-6 py-4 ${theme === "dark" ? "bg-gray-800 shadow-md" : "bg-white shadow-md"}`}>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">ProjectHub</h1>
+        <div className={`w-screen h-screen flex flex-col items-center ${darkMode === "dark" ? "text-white" : " text-black"}`}>
+            <header className={`w-full flex justify-between items-center px-6 py-4 ${darkMode === "dark" ? "text-white shadow-md" : "text-gray-900 shadow-md"}`}>
+                <h1 className={`text-3xl font-bold ${darkMode === "dark" ? "text-white shadow-md" : "text-gray-900 shadow-md"}`}>ProjectHub</h1>
                 <div className="flex gap-4">
                     <button 
                         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
@@ -103,13 +103,11 @@ function Home({theme, toggleTheme}) {
             </header>
 
             <main className="w-full max-w-6xl p-6">
-                {/* Hero Section */}
                 <section className="text-center mb-12">
-                    <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Discover & Join Amazing Projects</h1>
-                    <p className="text-lg text-gray-600 dark:text-gray-300">Connect with other students and work on exciting projects together</p>
+                    <h1 className={`text-4xl font-bold ${darkMode === "dark" ? "text-gray-900" : "text-white" }mb-4`}>Discover & Join Amazing Projects</h1>
+                    <p className={`text-lg ${darkMode === "dark" ? "text-gray-600" : "text-gray-300"}`} >Connect with other students and work on exciting projects together</p>
                 </section>
 
-                {/* Feature Highlight Section */}
                 <section className="w-full flex justify-center mb-10">
                     <div className="relative w-full max-w-3xl h-32 flex justify-center items-center overflow-hidden">
                         {features.map((feature, index) => (
@@ -119,7 +117,7 @@ function Home({theme, toggleTheme}) {
                                     index === currentFeatureIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
                                 }`}
                             >
-                                <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg text-center">
+                                <div className={`${darkMode === "dark" ? "bg-gray-700": "bg-white"} p-6 rounded-lg shadow-lg text-center`}>
                                     <h3 className="text-xl font-semibold dark:text-white">{feature.title}</h3>
                                     <p className="text-gray-700 dark:text-gray-300">{feature.description}</p>
                                 </div>
@@ -172,7 +170,6 @@ function Home({theme, toggleTheme}) {
                     )}
                 </section>
 
-                {/* Call to Action */}
                 <section className="text-center mt-10">
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Ready to Start Your Journey?</h2>
                     <button 

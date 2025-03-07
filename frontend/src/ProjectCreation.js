@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Dropdown from "./Dropdown.js";
 import GetMajors from './GetMajors.js';
 
-function ProjectCreation() {
+function ProjectCreation({darkMode, toggleDarkMode}) {
     const [range, setRange] = useState([null, null]);
     const [startDate, endDate] = range;
     const [error, setError] = useState(null);
@@ -111,69 +111,121 @@ function ProjectCreation() {
     };
 
     return (
-        <div className="ProjectCreation flex justify-center items-center min-h-screen">
-          
-            <div className="form-container p-6 rounded-lg shadow-lg w-full max-w-3xl" 
-                style={{ backgroundColor: projectData.color || "#ffffff" }}> 
-                
-                <h1 className="text-2xl font-semibold text-center mb-4">Create a New Project</h1>
-                
-                <form onSubmit={handleSubmit}>
-                    <label className="form-label">Project Name:
-                        <input type="text" name="name" value={projectData.name} onChange={handleChange} className="form-input" required />
-                    </label>
-    
-                    <label className="form-label">Project Description:
-                        <textarea name="description" value={projectData.description} onChange={handleChange} rows={4} className="form-textarea" required />
-                    </label>
-    
-                    <label className="form-label">Project Duration:
+        <div className={`flex justify-center items-center min-h-screen ${darkMode === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
+            <div 
+                className={`p-8 rounded-lg shadow-lg w-full max-w-3xl md:max-w-2xl transition-all duration-300`} 
+                style={{ backgroundColor: projectData.color || (darkMode === "dark" ? "#1F2937" : "#ffffff") }}
+            > 
+                <h1 className="text-2xl font-bold text-center mb-6">Create a New Project</h1>
+        
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block font-medium mb-1">Project Name:</label>
+                        <input 
+                            type="text" name="name" value={projectData.name} onChange={handleChange} 
+                            className={`w-full px-4 py-2 rounded-md border border-gray-300 focus:ring focus:ring-blue-400 focus:outline-none ${
+                                darkMode === "dark" ? "bg-gray-700 text-white" : "bg-white text-black"
+                            }`} required 
+                        />
+                    </div>
+        
+                    <div>
+                        <label className="block font-medium mb-1">Project Description:</label>
+                        <textarea 
+                            name="description" value={projectData.description} onChange={handleChange} rows={4} 
+                            className={`w-full px-4 py-2 rounded-md border border-gray-300 focus:ring focus:ring-blue-400 focus:outline-none ${
+                                darkMode === "dark" ? "bg-gray-700 text-white" : "bg-white text-black"
+                            }`} required 
+                        />
+                    </div>
+        
+                    <div>
+                        <label className="block font-medium mb-1">Project Duration:</label>
                         <DatePicker
                             selectsRange={true}
                             startDate={startDate}
                             endDate={endDate}
                             onChange={(update) => setRange(update)}
                             isClearable={true}
-                            className="date-picker"
+                            className={`w-full px-4 py-2 rounded-md border border-gray-300 focus:ring focus:ring-blue-400 focus:outline-none ${
+                                darkMode === "dark" ? "bg-gray-700 text-white" : "bg-white text-black"
+                            }`}
                         />
-                    </label>
-    
-                    <label className="form-label">Looking For:
-                        <input type="text" name="looking_for" value={looking_for} onChange={(e) => setLookingFor(e.target.value)} className="form-input" />
-                    </label>
-    
-                    <label className="form-label">Category:
-                        <select name="category" value={category} onChange={handleChange} className="form-input" required>
+                    </div>
+        
+                    <div>
+                        <label className="block font-medium mb-1">Looking For:</label>
+                        <input 
+                            type="text" name="looking_for" value={looking_for} onChange={(e) => setLookingFor(e.target.value)} 
+                            className={`w-full px-4 py-2 rounded-md border border-gray-300 focus:ring focus:ring-blue-400 focus:outline-none ${
+                                darkMode === "dark" ? "bg-gray-700 text-white" : "bg-white text-black"
+                            }`} 
+                        />
+                    </div>
+        
+                    <div>
+                        <label className="block font-medium mb-1">Category:</label>
+                        <select 
+                            name="category" value={category} onChange={handleChange} 
+                            className={`w-full px-4 py-2 rounded-md border border-gray-300 focus:ring focus:ring-blue-400 focus:outline-none ${
+                                darkMode === "dark" ? "bg-gray-700 text-white" : "bg-white text-black"
+                            }`} required
+                        >
                             <option value="">Select a category</option>
                             {majors.map((major, index) => (
                                 <option key={index} value={major}>{major}</option>
                             ))}
                         </select>
-                    </label>
-    
-                    <label className="form-label">Upload Image:
-                        <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} className="form-input" />
-                    </label>
-    
-                    {/* Color Selection */}
-                    <label className="form-label">Project Card Color:
-                        <div className="color-row flex gap-2 mt-2">
+                    </div>
+        
+                    <div>
+                        <label className="block font-medium mb-1">Upload Image:</label>
+                        <div className="relative w-full">
+                            <input 
+                                type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} 
+                                className="hidden"
+                                id="fileInput"
+                            />
+                            <label 
+                                htmlFor="fileInput" 
+                                className="cursor-pointer flex justify-center items-center w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-200 text-black hover:bg-gray-300"
+                            >
+                                Choose File
+                            </label>
+                        </div>
+                    </div>
+        
+
+                    <div>
+                        <label className="block font-medium mb-1">Project Card Color:</label>
+                        <div className="flex gap-2 mt-2">
                             {colorOptions.map((c) => (
-                                <div key={c}
+                                <div 
+                                    key={c}
                                     onClick={() => setProjectData({ ...projectData, color: c })}
-                                    className={`color-circle ${projectData.color === c ? 'border-2 border-black' : ''}`}
-                                    style={{ backgroundColor: c, width: "30px", height: "30px", borderRadius: "50%", cursor: "pointer" }}
+                                    className={`cursor-pointer w-8 h-8 rounded-full transition ${
+                                        projectData.color === c ? 'ring-2 ring-offset-2 ring-black' : ''
+                                    }`}
+                                    style={{ backgroundColor: c }}
                                 />
                             ))}
                         </div>
-                    </label>
-    
-                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-4 w-full">Create Project</button>
+                    </div>
+        
+                    <button 
+                        type="submit" 
+                        className={`w-full px-4 py-2 rounded-md text-white font-semibold transition ${
+                            darkMode === "dark" ? "bg-blue-500 hover:bg-blue-600" : "bg-blue-500 hover:bg-blue-600"
+                        }`}
+                    >
+                        Create Project
+                    </button>
+        
                 </form>
-    
+        
                 {error && <p className="text-red-500 mt-4">{error}</p>}
             </div>
-        </div>
+    </div>
     );
 }
 export default ProjectCreation;

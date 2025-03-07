@@ -710,7 +710,6 @@ class ProjectViewSet(viewsets.ViewSet):
 
             print(f"🔹 Request for project ID: {project_id} by {user_email}")
 
-            # 🔍 Debugging: Print all projects
             projects_ref = db.collection("users").stream()
             found_project = None
 

@@ -1,42 +1,18 @@
-import React, {useEffect,useState} from "react";
+import React, {useEffect,useState, useMemo} from "react";
 import Header from "../Header";
 import NoteCards from "../NoteCards";
 import { useMajors } from "../GetMajors"; 
 import { useNavigate } from "react-router-dom";
 import {auth} from "../firebase";
-export default function Dashboard({ theme, toggleTheme, selectedMajor }) {
+export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, setSelectedMajor }) {
     const [projects, setProjects] = React.useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
     const [error, setError] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+
     const [recommendedProjects, setRecommendedProjects] = useState([]); 
     const majors = useMajors();
-
-    // const cs_projects = [
-    //   { id: 1, title: 'Project A', Name: 'John', description: 'Working on 2D platformer game', looking_for: "college students", skills_required: ["C++", "Unity", "Game Design"], progress: "In Progress" },
-    //   { id: 2, title: 'Project B', Name: 'Alice', description: 'Developing AI-based chatbots for customer service', looking_for: "software engineers", skills_required: ["Python", "Machine Learning", "Natural Language Processing"], progress: "Completed" },
-    //   { id: 3, title: 'Project C', Name: 'Bob', description: 'Building a mobile app for task management', looking_for: "app developers", skills_required: ["React Native", "Firebase", "UI/UX Design"], progress: "In Progress" },
-    //   { id: 4, title: 'Project D', Name: 'Eve', description: 'Creating a web app for time tracking and productivity', looking_for: "frontend developers", skills_required: ["JavaScript", "CSS", "React"], progress: "Not Started" },
-    //   { id: 5, title: 'Project E', Name: 'Sarah', description: 'Developing a machine learning algorithm for image recognition', looking_for: "data scientists", skills_required: ["Python", "TensorFlow", "Computer Vision"], progress: "In Progress" },
-    //   { id: 6, title: 'Project F', Name: 'Mike', description: 'Working on a cloud-based storage solution', looking_for: "cloud engineers", skills_required: ["AWS", "Node.js", "Security"], progress: "Completed" },
-    //   { id: 7, title: 'Project G', Name: 'Tom', description: 'Building a social media platform for gamers', looking_for: "backend developers", skills_required: ["Node.js", "MongoDB", "WebSockets"], progress: "In Progress" },
-    //   { id: 8, title: 'Project H', Name: 'Rachel', description: 'Creating a data visualization dashboard for business analytics', looking_for: "data analysts", skills_required: ["Python", "Tableau", "SQL"], progress: "Not Started" },
-    //   { id: 9, title: 'Project I', Name: 'Chris', description: 'Developing a personal finance app', looking_for: "mobile developers", skills_required: ["Swift", "Xcode", "Financial APIs"], progress: "Completed" },
-    //   { id: 10, title: 'Project J', Name: 'Diana', description: 'Building an e-commerce platform with advanced search features', looking_for: "full-stack developers", skills_required: ["React", "Node.js", "GraphQL"], progress: "In Progress" }
-    // ];
-    
-    // const film_projects = [
-    //   { id: 1, title: 'Short Film A', Name: 'Liam', description: 'Creating a sci-fi short film with practical effects', looking_for: "cinematographers", skills_required: ["Camera Operation", "Lighting", "Editing"], progress: "In Progress" },
-    //   { id: 2, title: 'Documentary B', Name: 'Sophia', description: 'Producing a documentary about climate change', looking_for: "researchers", skills_required: ["Interviewing", "Research", "Video Editing"], progress: "Completed" },
-    //   { id: 3, title: 'Animation C', Name: 'Noah', description: 'Developing a 2D animated short film', looking_for: "animators", skills_required: ["Adobe Animate", "Storyboarding", "Character Design"], progress: "In Progress" },
-    //   { id: 4, title: 'Feature Film D', Name: 'Olivia', description: 'Directing an indie drama film', looking_for: "actors", skills_required: ["Acting", "Screenwriting", "Directing"], progress: "Not Started" },
-    //   { id: 5, title: 'Experimental Film E', Name: 'James', description: 'Exploring avant-garde storytelling techniques', looking_for: "visual artists", skills_required: ["Abstract Filmmaking", "Color Grading", "Sound Design"], progress: "In Progress" },
-    //   { id: 6, title: 'Horror Film F', Name: 'Emma', description: 'Shooting a psychological horror short', looking_for: "makeup artists", skills_required: ["SFX Makeup", "Set Design", "Cinematography"], progress: "Completed" },
-    //   { id: 7, title: 'Music Video G', Name: 'Benjamin', description: 'Directing a music video for an indie band', looking_for: "editors", skills_required: ["Adobe Premiere", "After Effects", "Choreography"], progress: "In Progress" },
-    //   { id: 8, title: 'Comedy Sketch H', Name: 'Ava', description: 'Filming a series of short comedy sketches', looking_for: "writers", skills_required: ["Comedy Writing", "Improv", "Editing"], progress: "Not Started" },
-    //   { id: 9, title: 'Fantasy Film I', Name: 'Ethan', description: 'Creating a fantasy adventure short with CGI', looking_for: "VFX artists", skills_required: ["Blender", "Maya", "Compositing"], progress: "Completed" },
-    //   { id: 10, title: 'Thriller Film J', Name: 'Mia', description: 'Producing a suspenseful thriller with a twist ending', looking_for: "producers", skills_required: ["Budgeting", "Casting", "Production Management"], progress: "In Progress" }
-    // ];
 
     const categorizedProjects = majors.reduce((acc, major) => {
         const filteredProjects = projects.filter(proj => (proj.category?.toLowerCase() || "") === major.toLowerCase());
@@ -46,13 +22,22 @@ export default function Dashboard({ theme, toggleTheme, selectedMajor }) {
         return acc;
     }, []);
 
+    const searchedProjects = useMemo(() => {
+        if (!searchQuery) return [];
+        return projects.filter(project =>
+            project.name?.trim().toLowerCase().includes(searchQuery.trim().toLowerCase()) 
+        );
+    }, [searchQuery, projects]);
+
+
+
     const getProjects = async () => {
         setLoading(true);
         try {
             let url = "http://localhost:8000/api/projects/";
-            if (selectedMajor !== "All") {
-                url += `?category=${encodeURIComponent(selectedMajor)}`;
-            }
+            // if (selectedMajor !== "All") {
+            //     url += `?category=${encodeURIComponent(selectedMajor)}`;
+            // }
             const user = auth.currentUser;
             const idToken = await user.getIdToken();
             const response = await fetch(url, {
@@ -69,7 +54,11 @@ export default function Dashboard({ theme, toggleTheme, selectedMajor }) {
                 const userEmail = user.email;
                 const filteredProjects = data.filter(project => project.owner !== userEmail);
                 
-                setProjects(data);
+                if (selectedMajor === "All") {
+                    setProjects(data); 
+                } else {
+                    setProjects(data.filter(proj => proj.category === selectedMajor));
+                }
             } else {
                 throw new Error("Failed to fetch projects");
             }
@@ -145,20 +134,47 @@ export default function Dashboard({ theme, toggleTheme, selectedMajor }) {
 
 
     return (
-      <div className={`w-screen ${theme === "dark" ? "bg-gray-900 text-white"  : "bg-gray-100 text-black"}`}>
-        <main className = {`w-full ${theme === "dark" ? "bg-gray-800 shadow-md" : "bg-white shadow-md"}`}>
-        <h1 className="text-3xl font-bold mb-8">Welcome to CollabHub🎉</h1>
-        {loading ? (
-                    <div className="flex justify-center items-center h-64">
-                        <p className="text-xl text-gray-600">Loading projects...</p>
-                    </div>
-                ) : error ? (
-                    <div className="text-red-500 text-center">
-                        Error: {error}
-                    </div>
+        <div className={`w-screen min-h-screen ${darkMode === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
+        <main className={`w-full min-h-screen p-6 ${darkMode === "dark" ? "bg-gray-800 shadow-md" : "bg-white shadow-md"}`}>
+                <div className="mb-4">
+                    <input
+                        type="text"
+                        placeholder="Search for a project..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className={`w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-400 focus:outline-none ${darkMode === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}
+                    />
+                </div>
+            <h1 className="text-3xl font-bold mb-8 text-center">Welcome to Tech Nexus🎉</h1>
+    
+            {loading ? (
+                <div className="flex justify-center items-center h-64">
+                    <p className="text-xl text-gray-400">Loading projects...</p>
+                </div>
+            ) : error ? (
+                <div className="text-red-500 text-center font-semibold">
+                    Error: {error}
+                </div>
+            ) : (
+                <div className="space-y-10">
+
+                {searchedProjects.length > 0 ? (
+                    searchedProjects.map((project) => (
+                        <div key={project.id} className={`p-4 rounded-lg shadow-md transition 
+                            ${darkMode === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+                            <h2 className="text-xl font-semibold">{project.name}</h2>
+                            <p className="text-gray-600 dark:text-gray-300">{project.description}</p>
+                            <p className="text-sm text-gray-500">
+                                <strong>Looking for:</strong> {project.looking_for || "Not specified"}
+                            </p>
+                        </div>
+                    ))
                 ) : (
-                    <div className="space-y-10">
-                         <section>
+                    <p className="text-center text-gray-400 w-full">No matching projects found.</p>
+                )}
+
+                    {recommendedProjects.length > 0 && (
+                        <section>
                             <h2 className="text-2xl font-semibold mb-4">Recommended Projects</h2>
                             <NoteCards 
                                 items={recommendedProjects.map(project => ({
@@ -176,27 +192,36 @@ export default function Dashboard({ theme, toggleTheme, selectedMajor }) {
                                 }))} 
                                 category="Recommended" 
                             />
-                         </section>
-                         {categorizedProjects
-                            .map(({ category, projects }) => {
-                                const filteredProjects = projects.filter(project => project.owner !== auth.currentUser?.email);
-                                
-                                return filteredProjects.length > 0 ? (
-                                    <section key={category} className="mb-8">
-                                        <h2 className="text-2xl font-semibold mb-4">{category} Projects</h2>
-                                        <NoteCards 
-                                            items={filteredProjects} 
-                                            category={category} 
-                                            setSelectedProject={setSelectedProject}
-                                        />
-                                    </section>
-                                ) : null;  
-                            })}
-                    </div>
-                )}
-         
-         </main>
-      </div>
+                        </section>
+                    )}
+    
+                        {categorizedProjects.length > 0 ? (
+                         categorizedProjects.map(({ category, projects }) => {
+                            const filteredProjects = projects.filter(project => project.owner !== auth.currentUser?.email);
+
+                            return filteredProjects.length > 0 ? (
+                                <section key={category} className="mb-8">
+                                    <h2 className="text-2xl font-semibold mb-4">{category} Projects</h2>
+                                    <NoteCards 
+                                        darkMode={darkMode} 
+                                        toggleDarkMode={toggleDarkMode} 
+                                        items={filteredProjects} 
+                                        category={category} 
+                                        setSelectedProject={setSelectedProject}
+                                    />
+                                </section>
+                            ) : null;  
+                        })
+                    ) : (
+                        <div className="flex justify-center items-center h-64">
+                            <p className="text-xl text-gray-400">No Projects Avaliable</p>
+                        </div>
+                    )}
+                </div>
+            )}
+    
+        </main>
+    </div>
     );
   }
   

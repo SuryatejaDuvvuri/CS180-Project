@@ -36,7 +36,7 @@ function App() {
   const [user, setUser] = useState(null);
   // Triggers whenever the light/dark mode button is pressed
   // Switches the App's className
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
 
   useEffect(() => {
       const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -73,11 +73,11 @@ function App() {
             TEXT TEST
           </div> */}
            <div className="text-center">
-            {user &&  <Header darkMode = {theme} toggleDarkMode={toggleTheme} onMajorChange={handleMajorChange}/>}
+           {user &&  <Header darkMode = {theme} toggleDarkMode={toggleTheme} onMajorChange={handleMajorChange}/>}
           
-           <Routes>
+            <Routes>
 
-              <Route path=":email/profile/" element={<UserProfile darkMode = {theme} toggleDarkMode={toggleTheme} />} />
+             <Route path=":email/profile/" element={<UserProfile darkMode = {theme} toggleDarkMode={toggleTheme} />} />
                
               <Route path=":email/:projectId/applicants/" element={
                     <ProtectedRoute>
@@ -94,7 +94,7 @@ function App() {
                 <Route path="/home" element={
 
                     <ProtectedRoute>
-                      <Dashboard darkMode = {theme} toggleDarkMode={toggleTheme} selectedMajor ={selectedMajor} />
+                      <Dashboard darkMode = {theme} toggleDarkMode={toggleTheme} selectedMajor ={selectedMajor}  onMajorChange={handleMajorChange} />
                     </ProtectedRoute>
                 } />
                  <Route path="/:projectId/apply/" element={
@@ -108,23 +108,15 @@ function App() {
                     </ProtectedRoute>
                   } />
             <Route path="/" element={<Home darkMode = {theme} toggleDarkMode={toggleTheme} />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-
+            <Route path="/login" element={<Login darkMode = {theme} toggleDarkMode={toggleTheme} />} />
+            <Route path="/signup" element={<SignUp darkMode = {theme} toggleDarkMode={toggleTheme}/>} />
            
-          </Routes>
+           
+          </Routes> 
            </div>
     </div>
     </Router>
   );
-  /*return(
-    <div className={isLight ? "App LightMode" : "App DarkMode"}>
-      <Router>
-        <Header/>
-      </Router>
-      <ApplicationForm/>
-    </div>
-  );*/
 }
 
 export default App;

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { signUpWithEmail } from "./firebase";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
-function Signup() {
+function Signup({darkMode, toggleDarkMode}) {
     const navigate = useNavigate(); 
     const [formData, setFormData] = useState({
         name: '',
@@ -88,105 +88,105 @@ function Signup() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-3xl">
-                <h1 className="text-3xl font-bold text-center mb-6">Create an Account</h1>
+        <div className={`min-h-screen flex items-center justify-center ${darkMode === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
+            <div className={`shadow-lg rounded-lg p-8 w-full max-w-3xl ${darkMode === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+                <h1 className={`text-3xl font-bold text-center mb-6 ${darkMode === "dark" ? "text-white" : "text-black"}`}>Create an Account</h1>
 
                 {error && <p className="text-red-500 text-center">{error}</p>}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* Full Name */}
-                    <div>
-                        <label className="block text-gray-700 font-semibold">Full Name</label>
-                        <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                {/* Full Name */}
+                <div>
+                    <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Full Name</label>
+                    <input type="text" name="name" value={formData.name} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
+                </div>
+
+                {/* Email */}
+                <div>
+                    <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Email</label>
+                    <input type="email" name="email" value={formData.email} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
+                </div>
+
+                {/* NetID */}
+                <div>
+                    <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>NetID</label>
+                    <input type="text" name="netId" value={formData.netId} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
+                </div>
+
+                {/* Skills */}
+                <div>
+                    <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Skills</label>
+                    <input type="text" name="skills" value={formData.skills} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
+                </div>
+
+                {/* Pronouns */}
+                <div>
+                    <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Pronouns</label>
+                    <input type="text" name="pronouns" value={formData.pronouns} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
+                </div>
+
+                {/* Resume Upload */}
+                <div>
+                    <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Resume (PDF only)</label>
+                    <input type="file" accept=".pdf" onChange={handleFileUpload} className="w-full p-2 border rounded-lg" />
+                </div>
+
+                {/* GitHub & LinkedIn */}
+                <div className="flex gap-4">
+                    <div className="flex items-center w-1/2">
+                    <FaGithub className={`mr-2 ${darkMode === "dark" ? "text-white" : "text-gray-700"}`} size={24} />
+                    <input type="url" name="github" value={formData.github} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} placeholder="GitHub Profile" />
                     </div>
 
-                    {/* Email */}
-                    <div>
-                        <label className="block text-gray-700 font-semibold">Email</label>
-                        <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                    <div className="flex items-center w-1/2">
+                    <FaLinkedin className="mr-2 text-blue-600" size={24} />
+                    <input type="url" name="linkedin" value={formData.linkedin} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} placeholder="LinkedIn Profile" />
                     </div>
+                </div>
 
-                    {/* NetID */}
-                    <div>
-                        <label className="block text-gray-700 font-semibold">NetID</label>
-                        <input type="text" name="netId" value={formData.netId} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
-                    </div>
+                {/* Interests */}
+                <div>
+                    <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Interests</label>
+                    <input type="text" name="interests" value={formData.interests} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
+                </div>
 
-                    {/* Skills */}
-                    <div>
-                        <label className="block text-gray-700 font-semibold">Skills</label>
-                        <input type="text" name="skills" value={formData.skills} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
-                    </div>
+                {/* Experience */}
+                <div>
+                    <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Experience</label>
+                    <input type="text" name="experience" value={formData.experience} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
+                </div>
 
-                    {/* Pronouns */}
-                    <div>
-                        <label className="block text-gray-700 font-semibold">Pronouns</label>
-                        <input type="text" name="pronouns" value={formData.pronouns} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
-                    </div>
+                {/* Location */}
+                <div>
+                    <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Location</label>
+                    <input type="text" name="location" value={formData.location} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
+                </div>
 
-                    {/* Resume Upload */}
-                    <div>
-                        <label className="block text-gray-700 font-semibold">Resume (PDF only)</label>
-                        <input type="file" accept=".pdf" onChange={handleFileUpload} className="w-full p-2 border rounded-lg" />
-                    </div>
+                {/* Weekly Time Commitment */}
+                <div>
+                    <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Weekly Time Commitment (hours)</label>
+                    <input type="number" name="weeklyHours" value={formData.weeklyHours} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
+                </div>
 
-                    {/* GitHub & LinkedIn */}
-                    <div className="flex gap-4">
-                        <div className="flex items-center w-1/2">
-                            <FaGithub className="mr-2 text-gray-700" size={24} />
-                            <input type="url" name="github" value={formData.github} onChange={handleChange} className="w-full p-2 border rounded-lg" placeholder="GitHub Profile" />
-                        </div>
+                {/* Password */}
+                <div>
+                    <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Password</label>
+                    <input type="password" name="password" value={formData.password} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
+                </div>
 
-                        <div className="flex items-center w-1/2">
-                            <FaLinkedin className="mr-2 text-blue-600" size={24} />
-                            <input type="url" name="linkedin" value={formData.linkedin} onChange={handleChange} className="w-full p-2 border rounded-lg" placeholder="LinkedIn Profile" />
-                        </div>
-                    </div>
+                {/* Confirm Password */}
+                <div>
+                    <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Confirm Password</label>
+                    <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
+                </div>
 
-                    {/* Interests */}
-                    <div>
-                        <label className="block text-gray-700 font-semibold">Interests</label>
-                        <input type="text" name="interests" value={formData.interests} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
-                    </div>
-
-                    {/* Experience */}
-                    <div>
-                        <label className="block text-gray-700 font-semibold">Experience</label>
-                        <input type="text" name="experience" value={formData.experience} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
-                    </div>
-
-                    {/* Location */}
-                    <div>
-                        <label className="block text-gray-700 font-semibold">Location</label>
-                        <input type="text" name="location" value={formData.location} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
-                    </div>
-
-                    {/* Weekly Time Commitment */}
-                    <div>
-                        <label className="block text-gray-700 font-semibold">Weekly Time Commitment (hours)</label>
-                        <input type="number" name="weeklyHours" value={formData.weeklyHours} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
-                    </div>
-
-                    {/* Password */}
-                    <div>
-                        <label className="block text-gray-700 font-semibold">Password</label>
-                        <input type="password" name="password" value={formData.password} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
-                    </div>
-
-                    {/* Confirm Password */}
-                    <div>
-                        <label className="block text-gray-700 font-semibold">Confirm Password</label>
-                        <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
-                    </div>
-
-                    {/* Submit Button */}
-                    <button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mt-4">
-                        Sign Up
-                    </button>
+                {/* Submit Button */}
+                <button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mt-4 transition">
+                    Sign Up
+                </button>
                 </form>
             </div>
-        </div>
+            </div>
     );
 }
 
