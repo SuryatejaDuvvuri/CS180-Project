@@ -31,7 +31,7 @@ import datetime
 
 User = get_user_model()
 # db = firestore.client()
-OLLAMA_URL = "http://127.0.0.1:11434"
+OLLAMA_URL = os.getenv("OLLAMA_API_URL", "http://127.0.0.1:11434")
 def get_user_id_by_email(email):
         users_query = db.collection("users").where("email", "==", email).stream()
         
@@ -651,9 +651,9 @@ class ProjectViewSet(viewsets.ViewSet):
             Summary:
             """
 
-            # Send API request to Ollama
+
             response = requests.post(
-                f"{self.OLLAMA_URL}/api/generate",
+                f"{OLLAMA_URL}/api/generate",
                 json={
                     "model": "llama3.2", 
                     "prompt": prompt,
@@ -882,16 +882,13 @@ class ProjectUpdateView(RetrieveUpdateAPIView):
         except Exception as e:
             return Response({"error": str(e)}, status=400)
 
-
-
 class ProjectRecommendationViewSet(viewsets.ViewSet):
-     def list(self, request, email=None):
-        """ API endpoint to get project recommendations for a user. """
+     def list(self, request, email):
+        print("Hello")
         if not email:
             return Response({"error": "Email parameter is required"}, status=400)
+    
         print("🔍 Received email:", email)
-
-
         recommended_projects = recommend_projects(email)
         return JsonResponse(recommended_projects, safe=False)
      

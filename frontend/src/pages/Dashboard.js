@@ -78,7 +78,9 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
             setLoading(false);
         }
     }
-    
+    React.useEffect(() => {
+        fetchRecommendedProjects();;
+    }, []);
 
     const fetchRecommendedProjects = async () => {
         setLoading(true);
@@ -94,7 +96,8 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
 
             const idToken = await user.getIdToken();
             const email = user.email;
-
+            console.log(`${API_BASE_URL}/api/recommend-projects/${email}/`);
+            
             const response = await fetch(`${API_BASE_URL}/api/recommend-projects/${email}/`, {
                 method: "GET",
                 headers: { 
@@ -136,9 +139,7 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
         
     }, [selectedMajor]);
 
-    React.useEffect(() => {
-        fetchRecommendedProjects();;
-    }, []);
+    
 
 
     return (

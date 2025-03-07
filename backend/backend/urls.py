@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from api.views import (
     ProjectViewSet, ProjectDeleteView, ProjectUpdateView, 
     ApplicantViewSet, FeedBackViewSet, UserProfileViewSet, 
@@ -34,4 +36,4 @@ urlpatterns = [
     path("api/users/<str:email>/", UserProfileViewSet.as_view({"get": "retrieve", "put": "update", "delete": "delete"})),
 
     path("api/recommend-projects/<str:email>/", ProjectRecommendationViewSet.as_view({"get": "list"}), name="recommend_projects"),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
