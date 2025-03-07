@@ -3,6 +3,7 @@ from django.http import JsonResponse
 import json
 from unittest.mock import patch, MagicMock
 from .views import UserProfileViewSet
+from .sendEmail import sendEmail
 
 
 class AuthenticationTestCase(TestCase):
@@ -43,3 +44,48 @@ class AuthenticationTestCase(TestCase):
         response_data = json.loads(response.content)
         self.assertIn("message", response_data)
         self.assertEqual(response_data["message"], "Login successful!")
+
+
+class EmailTestCase(TestCase):
+    def setUp(self):
+        self.recipient = "student@ucr.edu"
+        self.name = "Test Student"
+        self.subject = "Test Email"
+        self.env_vars = {
+            "SENDGRID_API_KEY": "test_api_key",
+            "EMAIL": "sender@ucr.edu",
+            "FRONTEND_URL": "http://localhost:3000",
+        }
+
+    def mock_getenv(self, key, default=None):
+        return self.env_vars.get(key, default)
+
+    @patch("api.sendEmail.SendGridAPIClient")
+    @patch("api.sendEmail.os.getenv")
+    def test_successful_email_send(self, mock_getenv, mock_sendgrid):
+        mock_getenv.side_effect = self.mock_getenv
+
+        mock_instance = MagicMock()
+        mock_sendgrid.return_value = mock_instance
+        mock_instance.send.return_value.status_code = 202
+
+        result = sendEmail(
+            self.recipient, self.name, self.subject, "thanks", applicant_name=self.name
+        )
+
+        self.assertTrue(result)
+
+    @patch("api.sendEmail.SendGridAPIClient")
+    @patch("api.sendEmail.os.getenv")
+    def test_failed_email_send(self, mock_getenv, mock_sendgrid):
+        mock_getenv.side_effect = self.mock_getenv
+
+        mock_instance = MagicMock()
+        mock_sendgrid.return_value = mock_instance
+        mock_instance.send.side_effect = Exception("Failed to send")
+
+        result = sendEmail(
+            self.recipient, self.name, self.subject, "thanks", applicant_name=self.name
+        )
+
+        self.assertFalse(result)
