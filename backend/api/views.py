@@ -60,7 +60,7 @@ class FeedBackViewSet(viewsets.ViewSet):
             id_token = auth_header.split(" ")[1]
             decoded_token = auth.verify_id_token(id_token)
             user_email = decoded_token.get("email")
-            print(f"🔹 Authenticated User Email: {user_email}")
+           
 
             users_ref = db.collection("users").stream()
             owner_email = None
@@ -71,7 +71,7 @@ class FeedBackViewSet(viewsets.ViewSet):
                 if user_projects_ref.get().exists:
                     owner_email = user_doc.get("email")  
                     owner_id = user_doc.id
-                    print(f"✅ Found Project Owner: {owner_email}")
+                   
                     break
             if not owner_email:
                 return JsonResponse({"error": "Project not found"}, status=404)
@@ -640,20 +640,37 @@ class UserProfileViewSet(viewsets.ViewSet):
 class ProjectViewSet(viewsets.ViewSet):
     def generate_summary(self, description):
         try:
-            print(description)
-            prompt = f"Summarize a project one short sentence."
-            prompt += f"Here is a project description:\n\n{description}\n\n"
-            # response = requests.post("http://127.0.0.1:11434/api/generate", json={
-            # "model": "llama3",
-            # "prompt": prompt,
-            # "stream": False
-            # })
+            print("Project Description:", description)
 
-            response = ollama.chat(model="llama3.2", messages=[{"role": "user", "content": prompt}])
-            
-            summary = response['message']['content'].strip()
+            prompt = f"""
+            Summarize a project in one short sentence.
+            Here is a project description:
+
+            {description}
+
+            Summary:
+            """
+
+            # Send API request to Ollama
+            response = requests.post(
+                f"{self.OLLAMA_URL}/api/generate",
+                json={
+                    "model": "llama3.2", 
+                    "prompt": prompt,
+                    "stream": False
+                }
+            ).json()
+
+          
+            summary = response.get("response", "").strip()
+
+            if not summary:
+                return "No summary available"
+
             return summary
+
         except Exception as e:
+            print(f"Error generating summary: {e}")
             return "No summary available"
         
     def list(self, request):

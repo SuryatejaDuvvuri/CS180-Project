@@ -1,15 +1,17 @@
-
+import os
 from firebase import db
 import ollama
 import requests
 from django.http import JsonResponse
-OLLAMA_URL = "http://127.0.0.1:11434"
+
+
+OLLAMA_URL = os.getenv("OLLAMA_API_URL", "http://127.0.0.1:11434")
+
 def recommend_projects(user_email):  
     if not user_email:
         return {"error": "Email is required"}
-
     try:
-        # 1. Get the requesting user doc (by email)
+       
         user_query = db.collection("users").where("email", "==", user_email).stream()
         user_doc_id = None
         user_data = None
@@ -23,7 +25,7 @@ def recommend_projects(user_email):
             print("No user found for email:", user_email)
             return {"recommended_projects": []}
 
-        # Extract user's skills/interests from the doc
+
         user_skills = user_data.get("skills", [])
         user_interests = user_data.get("interests", [])
 
@@ -31,7 +33,7 @@ def recommend_projects(user_email):
         print(f"User Skills: {user_skills}")
         print(f"User Interests: {user_interests}")
 
-        # 2. Build a set of project IDs the user has created or joined (exclude these)
+
         excluded_projects = set()
         if user_doc_id:
             created_docs = db.collection("users") \
@@ -42,20 +44,18 @@ def recommend_projects(user_email):
                             .collection("projects_joined").stream()
 
             for doc in created_docs:
-                excluded_projects.add(doc.id)  # doc.id is "project-th0g" or similar
+                excluded_projects.add(doc.id)
             for doc in joined_docs:
                 excluded_projects.add(doc.id)
 
         print(f"Excluded projects (Created or Joined): {excluded_projects}")
 
         # 3. Gather all projects from all other users' subcollections.
-        #    We'll check each for potential recommendation via Ollama.
         recommended_projects = []
 
         all_users = db.collection("users").stream()
         for other_user_doc in all_users:
             if other_user_doc.id == user_doc_id:
-                # Skip the same user (we don't want to recommend their own projects)
                 continue
 
             # 3a. Check that user’s projects_created
@@ -65,7 +65,6 @@ def recommend_projects(user_email):
                                 .stream()
 
             for project_doc in other_created_ref:
-                # Skip if user has already created or joined the same project ID
                 if project_doc.id in excluded_projects:
                     continue
 
@@ -93,14 +92,13 @@ def recommend_projects(user_email):
                 ### Answer:
                 """
 
-                response = ollama.chat(model="llama3.2", messages=[{"role": "user", "content": prompt}])
-                # decision = run_ollama(prompt)
-              
-                if "message" in response and "content" in response["message"]:
-                    decision = response["message"]["content"].strip().lower()
-                else:
-                    print("Unexpected Ollama response:", response)
-                    decision = "no"
+                response = requests.post(
+                    f"{OLLAMA_URL}/api/generate",
+                    json={"model": "mistral", "prompt": prompt}
+                ).json()
+
+                decision = response.get("message", {}).get("content", "").strip().lower()
+
                 if "yes" in decision:
                     recommended_projects.append({
                         "project_id": project_doc.id,  
@@ -142,13 +140,14 @@ def recommend_projects(user_email):
 
                 ### Answer:
                 """
-                # decision = run_ollama(prompt)
-                response = ollama.chat(model="llama3.2", messages=[{"role": "user", "content": prompt}])
-                if "message" in response and "content" in response["message"]:
-                    decision = response["message"]["content"].strip().lower()
-                else:
-                    print("Unexpected Ollama response:", response)
-                    decision = "no"
+                
+                response = requests.post(
+                    f"{OLLAMA_URL}/api/generate",
+                    json={"model": "mistral", "prompt": prompt}
+                ).json()
+
+                decision = response.get("message", {}).get("content", "").strip().lower()
+
                 if "yes" in decision:
                     recommended_projects.append({
                         "project_id": project_doc.id, 
