@@ -97,87 +97,87 @@ function Signup() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Full Name */}
                     <div>
-                        <label className="block text-gray-700 font-semibold">Full Name</label>
-                        <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                        <label htmlFor="name" className="block text-gray-700 font-semibold">Full Name</label>
+                        <input id="name" type="text" name="name" value={formData.name} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
                     </div>
 
                     {/* Email */}
                     <div>
-                        <label className="block text-gray-700 font-semibold">Email</label>
-                        <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                        <label htmlFor="email" className="block text-gray-700 font-semibold">Email</label>
+                        <input id="email" type="email" name="email" value={formData.email} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
                     </div>
 
                     {/* NetID */}
                     <div>
-                        <label className="block text-gray-700 font-semibold">NetID</label>
-                        <input type="text" name="netId" value={formData.netId} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                        <label htmlFor="netId" className="block text-gray-700 font-semibold">NetID</label>
+                        <input id="netId" type="text" name="netId" value={formData.netId} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
                     </div>
 
                     {/* Skills */}
                     <div>
-                        <label className="block text-gray-700 font-semibold">Skills</label>
-                        <input type="text" name="skills" value={formData.skills} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                        <label htmlFor="skills" className="block text-gray-700 font-semibold">Skills</label>
+                        <input id="skills" type="text" name="skills" value={formData.skills} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
                     </div>
 
                     {/* Pronouns */}
                     <div>
-                        <label className="block text-gray-700 font-semibold">Pronouns</label>
-                        <input type="text" name="pronouns" value={formData.pronouns} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                        <label htmlFor="pronouns" className="block text-gray-700 font-semibold">Pronouns</label>
+                        <input id="pronouns" type="text" name="pronouns" value={formData.pronouns} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
                     </div>
 
                     {/* Resume Upload */}
                     <div>
-                        <label className="block text-gray-700 font-semibold">Resume (PDF only)</label>
-                        <input type="file" accept=".pdf" onChange={handleFileUpload} className="w-full p-2 border rounded-lg" />
+                        <label htmlFor="resume" className="block text-gray-700 font-semibold">Resume (PDF only)</label>
+                        <input id="resume" type="file" accept=".pdf" onChange={handleFileUpload} className="w-full p-2 border rounded-lg" />
                     </div>
 
                     {/* GitHub & LinkedIn */}
                     <div className="flex gap-4">
                         <div className="flex items-center w-1/2">
                             <FaGithub className="mr-2 text-gray-700" size={24} />
-                            <input type="url" name="github" value={formData.github} onChange={handleChange} className="w-full p-2 border rounded-lg" placeholder="GitHub Profile" />
+                            <input id="github" type="url" name="github" value={formData.github} onChange={handleChange} className="w-full p-2 border rounded-lg" placeholder="GitHub Profile" />
                         </div>
 
                         <div className="flex items-center w-1/2">
                             <FaLinkedin className="mr-2 text-blue-600" size={24} />
-                            <input type="url" name="linkedin" value={formData.linkedin} onChange={handleChange} className="w-full p-2 border rounded-lg" placeholder="LinkedIn Profile" />
+                            <input id="linkedin" type="url" name="linkedin" value={formData.linkedin} onChange={handleChange} className="w-full p-2 border rounded-lg" placeholder="LinkedIn Profile" />
                         </div>
                     </div>
 
                     {/* Interests */}
                     <div>
-                        <label className="block text-gray-700 font-semibold">Interests</label>
-                        <input type="text" name="interests" value={formData.interests} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                        <label htmlFor="interests" className="block text-gray-700 font-semibold">Interests</label>
+                        <input id="interests" type="text" name="interests" value={formData.interests} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
                     </div>
 
                     {/* Experience */}
                     <div>
-                        <label className="block text-gray-700 font-semibold">Experience</label>
-                        <input type="text" name="experience" value={formData.experience} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                        <label htmlFor="experience" className="block text-gray-700 font-semibold">Experience</label>
+                        <input id="experience" type="text" name="experience" value={formData.experience} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
                     </div>
 
                     {/* Location */}
                     <div>
-                        <label className="block text-gray-700 font-semibold">Location</label>
-                        <input type="text" name="location" value={formData.location} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                        <label htmlFor="location" className="block text-gray-700 font-semibold">Location</label>
+                        <input id="location" type="text" name="location" value={formData.location} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
                     </div>
 
                     {/* Weekly Time Commitment */}
                     <div>
-                        <label className="block text-gray-700 font-semibold">Weekly Time Commitment (hours)</label>
-                        <input type="number" name="weeklyHours" value={formData.weeklyHours} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                        <label htmlFor="weeklyHours" className="block text-gray-700 font-semibold">Weekly Time Commitment (hours)</label>
+                        <input id="weeklyHours" type="number" name="weeklyHours" value={formData.weeklyHours} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
                     </div>
 
                     {/* Password */}
                     <div>
-                        <label className="block text-gray-700 font-semibold">Password</label>
-                        <input type="password" name="password" value={formData.password} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                        <label htmlFor="password" className="block text-gray-700 font-semibold">Password</label>
+                        <input id="password" type="password" name="password" value={formData.password} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
                     </div>
 
                     {/* Confirm Password */}
                     <div>
-                        <label className="block text-gray-700 font-semibold">Confirm Password</label>
-                        <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                        <label htmlFor="confirmPassword" className="block text-gray-700 font-semibold">Confirm Password</label>
+                        <input id="confirmPassword" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
                     </div>
 
                     {/* Submit Button */}
