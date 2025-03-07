@@ -4,7 +4,7 @@ import { signUpWithEmail } from "./firebase";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 function Signup() {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
         email: '',

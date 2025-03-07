@@ -1,18 +1,18 @@
-import React, {useEffect,useState} from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../Header";
 import NoteCards from "../NoteCards";
-import { useMajors } from "../GetMajors"; 
+import { useMajors } from "../GetMajors";
 import { useNavigate } from "react-router-dom";
-import {auth} from "../firebase";
+import { auth } from "../firebase";
 export default function Dashboard({ selectedMajor }) {
     const [projects, setProjects] = React.useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
     const [error, setError] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
-    const [recommendedProjects, setRecommendedProjects] = useState([]); 
+    const [recommendedProjects, setRecommendedProjects] = useState([]);
     const majors = useMajors();
 
-    
+
     const categorizedProjects = majors.reduce((acc, major) => {
         const filteredProjects = projects.filter(proj => (proj.category?.toLowerCase() || "") === major.toLowerCase());
         if (filteredProjects.length > 0) {
@@ -52,16 +52,14 @@ export default function Dashboard({ selectedMajor }) {
             setLoading(false);
         }
     }
-    
+
 
     const fetchRecommendedProjects = async () => {
         setLoading(true);
-        try
-        {
+        try {
             setLoading(true);
             const user = auth.currentUser;
-            if (!user) 
-            {
+            if (!user) {
                 console.error("No authenticated user found.");
                 return;
             }
@@ -71,14 +69,13 @@ export default function Dashboard({ selectedMajor }) {
 
             const response = await fetch(`http://localhost:8000/api/recommend-projects/${email}/`, {
                 method: "GET",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${idToken}`,
                 },
             });
 
-            if (!response.ok) 
-            {
+            if (!response.ok) {
                 throw new Error("Failed to fetch recommended projects");
             }
 
@@ -92,13 +89,11 @@ export default function Dashboard({ selectedMajor }) {
                 setRecommendedProjects([]);
             }
         }
-        catch(err)
-        {
+        catch (err) {
             console.error("Error fetching recommended projects:", err);
             setRecommendedProjects([]);
         }
-        finally
-        {
+        finally {
             setLoading(false);
         }
     }
@@ -108,7 +103,7 @@ export default function Dashboard({ selectedMajor }) {
     // };
     React.useEffect(() => {
         getProjects();
-        
+
     }, [selectedMajor]);
 
     React.useEffect(() => {
@@ -117,10 +112,10 @@ export default function Dashboard({ selectedMajor }) {
 
 
     return (
-      <div className="w-screen flex flex-col items-center justify-center">
-        <main className = "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold mb-8">Welcome to CollabHub🎉</h1>
-        {loading ? (
+        <div className="w-screen flex flex-col items-center justify-center">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <h1 className="text-3xl font-bold mb-8">Welcome to CollabHub🎉</h1>
+                {loading ? (
                     <div className="flex justify-center items-center h-64">
                         <p className="text-xl text-gray-600">Loading projects...</p>
                     </div>
@@ -130,12 +125,12 @@ export default function Dashboard({ selectedMajor }) {
                     </div>
                 ) : (
                     <div className="space-y-10">
-                         <section>
+                        <section>
                             <h2 className="text-2xl font-semibold mb-4">Recommended Projects</h2>
-                            <NoteCards 
+                            <NoteCards
                                 items={recommendedProjects.map(project => ({
                                     project_id: project.project_id || "N/A",
-                                    image_url: project.image_url || "",  
+                                    image_url: project.image_url || "",
                                     name: project.name || "Unnamed Project",
                                     description: project.description || "No description available.",
                                     owner: project.owner || "Unknown",
@@ -145,25 +140,24 @@ export default function Dashboard({ selectedMajor }) {
                                     team_size: project.number_of_people || 1,
                                     start_date: project.start_date || "No start date",
                                     end_date: project.end_date || "No end date",
-                                }))} 
-                                category="Recommended" 
+                                }))}
+                                category="Recommended"
                             />
-                         </section>
-                         {categorizedProjects.map(({ category, projects }) => (
+                        </section>
+                        {categorizedProjects.map(({ category, projects }) => (
                             <section key={category}>
                                 <h2 className="text-2xl font-semibold mb-4">{category} Projects</h2>
-                                <NoteCards 
-                                    items={projects} 
-                                    category={category} 
+                                <NoteCards
+                                    items={projects}
+                                    category={category}
                                     setSelectedProject={setSelectedProject}
                                 />
                             </section>
                         ))}
                     </div>
                 )}
-         
-         </main>
-      </div>
+
+            </main>
+        </div>
     );
-  }
-  
+}

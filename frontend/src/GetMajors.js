@@ -18,7 +18,7 @@ export function useMajors() {
 
     useEffect(() => {
         async function fetchMajors() {
-            const fileContents = await getData("/Major-Categories.txt");  
+            const fileContents = await getData("/Major-Categories.txt");
             setMajors(fileContents.split(", ").map((major) => major.trim()));
         }
 
@@ -29,8 +29,7 @@ export function useMajors() {
 }
 
 // Function that returns majors
-export async function GetMajors()
-{
+export async function GetMajors() {
     const fileContents = await getData("/Major-Categories.txt");
     return fileContents.split(", ").map((major) => major.trim());
 };

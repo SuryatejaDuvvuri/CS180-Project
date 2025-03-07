@@ -8,7 +8,7 @@ function NoteCards({ items = [], category }) {
     const [projects, setProjects] = useState(Array.isArray(items) ? items : []);
     const [selectedProject, setSelectedProject] = useState(null);
     const [scrollIndex, setScrollIndex] = useState(0);
-    const maxVisible = 3; 
+    const maxVisible = 3;
 
 
     const handleLeftScroll = () => {
@@ -39,7 +39,7 @@ function NoteCards({ items = [], category }) {
                                 key={item.id}
                                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
                             >
-                                 {item.image_url && (
+                                {item.image_url && (
                                     <img
                                         src={item.image_url}
                                         alt={item.name}
@@ -58,11 +58,11 @@ function NoteCards({ items = [], category }) {
                                             Category: {item.category}
                                         </span>
                                         <span className="text-sm text-gray-500">
-                                             Looking For: {item.looking_for}
+                                            Looking For: {item.looking_for}
                                         </span>
                                         <span className="text-sm text-gray-500">Team Size: {item.number_of_people}</span>
                                     </div>
-                                    
+
                                     <button
                                         onClick={() => openModal(item)}
                                         className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm transition-colors duration-300"

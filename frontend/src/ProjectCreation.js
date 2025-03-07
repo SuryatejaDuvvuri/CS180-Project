@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import './ProjectCreation.css';
 import DatePicker from "react-datepicker";
-import { useMajors } from "./GetMajors"; 
+import { useMajors } from "./GetMajors";
 import "react-datepicker/dist/react-datepicker.css";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -111,7 +111,7 @@ function ProjectCreation() {
 
     return (
         <div className="ProjectCreation">
-            <br/>
+            <br />
             <h1>Create a New Project</h1>
             <form onSubmit={handleSubmit} className="form-container">
                 {/* Project Name */}

@@ -1,14 +1,12 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 
-function Email({email,name,projName,type})
-{
-    const sendEmail = async(type) => {
-        const subject = type === "accept" ?  `Congratulations! You’ve been accepted to ${projName}`
-        : type === "reject" ? `Thank you for applying to ${projName}` : `Thank you for your interest in ${projName}`;
+function Email({ email, name, projName, type }) {
+    const sendEmail = async (type) => {
+        const subject = type === "accept" ? `Congratulations! You’ve been accepted to ${projName}`
+            : type === "reject" ? `Thank you for applying to ${projName}` : `Thank you for your interest in ${projName}`;
 
-        try
-        {
+        try {
             const response = await fetch("http://localhost:8000/api/send_email/", {
                 method: "POST",
                 headers: {
@@ -18,7 +16,7 @@ function Email({email,name,projName,type})
                     email: email,
                     name: name,
                     subject: subject,
-                    type: type, 
+                    type: type,
                     project_name: projName,
                 }),
             });
@@ -31,35 +29,34 @@ function Email({email,name,projName,type})
                 alert("Error sending email");
             }
         }
-        catch(error)
-        {
+        catch (error) {
 
         }
     }
     return (
         <div className="p-4">
-        <h2 className="text-xl font-semibold mb-3">Send Email to {name}</h2>
-        <div className="flex space-x-2">
-            <button
-                className="bg-green-500 text-white px-4 py-2 rounded"
-                onClick={() => sendEmail("accept")}
-            >
-                Accept
-            </button>
-            <button
-                className="bg-red-500 text-white px-4 py-2 rounded"
-                onClick={() => sendEmail("reject")}
-            >
-                Reject
-            </button>
-            <button
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-                onClick={() => sendEmail("thanks")}
-            >
-                Thanks for Applying
-            </button>
+            <h2 className="text-xl font-semibold mb-3">Send Email to {name}</h2>
+            <div className="flex space-x-2">
+                <button
+                    className="bg-green-500 text-white px-4 py-2 rounded"
+                    onClick={() => sendEmail("accept")}
+                >
+                    Accept
+                </button>
+                <button
+                    className="bg-red-500 text-white px-4 py-2 rounded"
+                    onClick={() => sendEmail("reject")}
+                >
+                    Reject
+                </button>
+                <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                    onClick={() => sendEmail("thanks")}
+                >
+                    Thanks for Applying
+                </button>
+            </div>
         </div>
-    </div>
     );
 }
 

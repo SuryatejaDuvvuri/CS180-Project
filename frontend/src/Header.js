@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Dropdown from './Dropdown.js';
-import { useMajors } from "./GetMajors"; 
-import { useNavigate } from "react-router-dom"; 
+import { useMajors } from "./GetMajors";
+import { useNavigate } from "react-router-dom";
 import lightLogo from "./assets/light mode logo.png";
 import darkLogo from "./assets/dark mode logo.png";
 import ProjectCreation from "./ProjectCreation";
@@ -10,7 +10,7 @@ import { logout } from "./firebase.js";
 // The header for the website. Consists of a "View profile" button, a "Create project" button,
 //    a "Filter" button to filter by majors, and a search bar.
 
-function Header({method, onMajorChange}) {
+function Header({ method, onMajorChange }) {
 
     const navigate = useNavigate();
     // const [showProjectCreation, setShowProjectCreation] = React.useState(false);
@@ -25,11 +25,11 @@ function Header({method, onMajorChange}) {
     // }, []);
 
     const [selectedMajor, setSelectedMajor] = useState("All");
-    
+
     const handleLogout = async () => {
         await logout();
-        localStorage.removeItem("authToken"); 
-        navigate("/"); 
+        localStorage.removeItem("authToken");
+        navigate("/");
     };
 
     // Triggers whenever the light/dark mode button is pressed
@@ -43,8 +43,7 @@ function Header({method, onMajorChange}) {
     const handleMajorSelect = (event) => {
         const major = event.target.value;
         setSelectedMajor(major);
-        if (onMajorChange) 
-        {
+        if (onMajorChange) {
             onMajorChange(major);
         }
     };
@@ -70,18 +69,18 @@ function Header({method, onMajorChange}) {
         <header className={`w-screen bg-${isLight ? 'white' : 'gray-900'} text-${isLight ? 'black' : 'white'}`}>
             <div className="bg-mainColor p-5 flex items-center justify-between">
                 <div className="flex space-x-4 items-center">
-                        <button 
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                            onClick={() => navigate("/home")}
-                        >
-                            Back to Home
-                        </button>
-                    <button 
+                    <button
+                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        onClick={() => navigate("/home")}
+                    >
+                        Back to Home
+                    </button>
+                    <button
                         className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
                         onClick={() => navigate("/profile/:email")}>
                         View Profile
                     </button>
-                    <button 
+                    <button
                         className="px-4 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
                         onClick={() => navigate("/create")}
                     >
@@ -90,7 +89,7 @@ function Header({method, onMajorChange}) {
                 </div>
 
                 <div className="w-full flex justify-center">
-                    <select 
+                    <select
                         className="text-white bg-green-500 rounded-md px-4 py-2 cursor-pointer"
                         onChange={handleMajorSelect}
                         value={selectedMajor}
@@ -114,7 +113,7 @@ function Header({method, onMajorChange}) {
             </div>
             <div className="text-white bg-headerShadow p-1 w-full flex items-center justify-center" />
         </header>
-    
+
     );
 }
 

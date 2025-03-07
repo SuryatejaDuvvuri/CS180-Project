@@ -31,15 +31,15 @@ function Feedback() {
                 console.error("User not authenticated.");
                 return;
             }
-    
+
             const idToken = await user.getIdToken();
             const response = await fetch(
-                `http://localhost:8000/api/projects/${projectId}/feedback/`, 
+                `http://localhost:8000/api/projects/${projectId}/feedback/`,
                 {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${idToken}`,  
+                        Authorization: `Bearer ${idToken}`,
                     },
                 }
             );
@@ -47,14 +47,12 @@ function Feedback() {
                 throw new Error("Failed to fetch feedback.");
             }
             const data = await response.json();
-            if (response.status === 403) 
-            {
-                setIsOwner(false);  
-            } 
-            else 
-            {
+            if (response.status === 403) {
+                setIsOwner(false);
+            }
+            else {
                 setFeedbacks(data.feedback || []);
-                setIsOwner(true); 
+                setIsOwner(true);
             }
             setFeedbacks(data.feedback || []);
         } catch (err) {

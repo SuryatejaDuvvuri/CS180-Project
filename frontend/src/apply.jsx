@@ -1,7 +1,7 @@
 import React from 'react';
-function Apply(){
+function Apply() {
     console.log("apply");
-    return(
+    return (
         <div>
             <p>Implement apply</p>
         </div>

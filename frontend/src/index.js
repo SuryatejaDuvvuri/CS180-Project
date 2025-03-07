@@ -5,8 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Feedback from './Feedback';
 
-function HelloWorld()
-{
+function HelloWorld() {
   return (<h1 className="greeting">Hello, world!</h1>);
 };
 
@@ -19,11 +18,11 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 
 root.render(
-  <React.StrictMode> 
+  <React.StrictMode>
     {/* <BrowserRouter> */}
-      <App />
+    <App />
     {/* </BrowserRouter> */}
-    
+
   </React.StrictMode>
 );
 

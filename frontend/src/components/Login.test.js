@@ -6,7 +6,7 @@ import Login from './Login';
 
 const renderLogin = () => {
     render(
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true}}>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Login />
         </BrowserRouter>
     );

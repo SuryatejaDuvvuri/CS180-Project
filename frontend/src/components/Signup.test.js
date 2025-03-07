@@ -6,7 +6,7 @@ import Signup from './Signup';
 
 const renderSignup = () => {
     render(
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true}}>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Signup />
         </BrowserRouter>
     );

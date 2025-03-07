@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {auth} from "./firebase";
+import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 function Home() {
-    const [projects, setProjects] = useState([]); 
-    const [selectedMajor, setSelectedMajor] = useState("All"); 
+    const [projects, setProjects] = useState([]);
+    const [selectedMajor, setSelectedMajor] = useState("All");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [filteredProjects, setFilteredProjects] = useState([]);
-    const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0); 
+    const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ function Home() {
 
     useEffect(() => {
         fetchProjects();
-    }, [selectedMajor]); 
+    }, [selectedMajor]);
 
     const fetchProjects = async (user) => {
         setLoading(true);
@@ -71,7 +71,7 @@ function Home() {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setIsAuthenticated(!!user);
-            fetchProjects(user);  
+            fetchProjects(user);
         });
 
         return () => unsubscribe();
@@ -84,8 +84,7 @@ function Home() {
         return () => clearInterval(interval);
     }, []);
 
-    const handleMajorSelect = (major) =>
-    {
+    const handleMajorSelect = (major) => {
         setSelectedMajor(major);
         if (major === "All") {
             setFilteredProjects(projects);
@@ -98,17 +97,17 @@ function Home() {
     return (
         <div className="w-screen h-screen flex flex-col items-center bg-gray-100">
             <div className="bg-gray-100 p-5">
-                
+
                 <header className="flex justify-between items-center p-5 bg-white shadow-md">
                     <div className="text-3xl font-bold text-center">ProjectHub</div>
                     <div>
-                        <button 
+                        <button
                             className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
                             onClick={() => navigate('/signup')}
                         >
                             Sign Up
                         </button>
-                        <button 
+                        <button
                             className="bg-transparent border-2 border-blue-500 text-blue-500 px-4 py-2 rounded"
                             onClick={() => navigate('/login')}
                         >
@@ -137,11 +136,10 @@ function Home() {
                         </div> */}
                         <div className="relative w-full max-w-3xl h-32 flex justify-center items-center overflow-hidden">
                             {features.map((feature, index) => (
-                                <div 
+                                <div
                                     key={index}
-                                    className={`absolute w-full transition-opacity duration-500 flex flex-col items-center text-center ${
-                                        index === currentFeatureIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
-                                    }`}
+                                    className={`absolute w-full transition-opacity duration-500 flex flex-col items-center text-center ${index === currentFeatureIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
+                                        }`}
                                 >
                                     <div className="bg-white p-6 rounded-lg shadow-lg">
                                         <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
@@ -150,7 +148,7 @@ function Home() {
                                 </div>
                             ))}
                         </div>
-                        
+
                     </section>
 
                     <section className="text-center">
@@ -174,56 +172,56 @@ function Home() {
                             <p>Loading projects...</p>
                         ) : error ? (
                             <p className="text-red-500">{error}</p>
-                        ) : 
-                        projects.length > 0 ? (
-                           <>
-                            <h2 className="text-2xl font-semibold mb-4">
-                                    {isAuthenticated ? "Your Recommended Projects" : "Explore Some Projects"}
-                            </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {projects
-                                    .filter((project) => new Date(project.end_date) >= new Date()) 
-                                    .map((project) => (
-                                        <div key={project.id} className="bg-white p-4 rounded shadow-md">
-                                            <h2 className="text-xl font-semibold">{project.name}</h2>
-                                            <p className="text-gray-600">{project.description}</p>
-                                            <p className="text-gray-600">
-                                                <strong>Deadline:</strong> {new Date(project.end_date).toDateString()}
-                                            </p>
-                                            <p className="text-sm text-gray-500">Looking for: {project.looking_for}</p>
-                                        </div>
-                                    ))}
-                            </div>
-                            </>
-                        ) : filteredProjects.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <h2 className="text-2xl font-semibold mb-4">
-                                    {isAuthenticated ? "Your Recommended Projects" : "Explore Some Projects"}
-                                </h2>
-                                {filteredProjects.length > 0 ? (
+                        ) :
+                            projects.length > 0 ? (
+                                <>
+                                    <h2 className="text-2xl font-semibold mb-4">
+                                        {isAuthenticated ? "Your Recommended Projects" : "Explore Some Projects"}
+                                    </h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {projects
+                                            .filter((project) => new Date(project.end_date) >= new Date())
+                                            .map((project) => (
+                                                <div key={project.id} className="bg-white p-4 rounded shadow-md">
+                                                    <h2 className="text-xl font-semibold">{project.name}</h2>
+                                                    <p className="text-gray-600">{project.description}</p>
+                                                    <p className="text-gray-600">
+                                                        <strong>Deadline:</strong> {new Date(project.end_date).toDateString()}
+                                                    </p>
+                                                    <p className="text-sm text-gray-500">Looking for: {project.looking_for}</p>
+                                                </div>
+                                            ))}
+                                    </div>
+                                </>
+                            ) : filteredProjects.length > 0 ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {filteredProjects.map((project) => (
-                                        <div key={project.id} className="bg-white p-4 rounded shadow-md">
-                                            <h2 className="text-xl font-semibold">{project.name}</h2>
-                                            <p className="text-gray-600">{project.description}</p>
-                                            <p className="text-sm text-gray-500">Category: {project.category}</p>
+                                    <h2 className="text-2xl font-semibold mb-4">
+                                        {isAuthenticated ? "Your Recommended Projects" : "Explore Some Projects"}
+                                    </h2>
+                                    {filteredProjects.length > 0 ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            {filteredProjects.map((project) => (
+                                                <div key={project.id} className="bg-white p-4 rounded shadow-md">
+                                                    <h2 className="text-xl font-semibold">{project.name}</h2>
+                                                    <p className="text-gray-600">{project.description}</p>
+                                                    <p className="text-sm text-gray-500">Category: {project.category}</p>
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
+                                    ) : (
+                                        <p className="text-center text-gray-500">No projects available in this category.</p>
+                                    )}
+
                                 </div>
-                            ) : (
-                                <p className="text-center text-gray-500">No projects available in this category.</p>
-                            )}
-                            
-                            </div>
-                        ) 
-                        : (
-                            <p>No projects found for {selectedMajor}.</p>
-                        )}
+                            )
+                                : (
+                                    <p>No projects found for {selectedMajor}.</p>
+                                )}
                     </section>
 
                     <section className="text-center mt-10">
                         <h2 className="text-3xl font-bold mb-4">Ready to Start Your Journey?</h2>
-                        <button 
+                        <button
                             className="bg-blue-500 text-white px-6 py-3 rounded text-lg"
                             onClick={() => navigate('/signup')}
                         >

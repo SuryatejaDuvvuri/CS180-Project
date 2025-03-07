@@ -1,10 +1,9 @@
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import React, { useState, useEffect } from 'react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { useParams, useNavigate} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
-export default function UserProfile()
-{
+export default function UserProfile() {
     const navigate = useNavigate();
     const { email } = useParams();
     const [user, setUser] = useState(null);
@@ -12,7 +11,7 @@ export default function UserProfile()
     const [projectsJoined, setProjectsJoined] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
- 
+
     useEffect(() => {
         const auth = getAuth();
 
@@ -26,7 +25,7 @@ export default function UserProfile()
             }
         });
 
-        return () => unsubscribe(); 
+        return () => unsubscribe();
     }, []);
 
     // useEffect(() => {
@@ -37,8 +36,7 @@ export default function UserProfile()
         setLoading(true);
         setError(null);
         try {
-            if (!user) 
-            {
+            if (!user) {
                 setError("User is not authenticated.");
                 setLoading(false);
                 return;
@@ -55,9 +53,10 @@ export default function UserProfile()
 
             const response = await fetch(`http://localhost:8000/api/users/${email}/`, {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json',
-                     Authorization: `Bearer ${token}`,
-                 }
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                }
             });
 
             if (!response.ok) {
@@ -76,8 +75,7 @@ export default function UserProfile()
     };
 
 
-    const leaveProject = async (projectId) => 
-    {
+    const leaveProject = async (projectId) => {
         try {
             const auth = getAuth();
             const user = auth.currentUser;
@@ -85,9 +83,9 @@ export default function UserProfile()
                 alert("You must be logged in to leave a project.");
                 return;
             }
-    
+
             const idToken = await user.getIdToken();
-    
+
             const response = await fetch(`http://localhost:8000/api/projects/delete/${projectId}/`, {
                 method: "DELETE",
                 headers: {
@@ -95,11 +93,11 @@ export default function UserProfile()
                     Authorization: `Bearer ${idToken}`,
                 },
             });
-    
+
             if (!response.ok) {
                 throw new Error("Failed to leave the project.");
             }
-    
+
             alert("Successfully left the project.");
             setProjectsJoined((prev) => prev.filter((project) => project.id !== projectId));
         } catch (err) {
@@ -110,18 +108,16 @@ export default function UserProfile()
 
     const getProjects = async (userId, token) => {
         setLoading(true);
-        try
-        {
+        try {
             const response = await fetch(`http://localhost:8000/api/users/${userId}/projects`, {
 
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
             });
-            if(response.ok)
-            {
+            if (response.ok) {
                 const data = await response.json();
 
                 if (!Array.isArray(data.projects_created)) {
@@ -130,10 +126,9 @@ export default function UserProfile()
                 console.log("Fetched Projects:", data.projects_created);
                 setProjectsCreated(data.projects_created);
                 setProjectsJoined(data.projects_joined);
-                
+
             }
-            else
-            {
+            else {
                 throw new Error("Failed to fetch projects");
             }
 
@@ -152,16 +147,14 @@ export default function UserProfile()
             // }
 
         }
-        catch(err)
-        {
+        catch (err) {
             setError(err.message);
             console.error("Error fetching projects:", err);
-        } 
-        finally
-        {
+        }
+        finally {
             setLoading(false);
         }
-        
+
     }
 
 
@@ -190,7 +183,7 @@ export default function UserProfile()
                         ) : (
                             <p>No resume uploaded.</p>
                         )}
-                        
+
                         <h3 className="text-xl font-bold mt-4">GitHub & LinkedIn</h3>
                         <p className="text-blue-500 hover:underline">
                             <a href={user.github} target="_blank" rel="noopener noreferrer"><FaGithub /> GitHub</a>
@@ -202,38 +195,38 @@ export default function UserProfile()
                         <h3 className="text-xl font-bold mt-4">Projects Created</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {projectsCreated.length > 0 ? (
-                                            projectsCreated
-                                            .filter((project) => 
-                                                project.id !== "init" 
-                                            ).map((project) => (
-                                                    <div key={project.id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                                                        {project.image && (
-                                                            <img src={project.image} alt={project.name} className="w-full h-48 object-cover rounded-t-lg" />
-                                                        )}
-                                                        <div className="p-4">
-                                                            <h2 className="text-xl font-semibold">{project.name}</h2>
-                                                            <p className="text-gray-600">{project.description}</p>
-                                                            <p className="text-gray-600">
-                                                                <strong>Deadline:</strong> {project.end_date ? new Date(project.end_date).toDateString() : "N/A"}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500"><strong>Looking for:</strong> {project.looking_for || "Not specified"}</p>
-                                                            <a href={`/${user.email}/${project.id}/applicants/`} className="text-blue-500 hover:underline mt-2 inline-block">
-                                                                View Applicants
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                ))
-                                        ) : (
-                                            <p className="text-gray-500 text-center col-span-3">No projects created yet.</p>
-                                        )}
-                                    </div>
+                                projectsCreated
+                                    .filter((project) =>
+                                        project.id !== "init"
+                                    ).map((project) => (
+                                        <div key={project.id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                                            {project.image && (
+                                                <img src={project.image} alt={project.name} className="w-full h-48 object-cover rounded-t-lg" />
+                                            )}
+                                            <div className="p-4">
+                                                <h2 className="text-xl font-semibold">{project.name}</h2>
+                                                <p className="text-gray-600">{project.description}</p>
+                                                <p className="text-gray-600">
+                                                    <strong>Deadline:</strong> {project.end_date ? new Date(project.end_date).toDateString() : "N/A"}
+                                                </p>
+                                                <p className="text-sm text-gray-500"><strong>Looking for:</strong> {project.looking_for || "Not specified"}</p>
+                                                <a href={`/${user.email}/${project.id}/applicants/`} className="text-blue-500 hover:underline mt-2 inline-block">
+                                                    View Applicants
+                                                </a>
+                                            </div>
+                                        </div>
+                                    ))
+                            ) : (
+                                <p className="text-gray-500 text-center col-span-3">No projects created yet.</p>
+                            )}
+                        </div>
 
                         <h3 className="text-xl font-bold mt-4">Projects Joined</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {projectsJoined.length > 0 ? (
-                                    projectsJoined
-                                        .filter((project) => project.id !== "init")
-                                        .map((project) => (
+                            {projectsJoined.length > 0 ? (
+                                projectsJoined
+                                    .filter((project) => project.id !== "init")
+                                    .map((project) => (
                                         <div key={project.id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                                             {project.image && (
                                                 <img src={project.image} alt={project.name} className="w-full h-48 object-cover rounded-t-lg" />
@@ -258,7 +251,7 @@ export default function UserProfile()
                                                     </button>
                                                     {/* Give Feedback Button :email/:projectId/feedback/*/}
                                                     <button
-                                                    
+
                                                         onClick={() => navigate(`/${project.id}/feedback/`)}
                                                         className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
                                                     >
@@ -267,11 +260,11 @@ export default function UserProfile()
                                                 </div>
                                             </div>
                                         </div>
-                                        ))
-                                ) : (
-                                    <p className="text-gray-500 text-center col-span-3">No projects joined yet.</p>
-                                )}
-                            </div>
+                                    ))
+                            ) : (
+                                <p className="text-gray-500 text-center col-span-3">No projects joined yet.</p>
+                            )}
+                        </div>
                     </div>
                 )
             )}

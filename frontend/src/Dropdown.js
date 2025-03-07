@@ -10,7 +10,7 @@ import onSelect from "./Header.js"
 
 // The Dropdown menu. Consists of a button and several DropdownItems
 
-function Dropdown({ title, arr, onSelect,addChosenElem, removeChosenElem}) {
+function Dropdown({ title, arr, onSelect, addChosenElem, removeChosenElem }) {
 
     const [isOpen, setIsOpen] = React.useState(false);
 
@@ -26,7 +26,7 @@ function Dropdown({ title, arr, onSelect,addChosenElem, removeChosenElem}) {
     }
 
     const handleSelect = (major) => {
-        onSelect(major);  
+        onSelect(major);
         setIsOpen(false);
     };
 

@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 //css 
 import "./css/Feedback.css"
-function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, lastProj}){
+function Feedback({ setselectedFeedback, selectedFeedback, setSelectedProject, lastProj }) {
 
     const closeFeedback = () => {
         setselectedFeedback(false);
         setSelectedProject(lastProj)
-    } 
+    }
 
     /* Before submitting, update the form data one last time to ensure there are no lagged inputs.
        First, check to make sure there are no input errors. We check each input individually.
@@ -23,8 +23,7 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
         e.preventDefault();
         console.log(values);
         // If there are no errors, close the tab and send the alert
-        if(!(valueError.fNameError || valueError.lNameError || valueError.emailError || valueError.feedbackError))
-        {
+        if (!(valueError.fNameError || valueError.lNameError || valueError.emailError || valueError.feedbackError)) {
             closeFeedback();
             alert('Form submitted');
         }
@@ -37,7 +36,7 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
         email: '',
         feedback: ''
     });
-        
+
     // I didn't end up using the setValueError function because I wasn't sure how to use it
     const [valueError, setValueError] = useState({
         fNameError: false,
@@ -48,9 +47,9 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
         feedbackError: false,
     });
 
-    const handleChanges = (e) =>{
-        
-        setValues({...values, [e.target.name]:[e.target.value]})
+    const handleChanges = (e) => {
+
+        setValues({ ...values, [e.target.name]: [e.target.value] })
     }
 
     //If firstname input is filled, there is no error (nameError = false)
@@ -64,7 +63,7 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
         setValues({ ...values, [e.target.name]: e.target.value });
         valueError.lNameError = values.lastname == '' ? true : false;
     };
-    
+
     //If email input is empty, we get a requirement error (emailError = true)
     //Since we use type='email', it will automatically check for us if the email is valid or not
     const checkEmail = (e) => {
@@ -80,7 +79,7 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
 
 
     // HACK: I made a border style for each of the inputs because I couldn't hardcode it straight into the html
-   const fNameDisplayStyle = {
+    const fNameDisplayStyle = {
         display: valueError.fNameError ? "flex" : "none",
     }
     const lNameDisplayStyle = {
@@ -92,73 +91,73 @@ function Feedback({setselectedFeedback, selectedFeedback, setSelectedProject, la
     const feedbackDisplayStyle = {
         display: valueError.feedbackError ? "flex" : "none",
     }
-    
-    
-    return(
+
+
+    return (
         <>
-            {selectedFeedback &&( 
-            <div className = "Feedback-overlay">
-                <div className="Feedback-container">
-                    {/*Exit button*/}
-                    <div className="exit"><button  onClick={closeFeedback}>x</button></div>
-                    
-                    {/*Header*/}
-                    <h1>Feedback Form</h1>
+            {selectedFeedback && (
+                <div className="Feedback-overlay">
+                    <div className="Feedback-container">
+                        {/*Exit button*/}
+                        <div className="exit"><button onClick={closeFeedback}>x</button></div>
 
-                    <form className= "form" onSubmit={handleSubmit}>
-                        {/*First name input*/}
-                        <label htmlFor="firstname">First Name*</label>
-                        <input  
-                            className={valueError.fNameError ? "form-input error-input" : "form-input"}
-                            name ="firstname" type="text"
-                            id = "firstname"
-                            placeholder='Enter first Name'
-                            onChange ={(e)=>handleChanges(e)}
-                        />
-                        <div style={fNameDisplayStyle} className='errorLabel' >Required</div>
+                        {/*Header*/}
+                        <h1>Feedback Form</h1>
 
-                        {/*Last name input*/}
-                        <label htmlFor="lastname">Last Name*</label>
-                        <input
-                            className={valueError.lNameError ? "form-input error-input" : "form-input"}
-                            name ="lastname"
-                            type="text"
-                            placeholder='Enter last Name'
-                            id = "lastname"
-                            onChange ={(e)=>handleChanges(e)}
-                        />
-                        <div style={lNameDisplayStyle} className='errorLabel' >Required</div>
+                        <form className="form" onSubmit={handleSubmit}>
+                            {/*First name input*/}
+                            <label htmlFor="firstname">First Name*</label>
+                            <input
+                                className={valueError.fNameError ? "form-input error-input" : "form-input"}
+                                name="firstname" type="text"
+                                id="firstname"
+                                placeholder='Enter first Name'
+                                onChange={(e) => handleChanges(e)}
+                            />
+                            <div style={fNameDisplayStyle} className='errorLabel' >Required</div>
 
-                        {/*Email input*/}
-                        <label htmlFor="email">Email*</label>
-                        <input
-                            className={valueError.emailError ? "form-input error-input" : "form-input"}
-                            type="email"
-                            placeholder="Enter Email"
-                            name ="email"
-                            id="email"
-                            onChange ={(e)=>handleChanges(e)}
-                        />
-                        <div style={emailDisplayStyle} className='errorLabel' >Required</div>
-                
-                        {/*Feedback input*/}
-                        <label htmlFor="Feedback">FeedBack*</label>
-                        <textarea
-                            className={valueError.feedbackError ? "form-input error-input" : "form-input"}
-                            name="feedback"
-                            id="Feedback"
-                            cols ="30"
-                            row = "10"
-                            placeholder="Feedback for Project"
-                            onChange ={(e)=>handleChanges(e)}
-                        />
-                        <div style={feedbackDisplayStyle} className='errorLabel' >Required</div>
+                            {/*Last name input*/}
+                            <label htmlFor="lastname">Last Name*</label>
+                            <input
+                                className={valueError.lNameError ? "form-input error-input" : "form-input"}
+                                name="lastname"
+                                type="text"
+                                placeholder='Enter last Name'
+                                id="lastname"
+                                onChange={(e) => handleChanges(e)}
+                            />
+                            <div style={lNameDisplayStyle} className='errorLabel' >Required</div>
 
-                        {/*Submit button*/}
-                        <button className='submit'>Submit</button>
-                    </form>
-                </div>
-            </div>)}
+                            {/*Email input*/}
+                            <label htmlFor="email">Email*</label>
+                            <input
+                                className={valueError.emailError ? "form-input error-input" : "form-input"}
+                                type="email"
+                                placeholder="Enter Email"
+                                name="email"
+                                id="email"
+                                onChange={(e) => handleChanges(e)}
+                            />
+                            <div style={emailDisplayStyle} className='errorLabel' >Required</div>
+
+                            {/*Feedback input*/}
+                            <label htmlFor="Feedback">FeedBack*</label>
+                            <textarea
+                                className={valueError.feedbackError ? "form-input error-input" : "form-input"}
+                                name="feedback"
+                                id="Feedback"
+                                cols="30"
+                                row="10"
+                                placeholder="Feedback for Project"
+                                onChange={(e) => handleChanges(e)}
+                            />
+                            <div style={feedbackDisplayStyle} className='errorLabel' >Required</div>
+
+                            {/*Submit button*/}
+                            <button className='submit'>Submit</button>
+                        </form>
+                    </div>
+                </div>)}
         </>
     );
 

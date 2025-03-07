@@ -1,6 +1,6 @@
 @import "./Colors.css";
 
-.Feedback-overlay{
+.Feedback-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -10,10 +10,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
 }
 
-.Feedback-container{
+.Feedback-container {
 
     border: 1px solid;
     border-radius: 10px;
@@ -27,38 +27,42 @@
     transition: 0.2s;
     align-items: center;
     display: flex;
-    flex-direction : column;
+    flex-direction: column;
     align-items: center;
-    
+
     justify-content: flex-start;
     gap: 10px;
     overflow: auto;
 }
-.Feedback-container button{
+
+.Feedback-container button {
     align-self: center;
 }
-h1{
-    font-size:x-large;
+
+h1 {
+    font-size: x-large;
     text-align: center;
     color: var(--acc-color);
     margin-top: 0px;
     margin-bottom: 5px;
 }
-.exit{
+
+.exit {
     width: 100%;
     text-align: right;
     border-radius: 50%;
 }
-.exit button{
-    
+
+.exit button {
+
     background-color: var(--error-color);
     height: 30px;
     align-items: right;
     padding: 0px 12px 0px 12px;
-    
+
 }
 
-form{
+form {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -67,7 +71,7 @@ form{
     background-color: var(--box-color);
 }
 
-label{
+label {
     font-size: 15px;
     display: block;
     width: 100%;
@@ -75,10 +79,11 @@ label{
     margin-bottom: 5px;
     text-align: left;
     font-weight: bold;
-    
+
 }
-input{
-    
+
+input {
+
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
@@ -89,15 +94,15 @@ input{
     background-color: var(--button-color);
 }
 
-textarea{
+textarea {
     font-size: 12px;
     resize: none;
     min-height: 100px;
     background-color: var(--button-color);
-    
+
 }
 
-.submit{
+.submit {
     margin-top: 10px;
     background-color: var(--acc-color);
 }
