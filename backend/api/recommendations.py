@@ -94,11 +94,11 @@ def recommend_projects(user_email):
 
                 response = requests.post(
                     f"{OLLAMA_URL}/api/generate",
-                    json={"model": "mistral", "prompt": prompt}
+                    json={"model": "llama3.2", "prompt": prompt}
                 ).json()
-
+                
                 decision = response.get("message", {}).get("content", "").strip().lower()
-
+                print(decision)
                 if "yes" in decision:
                     recommended_projects.append({
                         "project_id": project_doc.id,  
