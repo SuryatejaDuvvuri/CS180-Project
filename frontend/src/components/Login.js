@@ -8,6 +8,7 @@ export default function Login({darkMode, toggleDarkMode}) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,7 +22,7 @@ export default function Login({darkMode, toggleDarkMode}) {
     try {
       const idToken = await signInWithEmail(email, password);
       
-      const response = await fetch("http://localhost:8000/api/login/", {
+      const response = await fetch(`http://${API_BASE_URL}/api/login/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, idToken }),
@@ -50,7 +51,7 @@ export default function Login({darkMode, toggleDarkMode}) {
         throw new Error("Failed to retrieve Firebase ID token.");
       }
 
-      const response = await fetch("http://localhost:8000/api/google-login/", {
+      const response = await fetch(`http://${API_BASE_URL}/api/google-login/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),

@@ -4,6 +4,7 @@ import './css/NoteCards.css';
 import Note from './Note';
 
 function NoteCards({darkMode, toggleDarkMode, items = [], category }) {
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const navigate = useNavigate();
     const [projects, setProjects] = useState(Array.isArray(items) ? items : []);
     const [selectedProject, setSelectedProject] = useState(null);

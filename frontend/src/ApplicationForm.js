@@ -8,6 +8,7 @@ const ApplicationForm = ({darkMode, toggleDarkMode}) => {
     const location = useLocation();
     const project = location.state?.project;
     const navigate = useNavigate();
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const [formData, setFormData] = useState({
         name: '',
@@ -59,7 +60,7 @@ const ApplicationForm = ({darkMode, toggleDarkMode}) => {
             const owner_email = project.owner_email || project.owner;
             const projectId = project.project_id || project.id;
 
-            const response = await fetch(`http://localhost:8000/api/projects/${projectId}/apply/`, {
+            const response = await fetch(`http://${API_BASE_URL}/api/projects/${projectId}/apply/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

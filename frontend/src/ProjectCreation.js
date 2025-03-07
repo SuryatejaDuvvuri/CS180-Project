@@ -9,6 +9,7 @@ import Dropdown from "./Dropdown.js";
 import GetMajors from './GetMajors.js';
 
 function ProjectCreation({darkMode, toggleDarkMode}) {
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const [range, setRange] = useState([null, null]);
     const [startDate, endDate] = range;
     const [error, setError] = useState(null);
@@ -88,7 +89,7 @@ function ProjectCreation({darkMode, toggleDarkMode}) {
                 image: imageBase64
             };
 
-            const response = await fetch("http://localhost:8000/api/projects/", {
+            const response = await fetch(`http://${API_BASE_URL}/api/projects/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

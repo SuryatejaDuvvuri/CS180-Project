@@ -5,12 +5,14 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Header from './Header.js';
 function Applicants({darkMode, toggleDarkMode, handleMajorChange})
 {
+    
     const [applicants, setApplicants] = useState([]);
     const {email, projectId } = useParams();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [userEmail, setUserEmail] = useState(null);
     const navigate = useNavigate();
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
    
     useEffect(() => {
 
@@ -36,7 +38,7 @@ function Applicants({darkMode, toggleDarkMode, handleMajorChange})
                 }
 
                 const idToken = await user.getIdToken();
-                const response = await fetch(`http://localhost:8000/api/users/${email}/projects/${projectId}/applicants/`, {
+                const response = await fetch(`http:/${API_BASE_URL}/api/users/${email}/projects/${projectId}/applicants/`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

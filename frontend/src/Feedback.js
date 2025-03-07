@@ -3,6 +3,7 @@ import { auth } from "./firebase";
 import { useParams } from "react-router-dom";
 import Header from './Header';
 function Feedback({darkMode, toggleDarkMode}) {
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const { projectId } = useParams();
     const [feedbacks, setFeedbacks] = useState([]);
     const [experience, setExperience] = useState("");
@@ -28,7 +29,7 @@ function Feedback({darkMode, toggleDarkMode}) {
             try {
                 // Fetch project details to check if the user is the owner
                 const projectResponse = await fetch(
-                    `http://localhost:8000/api/projects/${projectId}/`,
+                    `http://${API_BASE_URL}/api/projects/${projectId}/`,
                     {
                         method: "GET",
                         headers: {
@@ -52,7 +53,7 @@ function Feedback({darkMode, toggleDarkMode}) {
 
                 // Check if the user is a member of the project
                 const memberResponse = await fetch(
-                    `http://localhost:8000/api/users/${user.email}/projects/`,
+                    `http://${API_BASE_URL}/api/users/${user.email}/projects/`,
                     {
                         method: "GET",
                         headers: {
@@ -85,7 +86,7 @@ function Feedback({darkMode, toggleDarkMode}) {
                     const idToken = await auth.currentUser.getIdToken();
 
                     const response = await fetch(
-                        `http://localhost:8000/api/projects/${projectId}/feedback/`,
+                        `http://${API_BASE_URL}/api/projects/${projectId}/feedback/`,
                         {
                             method: "GET",
                             headers: {
@@ -169,7 +170,7 @@ function Feedback({darkMode, toggleDarkMode}) {
 
             const idToken = await user.getIdToken();
             console.log(projectId);
-            const response = await fetch(`http://localhost:8000/api/projects/${projectId}/feedback/`, {
+            const response = await fetch(`http://${API_BASE_URL}/api/projects/${projectId}/feedback/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -199,7 +200,7 @@ function Feedback({darkMode, toggleDarkMode}) {
     return (
         <div className={`${darkMode === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"} min-h-screen py-8`}>
     
-            {/* Feedback Form (For Members, Not Owners) */}
+
             {isMember && !isOwner && (
                 <div className={`max-w-4xl mx-auto p-6 rounded-lg shadow-md transition ${
                     darkMode === "dark" ? "bg-gray-800 text-white" : "bg-white"
@@ -242,7 +243,7 @@ function Feedback({darkMode, toggleDarkMode}) {
                 </div>
             )}
         
-            {/* Feedback Table (For Owners) */}
+
             {isOwner && (
                 <div className={`max-w-4xl mx-auto p-6 rounded-lg shadow-md mt-6 transition ${
                     darkMode === "dark" ? "bg-gray-800 text-white" : "bg-white"
