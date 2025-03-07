@@ -41,7 +41,15 @@ function ProjectCreation({darkMode, toggleDarkMode}) {
     });
 
     const handleChange = (e) => {
-        setProjectData({ ...projectData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setProjectData((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    
+        if (name === "category") {
+            setCategory(value); 
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -66,6 +74,7 @@ function ProjectCreation({darkMode, toggleDarkMode}) {
             let imageBase64 = null;
 
             if (image) {
+                setImage(image);
                 const fileReader = new FileReader();
                 fileReader.readAsDataURL(image);
                 await new Promise((resolve) => {
@@ -167,7 +176,7 @@ function ProjectCreation({darkMode, toggleDarkMode}) {
                     <div>
                         <label className="block font-medium mb-1">Category:</label>
                         <select 
-                            name="category" value={category} onChange={handleChange} 
+                            name="category" value={projectData.category} onChange={handleChange} 
                             className={`w-full px-4 py-2 rounded-md border border-gray-300 focus:ring focus:ring-blue-400 focus:outline-none ${
                                 darkMode === "dark" ? "bg-gray-700 text-white" : "bg-white text-black"
                             }`} required
@@ -193,6 +202,12 @@ function ProjectCreation({darkMode, toggleDarkMode}) {
                             >
                                 Choose File
                             </label>
+
+                            {image && (
+                                <p className="text-green-500 text-sm mt-1">
+                                    Selected File: {image.name}
+                                </p>
+                            )}
                         </div>
                     </div>
         
