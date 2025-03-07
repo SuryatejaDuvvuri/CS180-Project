@@ -69,7 +69,7 @@ function App() {
   };
 
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div className={`min-h-screen ${isLight ? "bg-white text-black" : "bg-gray-900 text-white"}`}>
         <Header method={toggleLightAndDarkMode} onMajorChange={handleMajorChange} />
         <div className={`flex-1 w-full ${isLight ? "light" : "dark"}`}>
