@@ -4,6 +4,7 @@ import { signUpWithEmail } from "./firebase";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 function Signup({darkMode, toggleDarkMode}) {
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const navigate = useNavigate(); 
     const [formData, setFormData] = useState({
         name: '',
@@ -68,7 +69,7 @@ function Signup({darkMode, toggleDarkMode}) {
             const idToken = await signUpWithEmail(formData.email, formData.password);
             if (!idToken) throw new Error("Failed to register user in Firebase");
 
-            const response = await fetch("http://localhost:8000/api/users/", {
+            const response = await fetch(`http://${API_BASE_URL}/api/users/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(userData),
@@ -95,43 +96,43 @@ function Signup({darkMode, toggleDarkMode}) {
                 {error && <p className="text-red-500 text-center">{error}</p>}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Full Name */}
+
                 <div>
                     <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Full Name</label>
                     <input type="text" name="name" value={formData.name} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
                 </div>
 
-                {/* Email */}
+
                 <div>
                     <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Email</label>
                     <input type="email" name="email" value={formData.email} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
                 </div>
 
-                {/* NetID */}
+
                 <div>
                     <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>NetID</label>
                     <input type="text" name="netId" value={formData.netId} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
                 </div>
 
-                {/* Skills */}
+
                 <div>
                     <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Skills</label>
                     <input type="text" name="skills" value={formData.skills} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
                 </div>
 
-                {/* Pronouns */}
+
                 <div>
                     <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Pronouns</label>
                     <input type="text" name="pronouns" value={formData.pronouns} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
                 </div>
 
-                {/* Resume Upload */}
+
                 <div>
                     <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Resume (PDF only)</label>
                     <input type="file" accept=".pdf" onChange={handleFileUpload} className="w-full p-2 border rounded-lg" />
                 </div>
 
-                {/* GitHub & LinkedIn */}
+
                 <div className="flex gap-4">
                     <div className="flex items-center w-1/2">
                     <FaGithub className={`mr-2 ${darkMode === "dark" ? "text-white" : "text-gray-700"}`} size={24} />
@@ -144,43 +145,43 @@ function Signup({darkMode, toggleDarkMode}) {
                     </div>
                 </div>
 
-                {/* Interests */}
+
                 <div>
                     <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Interests</label>
                     <input type="text" name="interests" value={formData.interests} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
                 </div>
 
-                {/* Experience */}
+ 
                 <div>
                     <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Experience</label>
                     <input type="text" name="experience" value={formData.experience} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
                 </div>
 
-                {/* Location */}
+
                 <div>
                     <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Location</label>
                     <input type="text" name="location" value={formData.location} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
                 </div>
 
-                {/* Weekly Time Commitment */}
+
                 <div>
                     <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Weekly Time Commitment (hours)</label>
                     <input type="number" name="weeklyHours" value={formData.weeklyHours} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
                 </div>
 
-                {/* Password */}
+
                 <div>
                     <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Password</label>
                     <input type="password" name="password" value={formData.password} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
                 </div>
 
-                {/* Confirm Password */}
+
                 <div>
                     <label className={`block font-semibold ${darkMode === "dark" ? "text-gray-300" : "text-gray-700"}`}>Confirm Password</label>
                     <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} className={`w-full p-2 border rounded-lg ${darkMode === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"}`} required />
                 </div>
 
-                {/* Submit Button */}
+
                 <button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mt-4 transition">
                     Sign Up
                 </button>

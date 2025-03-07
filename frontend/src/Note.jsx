@@ -8,6 +8,7 @@ import {auth} from "./firebase";
 
 
 function Note({ darkMode, toggleDarkMode, selectedProject, setSelectedProject, updateProject }) {
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const [selectedFeedback, setselectedFeedback] = useState(false);
     const [lastProj, setlastProj] = useState(null);
     const [buttonText, setButtonText] = useState('Apply');
@@ -60,7 +61,7 @@ function Note({ darkMode, toggleDarkMode, selectedProject, setSelectedProject, u
     
             if (buttonText === "Apply") 
                 {
-                const response = await fetch(`http://localhost:8000/api/projects/${projectId}/apply/`, {
+                const response = await fetch(`http://${API_BASE_URL}/api/projects/${projectId}/apply/`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

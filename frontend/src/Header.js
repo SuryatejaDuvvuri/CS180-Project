@@ -11,7 +11,7 @@ import { auth, logout } from "./firebase.js";
 //    a "Filter" button to filter by majors, and a search bar.
 
 function Header({ darkMode, toggleDarkMode, onMajorChange }) {
-
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const navigate = useNavigate();
     const majors = useMajors();
     const currentUser = auth.currentUser;
@@ -56,15 +56,6 @@ function Header({ darkMode, toggleDarkMode, onMajorChange }) {
     return (
         <header className={`w-full px-6 py-5 shadow-md ${darkMode === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}>
             <div className="w-full max-w-7xl mx-auto flex justify-between items-center flex-wrap">
-                
-
-                {/* <button 
-                    className={`px-6 py-2 rounded-md transition ${darkMode === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-200"}`} 
-                    onClick={() => navigate("/")}
-                >
-                    Welcome
-                </button> */}
-
 
                 <div className="hidden md:flex flex-wrap gap-x-4">
                     <button 

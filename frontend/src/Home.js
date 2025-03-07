@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {auth} from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 function Home({darkMode, toggleDarkMode}) {
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const [projects, setProjects] = useState([]); 
     const [selectedMajor, setSelectedMajor] = useState("All"); 
     const [loading, setLoading] = useState(false);
@@ -27,10 +28,8 @@ function Home({darkMode, toggleDarkMode}) {
     const fetchProjects = async (user) => {
         setLoading(true);
         try {
-            let url = "http://localhost:8000/api/projects/";
-            // if (selectedMajor !== "All") {
-            //     url += `?category=${encodeURIComponent(selectedMajor)}`;
-            // }
+            let url = `http://${API_BASE_URL}/api/projects/`;
+          
 
             const headers = { "Content-Type": "application/json" };
             if (user) {
