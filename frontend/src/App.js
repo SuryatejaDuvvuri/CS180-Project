@@ -1,9 +1,9 @@
 
 //import logo from './logo.svg';
 // import './App.css';
-import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import { createRoot } from 'react-dom/client';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './Header.js';
 import Home from './Home.js';
 import Login from './components/Login.js';
@@ -27,7 +27,7 @@ import Apply from "./apply.jsx";
 import NavBar from './NavBar.jsx';
 import Note from './Note.jsx';
 import { auth, monitorAuthState } from "./firebase";
-import {Navigate} from "react-router-dom"
+import { Navigate } from "react-router-dom"
 
 function App() {
   // const [isLight, setMode] = React.useState(true);
@@ -37,42 +37,42 @@ function App() {
   // Triggers whenever the light/dark mode button is pressed
   // Switches the App's className
   const [isLight, setIsLight] = useState(() => {
-      return localStorage.getItem("theme") !== "dark";
+    return localStorage.getItem("theme") !== "dark";
   });
 
   useEffect(() => {
-      const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-          setUser(currentUser);
-      });
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+    });
 
-      return () => unsubscribe();
+    return () => unsubscribe();
   }, []);
 
-    useEffect(() => {
-        if (isLight) {
-            document.documentElement.classList.remove("dark");
-            localStorage.setItem("theme", "light");
-        } else {
-            document.documentElement.classList.add("dark");
-            localStorage.setItem("theme", "dark");
-        }
-    }, [isLight]);
+  useEffect(() => {
+    if (isLight) {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    } else {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    }
+  }, [isLight]);
 
 
-    const toggleLightAndDarkMode = () => {
-        setIsLight((prevMode) => !prevMode);
-    };
+  const toggleLightAndDarkMode = () => {
+    setIsLight((prevMode) => !prevMode);
+  };
 
-    const handleMajorChange = (major) => {
-      console.log("Selected Major:", major);
-      setSelectedMajor(major);
+  const handleMajorChange = (major) => {
+    console.log("Selected Major:", major);
+    setSelectedMajor(major);
   };
 
   return (
     <Router>
-    <div className={`min-h-screen ${isLight ? "bg-white text-black" : "bg-gray-900 text-white"}`}>
-       <Header method={toggleLightAndDarkMode} onMajorChange = {handleMajorChange} />
-      <div className={`flex-1 w-full ${isLight ? "light" : "dark"}`}>
+      <div className={`min-h-screen ${isLight ? "bg-white text-black" : "bg-gray-900 text-white"}`}>
+        <Header method={toggleLightAndDarkMode} onMajorChange={handleMajorChange} />
+        <div className={`flex-1 w-full ${isLight ? "light" : "dark"}`}>
           {/* <Home/> */}
           {/* <NoteCards items={cs_projects} category="Recommended" />
           <NoteCards items={film_projects} category="Film" /> */}
@@ -80,48 +80,48 @@ function App() {
           {/* <div className="bg-gradient-to-r from-gradientLeftLight to-gradientRightLight bg-clip-text text-transparent font-bold text-3xl">
             TEXT TEST
           </div> */}
-           <div className="text-center bg-websiteBackground">
-           {/* <Header method={toggleLightAndDarkMode} /> */}
-           <Routes>
+          <div className="text-center bg-websiteBackground">
+            {/* <Header method={toggleLightAndDarkMode} /> */}
+            <Routes>
 
               <Route path="/profile/:email" element={<UserProfile />} />
-                 <Route path="/create" element={
-                  <ProtectedRoute>
-                     <ProjectCreation />
-                  </ProtectedRoute>
-                   
-                } />
-               
+              <Route path="/create" element={
+                <ProtectedRoute>
+                  <ProjectCreation />
+                </ProtectedRoute>
+
+              } />
+
               <Route path=":email/:projectId/applicants/" element={
-                    <ProtectedRoute>
-                        <Applicants />
-                    </ProtectedRoute>
-                } />
-                <Route path="/home" element={
+                <ProtectedRoute>
+                  <Applicants />
+                </ProtectedRoute>
+              } />
+              <Route path="/home" element={
 
-                    <ProtectedRoute>
-                      <Dashboard selectedMajor ={selectedMajor} />
-                    </ProtectedRoute>
-                } />
-                 <Route path="/:projectId/apply/" element={
-                   <ProtectedRoute>
-                      <ApplicationForm />
-                   </ProtectedRoute>
-                  } />
-                   <Route path = "/:projectId/feedback/" element= {
-                    <ProtectedRoute>
-                        <Feedback/>
-                    </ProtectedRoute>
-                  } />
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
+                <ProtectedRoute>
+                  <Dashboard selectedMajor={selectedMajor} />
+                </ProtectedRoute>
+              } />
+              <Route path="/:projectId/apply/" element={
+                <ProtectedRoute>
+                  <ApplicationForm />
+                </ProtectedRoute>
+              } />
+              <Route path="/:projectId/feedback/" element={
+                <ProtectedRoute>
+                  <Feedback />
+                </ProtectedRoute>
+              } />
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
 
-           
-          </Routes>
-           </div>
+
+            </Routes>
+          </div>
+        </div>
       </div>
-    </div>
     </Router>
   );
   /*return(
