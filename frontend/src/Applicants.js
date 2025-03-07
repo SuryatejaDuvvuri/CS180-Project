@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Email from './Email.js';
-import { auth } from './firebase';
+import { auth } from './firebase.js';
 import { useNavigate, useParams } from 'react-router-dom'
 import Header from './Header.js';
 function Applicants({darkMode, toggleDarkMode, handleMajorChange})

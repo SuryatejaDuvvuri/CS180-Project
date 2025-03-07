@@ -26,6 +26,7 @@ urlpatterns = [
     path("api/projects/<str:project_id>/apply/", ApplicantViewSet.as_view({"post":"apply_to_project"}), name="apply_to_project"),
     path("api/projects/<str:project_id>/applicants/<str:applicant_email>/", ApplicantViewSet.as_view({"put":"modify"})),
     path("api/projects/", ProjectViewSet.as_view({"get": "list", "post": "create"}), name="list_create_projects"),
+    path("api/projects/<str:project_id>/", ProjectViewSet.as_view({"get": "retrieve"}), name="edit_projects"),
     path("api/projects/update/<str:project_id>/", ProjectUpdateView.as_view(), name="update_project"),
     path("api/projects/delete/<str:project_id>/", ProjectDeleteView.as_view(), name="delete_project"),
     path("api/users/<str:user_id>/projects/", UserProfileViewSet.as_view({"get": "list_projects"})),
