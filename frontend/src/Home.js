@@ -84,7 +84,7 @@ function Home({darkMode, toggleDarkMode}) {
     return (
         <div className={`w-screen h-screen flex flex-col items-center ${darkMode === "dark" ? "text-white" : " text-black"}`}>
             <header className={`w-full flex justify-between items-center px-6 py-4 ${darkMode === "dark" ? "text-white shadow-md" : "text-gray-900 shadow-md"}`}>
-                <h1 className={`text-3xl font-bold ${darkMode === "dark" ? "text-white shadow-md" : "text-gray-900 shadow-md"}`}>ProjectHub</h1>
+                <h1 className={`text-3xl font-bold ${darkMode === "dark" ? "text-white shadow-md" : "text-gray-900 shadow-md"}`}>TechNexus</h1>
                 <div className="flex gap-4">
                     <button 
                         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
