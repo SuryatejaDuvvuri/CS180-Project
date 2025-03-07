@@ -24,9 +24,18 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
 
     const searchedProjects = useMemo(() => {
         if (!searchQuery) return [];
-        return projects.filter(project =>
-            project.name?.trim().toLowerCase().includes(searchQuery.trim().toLowerCase()) 
-        );
+        return projects.filter(project =>{
+            const projectName = project.name?.trim().toLowerCase() || "";
+            const projectSummary = project.description?.trim().toLowerCase() || "";
+            const projectDetails = project.looking_for?.trim().toLowerCase() || "";
+            const query = searchQuery.trim().toLowerCase();
+
+            return (
+                projectName.includes(query) ||
+                projectSummary.includes(query) ||
+                projectDetails.includes(query)
+            );
+        });
     }, [searchQuery, projects]);
 
 
@@ -170,7 +179,7 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
                         </div>
                     ))
                 ) : (
-                    <p className="text-center text-gray-400 w-full">No matching projects found.</p>
+                    <></>
                 )}
 
                     {recommendedProjects.length > 0 && (
