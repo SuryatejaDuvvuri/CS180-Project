@@ -25,7 +25,7 @@ function Email({email,name,projName,type})
             });
             const data = await response.json();
             if (response.ok) {
-                console.log(`Email sent successfully: ${data.message}`);
+
                 alert(`Email sent to ${email}`);
             } else {
                 console.error("Failed to send email:", data);
