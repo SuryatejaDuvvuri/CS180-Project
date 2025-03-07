@@ -357,6 +357,7 @@ ruamel.yaml.clib @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp
 scipy==1.13.0
 Send2Trash @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_5b31f0zzlv/croot/send2trash_1699371144121/work
 sendgrid==6.11.0
+serverless-wsgi==3.0.5
 simpleaudio==1.0.4
 sip @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_ba9odc_3u1/croot/sip_1698675938651/work
 six @ file:///tmp/build/80754af9/six_1644875935023/work
@@ -388,5 +389,6 @@ webencodings==0.5.1
 websocket-client @ file:///Users/ktietz/ci_310/websocket-client_1643972661291/work
 websockets==12.0
 Werkzeug==3.0.3
+whitenoise==6.9.0
 yt-dlp==2025.2.19
 zstandard @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_41b3vxtask/croot/zstandard_1677013668452/work
