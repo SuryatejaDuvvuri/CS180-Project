@@ -1,9 +1,9 @@
 
 //import logo from './logo.svg';
 // import './App.css';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 // import { createRoot } from 'react-dom/client';
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import Header from './Header.js';
 import Home from './Home.js';
 import Login from './components/Login.js';
@@ -19,119 +19,101 @@ import Applicants from "./Applicants.js"
 import Feedback from "./Feedback.js"
 // import Login from "./components/Login";
 // import Signup from "./components/Signup"; 
-import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./ProtectedRoute";
+import Dashboard from "./pages/Dashboard.js";
+import ProtectedRoute from "./ProtectedRoute.js";
 //jsx
 import NoteCards from "./NoteCards.js";
 import Apply from "./apply.jsx";
 import NavBar from './NavBar.jsx';
 import Note from './Note.jsx';
-import { auth, monitorAuthState } from "./firebase";
-import { Navigate } from "react-router-dom"
+import { auth, monitorAuthState } from "./firebase.js";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import {Navigate} from "react-router-dom"
 
 function App() {
   // const [isLight, setMode] = React.useState(true);
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const [token, setTokenState] = useState(localStorage.getItem('authToken'));
   const [selectedMajor, setSelectedMajor] = useState("All");
   const [user, setUser] = useState(null);
   // Triggers whenever the light/dark mode button is pressed
   // Switches the App's className
-  const [isLight, setIsLight] = useState(() => {
-    return localStorage.getItem("theme") !== "dark";
-  });
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-      setUser(currentUser);
-    });
+      const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+       
+          setUser(currentUser);
+      });
 
-    return () => unsubscribe();
+      return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (isLight) {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    } else {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    }
-  }, [isLight]);
+    useEffect(() => {
+      document.documentElement.classList.remove("light", "dark");
+      document.documentElement.classList.add(theme);
+      localStorage.setItem("theme", theme);
+  }, [theme]);
 
 
-  const toggleLightAndDarkMode = () => {
-    setIsLight((prevMode) => !prevMode);
+    const toggleTheme = () => {
+      setTheme(theme === "light" ? "dark" : "light");
   };
 
-  const handleMajorChange = (major) => {
-    console.log("Selected Major:", major);
-    setSelectedMajor(major);
+    const handleMajorChange = (major) => {
+
+      setSelectedMajor(major);
   };
 
   return (
-    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <div className={`min-h-screen ${isLight ? "bg-white text-black" : "bg-gray-900 text-white"}`}>
-        <Header method={toggleLightAndDarkMode} onMajorChange={handleMajorChange} />
-        <div className={`flex-1 w-full ${isLight ? "light" : "dark"}`}>
-          {/* <Home/> */}
-          {/* <NoteCards items={cs_projects} category="Recommended" />
-          <NoteCards items={film_projects} category="Film" /> */}
-          {/* <Note /> */}
-          {/* <div className="bg-gradient-to-r from-gradientLeftLight to-gradientRightLight bg-clip-text text-transparent font-bold text-3xl">
-            TEXT TEST
-          </div> */}
-          <div className="text-center bg-websiteBackground">
-            {/* <Header method={toggleLightAndDarkMode} /> */}
+    <Router>
+    <div className={`w-screen flex justify-center items-center min-h-screen  ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
+   
+           <div className="text-center">
+           {user &&  <Header darkMode = {theme} toggleDarkMode={toggleTheme} onMajorChange={handleMajorChange}/>}
+          
             <Routes>
 
-              <Route path="/profile/:email" element={<UserProfile />} />
-              <Route path="/create" element={
-                <ProtectedRoute>
-                  <ProjectCreation />
-                </ProtectedRoute>
-
-              } />
-
+             <Route path=":email/profile/" element={<UserProfile darkMode = {theme} toggleDarkMode={toggleTheme} />} />
+               
               <Route path=":email/:projectId/applicants/" element={
-                <ProtectedRoute>
-                  <Applicants />
-                </ProtectedRoute>
-              } />
-              <Route path="/home" element={
+                    <ProtectedRoute>
+                        <Applicants darkMode = {theme} toggleDarkMode={toggleTheme} />
+                    </ProtectedRoute>
+                } />
 
-                <ProtectedRoute>
-                  <Dashboard selectedMajor={selectedMajor} />
-                </ProtectedRoute>
-              } />
-              <Route path="/:projectId/apply/" element={
-                <ProtectedRoute>
-                  <ApplicationForm />
-                </ProtectedRoute>
-              } />
-              <Route path="/:projectId/feedback/" element={
-                <ProtectedRoute>
-                  <Feedback />
-                </ProtectedRoute>
-              } />
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
+            <Route path="/create" element={
+                  <ProtectedRoute>
+                     <ProjectCreation darkMode = {theme} toggleDarkMode={toggleTheme} />
+                  </ProtectedRoute>
+                   
+                } />
+                <Route path="/home" element={
 
-
-            </Routes>
-          </div>
-        </div>
-      </div>
+                    <ProtectedRoute>
+                      <Dashboard darkMode = {theme} toggleDarkMode={toggleTheme} selectedMajor ={selectedMajor}  onMajorChange={handleMajorChange} />
+                    </ProtectedRoute>
+                } />
+                 <Route path="/:projectId/apply/" element={
+                   <ProtectedRoute>
+                      <ApplicationForm darkMode = {theme} toggleDarkMode={toggleTheme} />
+                   </ProtectedRoute>
+                  } />
+                   <Route path = "/:projectId/feedback/" element= {
+                    <ProtectedRoute>
+                        <Feedback darkMode = {theme} toggleDarkMode={toggleTheme}/>
+                    </ProtectedRoute>
+                  } />
+            <Route path="/" element={<Home darkMode = {theme} toggleDarkMode={toggleTheme} />} />
+            <Route path="/login" element={<Login darkMode = {theme} toggleDarkMode={toggleTheme} />} />
+            <Route path="/signup" element={<SignUp darkMode = {theme} toggleDarkMode={toggleTheme}/>} />
+           
+           
+          </Routes> 
+           </div>
+    </div>
     </Router>
   );
-  /*return(
-    <div className={isLight ? "App LightMode" : "App DarkMode"}>
-      <Router>
-        <Header/>
-      </Router>
-      <ApplicationForm/>
-    </div>
-  );*/
 }
 
 export default App;

@@ -21,7 +21,6 @@ function Feedback({ setselectedFeedback, selectedFeedback, setSelectedProject, l
         checkFeedback(e);
 
         e.preventDefault();
-        console.log(values);
         // If there are no errors, close the tab and send the alert
         if (!(valueError.fNameError || valueError.lNameError || valueError.emailError || valueError.feedbackError)) {
             closeFeedback();
