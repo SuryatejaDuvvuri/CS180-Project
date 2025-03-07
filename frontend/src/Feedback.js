@@ -29,7 +29,7 @@ function Feedback({darkMode, toggleDarkMode}) {
             try {
                 // Fetch project details to check if the user is the owner
                 const projectResponse = await fetch(
-                    `http://${API_BASE_URL}/api/projects/${projectId}/`,
+                    `${API_BASE_URL}/api/projects/${projectId}/`,
                     {
                         method: "GET",
                         headers: {
@@ -53,7 +53,7 @@ function Feedback({darkMode, toggleDarkMode}) {
 
                 // Check if the user is a member of the project
                 const memberResponse = await fetch(
-                    `http://${API_BASE_URL}/api/users/${user.email}/projects/`,
+                    `${API_BASE_URL}/api/users/${user.email}/projects/`,
                     {
                         method: "GET",
                         headers: {
@@ -86,7 +86,7 @@ function Feedback({darkMode, toggleDarkMode}) {
                     const idToken = await auth.currentUser.getIdToken();
 
                     const response = await fetch(
-                        `http://${API_BASE_URL}/api/projects/${projectId}/feedback/`,
+                        `${API_BASE_URL}/api/projects/${projectId}/feedback/`,
                         {
                             method: "GET",
                             headers: {
