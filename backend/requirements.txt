@@ -1,11 +1,13 @@
+asgiref==3.8.1
 certifi==2025.1.31
+dj-database-url==2.3.0
+Django==5.1.7
+django-cors-headers==4.7.0
+gunicorn==23.0.0
 numpy==2.2.2
 packaging==24.2
+psycopg2-binary==2.9.10
 scipy==1.15.1
-Django>=4.0.0
-gunicorn
-whitenoise
-psycopg2-binary
-dj-database-url
-django-cors-headers
-wheel @ file:///opt/homebrew/Cellar/python%403.13/3.13.2/libexec/wheel-0.45.1-py3-none-any.whl#sha256=b9235939e2096903717cb6bfc132267f8a7e46deb2ec3ef9c5e234ea301795d0
+sqlparse==0.5.3
+typing_extensions==4.12.2
+whitenoise==6.9.0
