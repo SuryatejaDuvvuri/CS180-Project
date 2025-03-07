@@ -113,7 +113,7 @@ function ProjectCreation({darkMode, toggleDarkMode}) {
             }
 
             alert("Project created successfully!");
-            navigate("/applicants");
+            navigate("/home");
         } catch (err) {
             setError(err.message);
             console.error("Error creating project:", err);
@@ -160,6 +160,16 @@ function ProjectCreation({darkMode, toggleDarkMode}) {
                             className={`w-full px-4 py-2 rounded-md border border-gray-300 focus:ring focus:ring-blue-400 focus:outline-none ${
                                 darkMode === "dark" ? "bg-gray-700 text-white" : "bg-white text-black"
                             }`}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block font-medium mb-1">Number of people:</label>
+                        <textarea 
+                            name="people" value={val} onChange={handleChange} rows={4} 
+                            className={`w-full px-4 py-2 rounded-md border border-gray-300 focus:ring focus:ring-blue-400 focus:outline-none ${
+                                darkMode === "dark" ? "bg-gray-700 text-white" : "bg-white text-black"
+                            }`} required 
                         />
                     </div>
         
