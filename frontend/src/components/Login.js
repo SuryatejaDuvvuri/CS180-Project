@@ -46,28 +46,36 @@ export default function Login({darkMode, toggleDarkMode}) {
 
   const handleGoogleLogin = async () => {
     try {
-      const idToken = await signInWithGoogle();
-      if (!idToken) {
-        throw new Error("Failed to retrieve Firebase ID token.");
-      }
+        const idToken = await signInWithGoogle();
+        if (!idToken) {
+            throw new Error("Failed to retrieve Firebase ID token.");
+        }
 
-      const response = await fetch(`${API_BASE_URL}/api/google-login/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idToken }),
-      });
+        const response = await fetch(`${API_BASE_URL}/api/google-login/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken }),
+        });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.detail || "Google Login failed");
-      }
+        const data = await response.json();
 
-      localStorage.setItem("authToken", data.token);
-      navigate("/home");
+        if (response.status === 302) 
+        {
+            navigate("/signup");
+            return;
+        }
+
+        if (!response.ok) 
+        {
+            throw new Error(data.error || "Google Login failed");
+        }
+
+        localStorage.setItem("authToken", data.token);
+        navigate("/home");
     } catch (err) {
-      setError(err.message);
+        setError(err.message);
     }
-  };
+};
 
   return (
     <div className={`w-screen h-screen flex justify-center items-center ${darkMode === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>

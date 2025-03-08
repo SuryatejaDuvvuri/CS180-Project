@@ -39,8 +39,6 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
         });
     }, [searchQuery, projects]);
 
-
-
     const getProjects = async () => {
         setLoading(true);
         try {
@@ -180,20 +178,24 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
                         <section>
                             <h2 className="text-2xl font-semibold mb-4">Recommended Projects</h2>
                             <NoteCards 
+                                darkMode={darkMode} 
+                                toggleDarkMode={toggleDarkMode} 
                                 items={recommendedProjects.map(project => ({
                                     project_id: project.project_id || "N/A",
-                                    image_url: project.image_url || "",  
+                                    image_url: project.image_url || project.image,  
                                     name: project.name || "Unnamed Project",
                                     description: project.description || "No description available.",
                                     owner: project.owner || "Unknown",
+                                    color: project.color || "",  
                                     category: project.category || "Uncategorized",
                                     looking_for: project.looking_for || "Not specified",
                                     weekly_hours: project.weekly_hours || 0,
-                                    team_size: project.number_of_people || 1,
+                                    team_size: project.no_of_people || 1,  
                                     start_date: project.start_date || "No start date",
                                     end_date: project.end_date || "No end date",
-                                }))} 
+                                }))}
                                 category="Recommended" 
+                                setSelectedProject={setSelectedProject}
                             />
                         </section>
                     )}

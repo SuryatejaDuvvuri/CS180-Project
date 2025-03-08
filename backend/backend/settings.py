@@ -26,10 +26,7 @@ SECRET_KEY = 'django-insecure-p_fvsgrba(5f2gnki@#ts+x9ggf&*0jxv@t1*)vn^mu-#pb6i=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [
-    os.getenv("RENDER_EXTERNAL_HOSTNAME", "localhost"),
-    "your-django-backend.onrender.com",
-]
+ALLOWED_HOSTS = ["vital-bison-game.ngrok-free.app", "https://cs180-project-o1hs.onrender.com", "127.0.0.1", "localhost"]
 
 
 # Application definition

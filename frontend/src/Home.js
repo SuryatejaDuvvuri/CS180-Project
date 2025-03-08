@@ -38,7 +38,7 @@ function Home({darkMode, toggleDarkMode}) {
             }
 
             const response = await fetch(url, { method: "GET", headers });
-
+            console.log(response);
             if (response.ok) {
                 const data = await response.json();
                 setProjects(Array.isArray(data) ? data : []);

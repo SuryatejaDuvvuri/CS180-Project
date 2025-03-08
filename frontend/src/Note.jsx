@@ -70,7 +70,7 @@ function Note({ darkMode, toggleDarkMode, selectedProject, setSelectedProject, u
         
                         {selectedProject.image && (
                             <img 
-                                src={selectedProject.image} 
+                                src={selectedProject.image || selectedProject.image_url} 
                                 alt={selectedProject.name} 
                                 className="w-full h-48 object-cover rounded-lg mb-4"
                             />

@@ -23,8 +23,6 @@ import Dashboard from "./pages/Dashboard.js";
 import ProtectedRoute from "./ProtectedRoute.js";
 //jsx
 import NoteCards from "./NoteCards.js";
-import Apply from "./apply.jsx";
-import NavBar from './NavBar.jsx';
 import Note from './Note.jsx';
 import { auth, monitorAuthState } from "./firebase.js";
 import { signOut, onAuthStateChanged } from "firebase/auth";

@@ -29,7 +29,7 @@ from .sendEmail import sendEmail
 import datetime
 
 User = get_user_model()
-OLLAMA_URL = os.getenv("OLLAMA_API_URL", "http://127.0.0.1:11434")
+OLLAMA_URL = os.getenv("OLLAMA_API_URL", "https://vital-bison-game.ngrok-free.app")
 def get_user_id_by_email(email):
         users_query = db.collection("users").where("email", "==", email).stream()
         
@@ -109,7 +109,7 @@ class FeedBackViewSet(viewsets.ViewSet):
                 return JsonResponse({"error": "User not found"}, status=404)
 
             user_id = user_doc.id 
-            print(f"✅ Found Firestore User ID: {user_id}")
+            
 
             joined_projects_ref = db.collection("users").document(user_id).collection("projects_joined").document(project_id)
             joined_doc = joined_projects_ref.get()
@@ -141,7 +141,7 @@ class FeedBackViewSet(viewsets.ViewSet):
 
             try:
                 feedback_ref.set(feedback_data)
-                print(f"Feedback successfully added: {feedback_data}")
+       
             except Exception as firestore_error:
 
                 return JsonResponse({"error": str(firestore_error)}, status=500)
@@ -194,7 +194,7 @@ class ApplicantViewSet(viewsets.ViewSet):
             if not applicant_data.exists:
                 return Response({"error": "Applicant not found"}, status=404)
 
-            print(f"Deleting applicant: {applicant_id}, Data: {applicant_data.to_dict()}")
+          
             applicant_ref.delete()
 
             return Response({"message": f"Applicant {applicant_id} deleted successfully"}, status=200)
@@ -238,7 +238,7 @@ class ApplicantViewSet(viewsets.ViewSet):
                 return JsonResponse({"error": "Project not found"}, status=404)
 
             project_data = project_doc.to_dict() 
-            print(f"Project Data Retrieved: {project_data}") 
+         
             
             application_data = {
                     "email": applicant_email,
@@ -335,7 +335,6 @@ class ApplicantViewSet(viewsets.ViewSet):
                 project_name=project_data["name"]
             )
             
-            print(new_status)
             if new_status == "Rejected":
                 applicants_ref.delete()
                 return Response({"message": f"Applicant {applicant_email} has been rejected and removed."}, status=200)
@@ -432,7 +431,6 @@ class UserProfileViewSet(viewsets.ViewSet):
                 return JsonResponse({"error": "Empty request body"}, status=400)
 
             data = json.loads(request.body.decode("utf-8"))
-            print("Received Data:", data)
 
             email = data.get("email")
             if not email:
@@ -529,13 +527,15 @@ class UserProfileViewSet(viewsets.ViewSet):
             if not email:
                 return Response({"error": "Invalid token, email not found"}, status=400)
 
-            user, created = User.objects.get_or_create(email=email, defaults={"username": email.split('@')[0]})
+            user_query = db.collection("users").where("email", "==", email).stream()
+            user_doc = next(user_query, None)
 
-            doc_ref = db.collection("users").document(user.email)
-            doc_ref.set({"email": user.email, "username": user.username, "created_at": firestore.SERVER_TIMESTAMP})
+            if user_doc:
 
-            return Response({"message": "Google login successful!", "email": email}, status=200)
-    
+                user_data = user_doc.to_dict()
+                return Response({"message": "Google login successful!", "email": email, "user": user_data}, status=200)
+            else:
+                return Response({"error": "User not found. Please sign up.", "redirect": "/signup"}, status=302)
         except Exception as e:
             return Response({"error": str(e)}, status=400)
         
@@ -585,7 +585,6 @@ class UserProfileViewSet(viewsets.ViewSet):
 class ProjectViewSet(viewsets.ViewSet):
     def generate_summary(self, description):
         try:
-            print("Project Description:", description)
 
             prompt = f"""
             Summarize a project in one short sentence.
@@ -622,6 +621,7 @@ class ProjectViewSet(viewsets.ViewSet):
             user_projects_ref = db.collection("users").stream()
             public_projects = []
             if not auth_header or not auth_header.startswith("Bearer "):
+
                 for user_doc in user_projects_ref:
                     user_id = user_doc.id
                     created_projects_ref = db.collection("users").document(user_id).collection("projects_created").stream()
@@ -699,7 +699,7 @@ class ProjectViewSet(viewsets.ViewSet):
             firebase_email = decoded_token.get("email")
             firebase_uid = decoded_token.get("uid") 
 
-            print(firebase_email)
+
             data = json.loads(request.body.decode("utf-8"))
             if not data.get("name") or not data.get("category"):
                 return JsonResponse({"error": "Project name and category are required"}, status=400)
@@ -712,7 +712,7 @@ class ProjectViewSet(viewsets.ViewSet):
 
             user_doc = user_docs[0]
             user_id = user_doc.id 
-            print(f"User ID: {user_id}")
+
   
             project_ref = db.collection("users").document(user_id).collection("projects_created").document()
 
@@ -823,7 +823,6 @@ class ProjectUpdateView(RetrieveUpdateAPIView):
 
 class ProjectRecommendationViewSet(viewsets.ViewSet):
      def list(self, request, email):
-        print("Hello")
         if not email:
             return Response({"error": "Email parameter is required"}, status=400)
     

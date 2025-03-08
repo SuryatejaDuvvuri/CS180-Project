@@ -29,7 +29,6 @@ console.log("Firebase Config:", {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Ensure persistence is set before any auth operations
 setPersistence(auth, browserLocalPersistence).then(() => {
     console.log("Firebase auth persistence set to local");
 }).catch((error) => {

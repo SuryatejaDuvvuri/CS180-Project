@@ -13,7 +13,7 @@ function ProjectCreation({darkMode, toggleDarkMode}) {
     const [range, setRange] = useState([null, null]);
     const [startDate, endDate] = range;
     const [error, setError] = useState(null);
-    const [val, setVal] = useState(0);
+    const [numPeople, setNumPeople] = useState(1);
     const [category, setCategory] = useState('');
     const [location, setLocation] = useState('');
     const [weeklyHours, setWeeklyHours] = useState(0);
@@ -90,7 +90,7 @@ function ProjectCreation({darkMode, toggleDarkMode}) {
                 owner: user.email,
                 start_date: startDate ? startDate.toISOString() : null,
                 end_date: endDate ? endDate.toISOString() : null,
-                no_of_people: val,
+                no_of_people: numPeople,
                 looking_for,
                 category,
                 location,
@@ -165,11 +165,11 @@ function ProjectCreation({darkMode, toggleDarkMode}) {
 
                     <div>
                         <label className="block font-medium mb-1">Number of people:</label>
-                        <textarea 
-                            name="people" value={val} onChange={(e) => setVal(e)} rows={4} 
+                        <input 
+                            type="number" name="people" value={numPeople} onChange={(e) => setNumPeople(e.target.value)} 
                             className={`w-full px-4 py-2 rounded-md border border-gray-300 focus:ring focus:ring-blue-400 focus:outline-none ${
                                 darkMode === "dark" ? "bg-gray-700 text-white" : "bg-white text-black"
-                            }`} required 
+                            }`}  required 
                         />
                     </div>
         
@@ -208,7 +208,9 @@ function ProjectCreation({darkMode, toggleDarkMode}) {
                             />
                             <label 
                                 htmlFor="fileInput" 
-                                className="cursor-pointer flex justify-center items-center w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-200 text-black hover:bg-gray-300"
+                                className={`w-full px-4 py-2 rounded-md border border-gray-300 focus:ring focus:ring-blue-400 focus:outline-none ${
+                                    darkMode === "dark" ? "bg-gray-700 text-white" : "bg-white text-black"
+                                }`} 
                             >
                                 Choose File
                             </label>

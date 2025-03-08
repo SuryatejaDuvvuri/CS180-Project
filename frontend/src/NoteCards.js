@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './css/NoteCards.css';
 import Note from './Note';
@@ -43,15 +43,15 @@ function NoteCards({darkMode, toggleDarkMode, items = [], category }) {
 
 
                     <div className="flex overflow-x-auto space-x-8 p-4 snap-x scroll-smooth">
-                        {projects.slice(scrollIndex, scrollIndex + maxVisible).map((item) => (
+                        {projects.slice(scrollIndex, scrollIndex + maxVisible).map((item, index) => (
                             <div
-                                key={item.id}
-                                className={`rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden ${
-                                    darkMode === "dark" ? "bg-gray-800 text-gray-200" : "bg-white"
+                                key={item.id || index}
+                                className={`rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden transition-colors duration-300 ease-in-out ${
+                                    !item.color ? (darkMode === "dark" ? "bg-gray-800" : "bg-white") : ""
                                 }`}
-                                style={{
-                                    backgroundColor: item.color,
-                                }}
+                                style={item.color ? { backgroundColor: item.color } : {}}
+                                
+                                
                             >
 
                                 {item.image_url || item.image ? (
