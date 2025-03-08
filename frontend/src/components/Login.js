@@ -112,12 +112,12 @@ export default function Login({darkMode, toggleDarkMode}) {
       </button>
     </form>
 
-    <button
+    {/* <button
       onClick={handleGoogleLogin}
       className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition"
     >
       Sign in with Google
-    </button>
+    </button> */}
 
     <button
       onClick={() => navigate("/signup")}

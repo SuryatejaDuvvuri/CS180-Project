@@ -114,7 +114,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://vital-bison-game.ngrok-free.app",
 ]
 
-
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
