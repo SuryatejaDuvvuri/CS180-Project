@@ -74,6 +74,8 @@ TEMPLATES = [
     },
 ]
 
+
+
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
@@ -109,6 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000", 
+    "https://vital-bison-game.ngrok-free.app",
 ]
 
 

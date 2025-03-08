@@ -3,9 +3,10 @@ import requests
 import json
 from firebase import db
 from django.http import JsonResponse
+from dotenv import load_dotenv
 
-OLLAMA_URL = os.getenv("OLLAMA_API_URL", "http://127.0.0.1:11434")
-
+load_dotenv(override=True)
+OLLAMA_URL = os.getenv("OLLAMA_API_URL", "https://vital-bison-game.ngrok-free.app")
 
 
 def recommend_projects(user_email):  
