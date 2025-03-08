@@ -28,7 +28,7 @@ def run_ollama_chat(prompt):
     payload = {
         "model": "llama3.2",
         "prompt": prompt,
-        "stream": False  # Disable streaming to get a single response
+        "stream": False  
     }
 
     try:
@@ -47,5 +47,5 @@ def run_ollama_chat(prompt):
     except requests.exceptions.RequestException as e:
         return f"Failed to connect to Ollama: {str(e)}"
 
-# Test if Ollama responds correctly
+
 print(run_ollama_chat("Tell me a fun fact about AI"))

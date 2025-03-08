@@ -81,7 +81,6 @@ function NoteCards({darkMode, toggleDarkMode, items = [], category }) {
                                     <div className={`flex flex-col gap-2 text-sm ${
                                         darkMode === "dark" ? "text-gray-200" : "text-gray-500"
                                     }`}>
-                                        {/* <span>Summary: {item.summary}</span> */}
                                         <span>Category: {item.category}</span>
                                         <span>Looking for: {item.looking_for}</span>
                                         <span>Team size: {item.number_of_people}</span>
@@ -115,7 +114,6 @@ function NoteCards({darkMode, toggleDarkMode, items = [], category }) {
                 </div>
             </div>
 
-            {/* Modal for Selected Project */}
             {selectedProject && (
                 <Note darkMode = {darkMode} toggleDarkMode = {toggleDarkMode} selectedProject={selectedProject} setSelectedProject={setSelectedProject} />
             )}

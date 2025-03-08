@@ -9,7 +9,6 @@ import DropdownItem from './DropdownItem.js';
 import onSelect from "./Header.js"
 
 // The Dropdown menu. Consists of a button and several DropdownItems
-
 function Dropdown({ title, arr, onSelect,addChosenElem, removeChosenElem}) {
 
     const [isOpen, setIsOpen] = React.useState(false);

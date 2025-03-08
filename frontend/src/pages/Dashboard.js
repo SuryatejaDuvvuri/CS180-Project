@@ -45,9 +45,6 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
         setLoading(true);
         try {
             let url = `${API_BASE_URL}/api/projects/`;
-            // if (selectedMajor !== "All") {
-            //     url += `?category=${encodeURIComponent(selectedMajor)}`;
-            // }
             const user = auth.currentUser;
             const idToken = await user.getIdToken();
             const response = await fetch(url, {
@@ -96,7 +93,7 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
 
             const idToken = await user.getIdToken();
             const email = user.email;
-            console.log(`${API_BASE_URL}/api/recommend-projects/${email}/`);
+           
             
             const response = await fetch(`${API_BASE_URL}/api/recommend-projects/${email}/`, {
                 method: "GET",
@@ -131,9 +128,6 @@ export default function Dashboard({ darkMode, toggleDarkMode, selectedMajor, set
         }
     }
 
-    // const getProjectsByCategory = (category) => {
-    //   return projects.filter(project => project.category === category);
-    // };
     React.useEffect(() => {
         getProjects();
         

@@ -41,7 +41,6 @@ function Home({darkMode, toggleDarkMode}) {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
                 setProjects(Array.isArray(data) ? data : []);
             } else {
                 throw new Error("Failed to fetch projects");
@@ -125,7 +124,6 @@ function Home({darkMode, toggleDarkMode}) {
                     </div>
                 </section>
 
-                {/* Project Listing Section */}
                 <section className="text-center">
                     {loading ? (
                         <p className="text-gray-600 dark:text-gray-300">Loading projects...</p>

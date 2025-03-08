@@ -36,7 +36,7 @@ function ProjectCreation({darkMode, toggleDarkMode}) {
         category: '',
         location: '',
         weekly_hours: 0,
-        color: '#FF5D5D', // Default white
+        color: '#FF5D5D', 
         image: null
     });
 

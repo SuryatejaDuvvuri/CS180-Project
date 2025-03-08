@@ -24,14 +24,6 @@ function Header({ darkMode, toggleDarkMode, onMajorChange }) {
         navigate("/"); 
     };
 
-    // Triggers whenever the light/dark mode button is pressed
-    // Calls App.toggleLightAndDarkMode() to switch the App's className, then
-    // sets this.isLight to toggle the image inside the toggle's button
-
-    // const [isLight, setIsLight] = useState(() => {
-    //     return localStorage.getItem("theme") === "dark" ? false : true;
-    // });
-
     const handleMajorSelect = (event) => {
         const major = event.target.value;
         setSelectedMajor(major);

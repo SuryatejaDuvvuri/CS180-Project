@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 
-
 function Email({email,name,projName,type})
 {
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;

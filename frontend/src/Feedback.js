@@ -112,48 +112,6 @@ function Feedback({darkMode, toggleDarkMode}) {
         }
     }, [isOwner, projectId]);
 
-    // const fetchFeedback = async () => {
-    //     try {
-    //         setLoading(true);
-    //         const user = auth.currentUser;
-    //         if (!user) {
-    //             console.error("User not authenticated.");
-    //             return;
-    //         }
-    
-    //         const idToken = await user.getIdToken();
-    //         const response = await fetch(
-    //             `http://localhost:8000/api/projects/${projectId}/feedback/`, 
-    //             {
-    //                 method: "GET",
-    //                 headers: {
-    //                     "Content-Type": "application/json",
-    //                     Authorization: `Bearer ${idToken}`,  
-    //                 },
-    //             }
-    //         );
-    //         if (!response.ok) {
-    //             throw new Error("Failed to fetch feedback.");
-    //         }
-    //         const data = await response.json();
-    //         if (data.owner === user.email) 
-    //         {
-    //             setIsOwner(false);  
-    //         } 
-    //         else 
-    //         {
-    //             setFeedbacks(data.feedback || []);
-    //             setIsOwner(true); 
-    //         }
-    //         setFeedbacks(data.feedback || []);
-    //     } catch (err) {
-    //         console.error("Error fetching feedback:", err);
-    //         setError(err.message);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!experience || !improvements) {

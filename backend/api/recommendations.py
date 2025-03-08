@@ -3,7 +3,6 @@ import json
 import requests
 from firebase import db
 
-# Ollama API URL
 OLLAMA_URL = os.getenv("OLLAMA_API_URL", "http://127.0.0.1:11434")
 
 
@@ -12,7 +11,6 @@ def recommend_projects(user_email):
         return {"error": "Email is required"}
 
     try:
-        # 1. Fetch User Data
         user_query = db.collection("users").where("email", "==", user_email).stream()
         user_doc_id = None
         user_data = None
@@ -33,7 +31,6 @@ def recommend_projects(user_email):
         print(f"User Skills: {user_skills}")
         print(f"User Interests: {user_interests}")
 
-        # 2. Exclude Projects Created or Joined by the User
         excluded_projects = set()
         if user_doc_id:
             created_docs = db.collection("users").document(user_doc_id).collection("projects_created").stream()
@@ -46,7 +43,6 @@ def recommend_projects(user_email):
 
         print(f"Excluded projects (Created or Joined): {excluded_projects}")
 
-        # 3. Gather Projects for AI Recommendation
         recommended_projects = []
         all_users = db.collection("users").stream()
 
@@ -54,7 +50,6 @@ def recommend_projects(user_email):
             if other_user_doc.id == user_doc_id:
                 continue  # Skip self
 
-            # 3a. Projects Created by Other Users
             other_created_ref = db.collection("users").document(other_user_doc.id).collection("projects_created").stream()
             for project_doc in other_created_ref:
                 if project_doc.id in excluded_projects:
@@ -64,7 +59,7 @@ def recommend_projects(user_email):
                 if process_project_recommendation(user_skills, user_interests, project_data):
                     recommended_projects.append(format_project_response(project_doc.id, project_data))
 
-            # 3b. Projects Joined by Other Users
+
             other_joined_ref = db.collection("users").document(other_user_doc.id).collection("projects_joined").stream()
             for project_doc in other_joined_ref:
                 if project_doc.id in excluded_projects:
@@ -83,7 +78,6 @@ def recommend_projects(user_email):
 
 
 def process_project_recommendation(user_skills, user_interests, project_data):
-    """ Calls Ollama to determine if the project should be recommended """
     project_name = project_data.get("name", "")
     project_description = project_data.get("description", "")
 
@@ -124,19 +118,18 @@ def process_project_recommendation(user_skills, user_interests, project_data):
                     if json_data.get("done", False): 
                         break
                 except json.JSONDecodeError:
-                    print(f"❌ Invalid JSON from Ollama: {line.decode('utf-8')}")
+                    print(f"Invalid JSON from Ollama: {line.decode('utf-8')}")
                     continue
 
-        print(f"✅ Ollama Decision: {final_response.lower()}")
+        print(f"Ollama Decision: {final_response.lower()}")
 
         return "yes" in final_response.lower()  
 
     except requests.exceptions.RequestException as e:
-        print(f"❌ Request error while calling Ollama: {e}")
+        print(f"Request error while calling Ollama: {e}")
         return False  
 
 def format_project_response(project_id, project_data):
-    """ Formats the project data for response """
     return {
         "project_id": project_id,
         "image_url": project_data.get("image_url", ""),

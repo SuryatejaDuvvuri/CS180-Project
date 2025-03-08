@@ -46,45 +46,6 @@ function Note({ darkMode, toggleDarkMode, selectedProject, setSelectedProject, u
             [name]: value,
         }));
     };
-
-
-    const handleApply = async () => {
-        const user = auth.currentUser;
-        if (!user) {
-            alert("You need to be logged in.");
-            return;
-        }
-    
-        try {
-            const idToken = await user.getIdToken();
-            const projectId = selectedProject.project_id;
-    
-            if (buttonText === "Apply") 
-                {
-                const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/apply/`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${idToken}`,
-                    },
-                    body: JSON.stringify({
-                        // position: "Developer", 
-                        // cv: null,
-                    }),
-                });
-    
-                if (!response.ok) {
-                    throw new Error("Failed to apply");
-                }
-    
-                setButtonText("Leave");
-                alert("Application submitted!");
-            }  
-        } catch (err) {
-            console.error("Error handling project application:", err);
-            alert("Error processing request.");
-        }
-    };
     return (
         <>
             {selectedProject && (
@@ -98,7 +59,6 @@ function Note({ darkMode, toggleDarkMode, selectedProject, setSelectedProject, u
                         }`}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        {/* Close Button */}
                         <button 
                             className={`absolute top-3 right-3 text-xl ${
                                 darkMode === "dark" ? "text-gray-400 hover:text-gray-200" : "text-gray-500 hover:text-gray-700"
@@ -108,7 +68,6 @@ function Note({ darkMode, toggleDarkMode, selectedProject, setSelectedProject, u
                             &times;
                         </button>
         
-                        {/* Project Image */}
                         {selectedProject.image && (
                             <img 
                                 src={selectedProject.image} 
@@ -117,7 +76,6 @@ function Note({ darkMode, toggleDarkMode, selectedProject, setSelectedProject, u
                             />
                         )}
         
-                        {/* Project Details */}
                         <h2 className="text-2xl font-bold mb-2">{selectedProject.name}</h2>
                         <p className={`mb-4 ${darkMode === "dark" ? "text-gray-300" : "text-gray-600"}`}>
                             {selectedProject.description}
@@ -141,7 +99,6 @@ function Note({ darkMode, toggleDarkMode, selectedProject, setSelectedProject, u
                             <p><span className="font-semibold">End Date:</span> {selectedProject.end_date ? new Date(selectedProject.end_date).toDateString() : "N/A"}</p>
                         </div>
         
-                        {/* Buttons */}
                         <div className="mt-6 flex justify-between">
                             <button 
                                 className={`px-4 py-2 rounded-lg transition ${

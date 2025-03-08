@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 
 def sendEmail(recipient_email, name, subject, email_type, project_name=None, applicant_name=None, position=None, applicant_email=None, linkedin=None, github=None):
     try:
-        # Load environment variables
         load_dotenv()
         api_key = os.getenv("SENDGRID_API_KEY")
         sender_email = os.getenv("EMAIL")

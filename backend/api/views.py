@@ -1,7 +1,6 @@
 from django.shortcuts import render
 
 # Create your views here.
-
 import os
 import random
 import re
@@ -30,7 +29,6 @@ from .sendEmail import sendEmail
 import datetime
 
 User = get_user_model()
-# db = firestore.client()
 OLLAMA_URL = os.getenv("OLLAMA_API_URL", "http://127.0.0.1:11434")
 def get_user_id_by_email(email):
         users_query = db.collection("users").where("email", "==", email).stream()
@@ -41,13 +39,10 @@ def get_user_id_by_email(email):
         return None 
 
 def serialize_firestore_data(document):
-    """
-    Convert Firestore document to a JSON-serializable format.
-    """
     data = document.to_dict()
     for key, value in data.items():
         if isinstance(value, firestore.SERVER_TIMESTAMP) or isinstance(value, datetime.datetime):
-            data[key] = value.isoformat()  # Convert timestamp to ISO format
+            data[key] = value.isoformat() 
     return data
 
 class FeedBackViewSet(viewsets.ViewSet):
@@ -188,39 +183,6 @@ class ApplicantViewSet(viewsets.ViewSet):
             return JsonResponse({"applicants": applicants}, status=200)
         except Exception as e:
             return JsonResponse({"error":str(e)},status=500)
-    # def create(self, request):
-    #     try:
-    #         data = json.loads(request.body)
-    #         required_fields = ["name", "email", "project_id"]
-    #         missing = [field for field in required_fields if field not in data]
-    #         if missing:
-    #             return Response({"error": f"Missing fields: {', '.join(missing)}"}, status=400)
-
-    #         applicant_ref = db.collection("Applicants").document()
-    #         applicant_data = {
-    #             "name": data["name"],
-    #             "email": data["email"],
-    #             "project_id": data["project_id"],
-    #             "position":data["position"],
-    #             "status": data.get("status", "pending"),
-    #             "submission_date": data.get("submission_date", None),
-    #         }
-
-    #         applicant_ref.set(applicant_data) 
-
-    #         print("Applicant successfully added:", applicant_data) 
-
-    #         return JsonResponse(
-    #             {"message": "Applicant created successfully", "applicant": applicant_data},
-    #             status=201
-    #         )
-
-    #     except json.JSONDecodeError:
-    #         print("Invalid JSON format received!")
-    #         return Response({"error": "Invalid JSON format"}, status=400)
-
-    #     except Exception as e:
-    #         return JsonResponse({"error": str(e)}, status=500)
     def delete(self, request, applicant_id=None):
         try:
             if not applicant_id:
@@ -265,14 +227,6 @@ class ApplicantViewSet(viewsets.ViewSet):
 
             if not applicant_data:
                 return JsonResponse({"error": "Applicant profile not found"}, status=404)
-
-            
-            # user_docs = list(applicant_query)
-            # if not user_docs:
-            #     return Response({"error": "User not found"}, status=404)
-            # user_doc = user_docs[0]
-            # user_id = user_doc.id  
-            
             
             project_ref = db.collection("users").document(owner_user_id).collection("projects_created").document(project_id)
             application_ref = project_ref.collection("Applicants").document(applicant_email)
@@ -393,7 +347,6 @@ class ApplicantViewSet(viewsets.ViewSet):
                     applicant_id = applicant_doc.id
                     applicant_uid = get_user_id_by_email(applicant_id)
                     joined_ref = db.collection("users").document(applicant_uid).collection("projects_joined").document(project_id)
-                    # joined_ref.set({"name": project_data.get("name", "Unnamed Project"), "status": "Accepted"})
                     joined_doc = joined_ref.get()
                     if not joined_ref.get().exists:
                         
@@ -411,8 +364,6 @@ class ApplicantViewSet(viewsets.ViewSet):
                         })
                     
                     return Response({**joined_ref.get().to_dict(), "id": joined_ref.id}, status=200)
-            
-           
 
             return Response({"message": f"Applicant {applicant_name} has been {new_status}"}, status=200)
 
@@ -441,9 +392,6 @@ class UserProfileViewSet(viewsets.ViewSet):
 
             is_self = firebase_email == email
             is_project_owner = db.collection("projects").where("owner", "==", firebase_email).limit(1).stream()
-
-            # if not is_self and not any(is_project_owner):
-            #     return Response({"error": "Unauthorized access"}, status=403)
 
             users_query = db.collection("users").where("email", "==", email).stream()
             user_doc = next(users_query, None)
@@ -542,7 +490,6 @@ class UserProfileViewSet(viewsets.ViewSet):
             firebase_uid = decoded_token.get("uid")
             email_pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
             if re.match(email_pattern, user_id):
-                # Convert email to Firestore ID
                 user_query = db.collection("users").where("email", "==", user_id).stream()
                 user_doc = next(user_query, None)
 
@@ -565,9 +512,7 @@ class UserProfileViewSet(viewsets.ViewSet):
             joined_projects = [
                 {**proj.to_dict(), "id": proj.id} for proj in joined_projects_ref
             ]
-            
-
-
+    
             return Response({
                 "projects_created": created_projects,
                 "projects_joined": joined_projects
@@ -650,8 +595,6 @@ class ProjectViewSet(viewsets.ViewSet):
 
             Summary:
             """
-
-
             response = requests.post(
                 f"{OLLAMA_URL}/api/generate",
                 json={
@@ -704,7 +647,6 @@ class ProjectViewSet(viewsets.ViewSet):
                 joined_projects_ref = db.collection("users").document(user_doc.id).collection("projects_joined").stream()
                 joined_projects = [{**proj.to_dict(), "id": proj.id} for proj in joined_projects_ref]
                 projects.extend(created_projects + joined_projects)
-            # proj_ref = db.collection("Projects")
             category_filter = request.GET.get("category", None)
             
             if category_filter and category_filter != "All":
@@ -725,7 +667,6 @@ class ProjectViewSet(viewsets.ViewSet):
             decoded_token = auth.verify_id_token(id_token)
             user_email = decoded_token.get("email")
 
-            print(f"🔹 Request for project ID: {project_id} by {user_email}")
 
             projects_ref = db.collection("users").stream()
             found_project = None
@@ -736,7 +677,6 @@ class ProjectViewSet(viewsets.ViewSet):
                 if project_doc.exists:
                     found_project = project_doc.to_dict()
                     found_project["id"] = project_id
-                    print(f"✅ Found project: {found_project}")
                     break
             
             if not found_project:
@@ -872,7 +812,6 @@ class ProjectUpdateView(RetrieveUpdateAPIView):
             if not update_data:
                 return Response({"error": "No valid fields provided for update"}, status=400)
             
-            print(f"Updating project {proj_id} with:", update_data)
             proj_ref.update(update_data)
 
             return Response({"message": "Project updated successfully", "updated_data": update_data}, status=200)
@@ -888,7 +827,6 @@ class ProjectRecommendationViewSet(viewsets.ViewSet):
         if not email:
             return Response({"error": "Email parameter is required"}, status=400)
     
-        print("🔍 Received email:", email)
         recommended_projects = recommend_projects(email)
         return JsonResponse(recommended_projects, safe=False)
      
