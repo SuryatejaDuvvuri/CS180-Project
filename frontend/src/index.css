@@ -2,11 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
+html,
+body {
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden; /* Prevent unwanted horizontal scrolling */
+  overflow-x: hidden;
+  /* Prevent unwanted horizontal scrolling */
 }
 
 

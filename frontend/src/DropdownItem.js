@@ -23,7 +23,7 @@ class DropdownItem extends React.Component {
     handleItemClick = () => {
         this.state.clicked ? this.setState({ checkmark: "[✓]" }) : this.setState({ checkmark: "[]" });
         this.setState({ clicked: !this.state.clicked });
-        if(this.state.checkmark != "[✓]")
+        if (this.state.checkmark != "[✓]")
             this.props.addChosenElem(this.props.text);
         else
             this.props.removeChosenElem(this.props.text);

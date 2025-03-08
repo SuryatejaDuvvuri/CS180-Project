@@ -1,83 +1,82 @@
 @import './css/Colors.css';
-  
-  .form-container {
-    display: flex;
-    flex-direction: column;
-    width: 400px;
-    margin: 0 auto;
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid var(--acc-color);
-  }
 
-  .form-title {
-      padding: 0px 0px 15px 0px;
-      font-size: 22px;
-      color: black;
-  }
-  
-  .form-label {
-    margin-bottom: 1rem;
-    display: flex;
-    flex-direction: column;
-    font-weight: bold;
-    padding: 0px 0px 0px 0px;
-    align-items: left;
-  }
+.form-container {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  margin: 0 auto;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--acc-color);
+}
 
-  .resumeLabel {
-      padding: 7px 0px 0px 7px;
-  }
-  
-  
-  .form-input,
-  .form-textarea,
-  .date-picker {
-    margin-top: 0.25rem;
-    padding: 0.5rem;
-    font-size: 1rem;
-    border: 1px solid var(--acc-color);
-  }
-  
-  
-  .form-textarea {
-    resize: vertical;
-  }
-  
-  
-  .color-row {
-    display: flex;
-    margin-top: 0.5rem;
-  }
-  
-  
-  .color-circle {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    margin-right: 8px;
-    cursor: pointer;
-    border: 1px solid black;
-  }
-  
-  .color-circle.selected {
-    border: 2px solid black;
-  }
-  
-  
-  .file-info {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    color: rgb(69, 85, 134);
-  }
-  
-  .submitButton {
-    padding: 0.75rem;
-    font-size: 1rem;
-    cursor: pointer;
-    border-radius: 4px;
-    background-color: var(--acc-color);
-    border: none;
-    color: white;
-  }
-  
+.form-title {
+  padding: 0px 0px 15px 0px;
+  font-size: 22px;
+  color: black;
+}
+
+.form-label {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  padding: 0px 0px 0px 0px;
+  align-items: left;
+}
+
+.resumeLabel {
+  padding: 7px 0px 0px 7px;
+}
+
+
+.form-input,
+.form-textarea,
+.date-picker {
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid var(--acc-color);
+}
+
+
+.form-textarea {
+  resize: vertical;
+}
+
+
+.color-row {
+  display: flex;
+  margin-top: 0.5rem;
+}
+
+
+.color-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 8px;
+  cursor: pointer;
+  border: 1px solid black;
+}
+
+.color-circle.selected {
+  border: 2px solid black;
+}
+
+
+.file-info {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: rgb(69, 85, 134);
+}
+
+.submitButton {
+  padding: 0.75rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  background-color: var(--acc-color);
+  border: none;
+  color: white;
+}

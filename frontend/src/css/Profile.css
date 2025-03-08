@@ -1,11 +1,11 @@
-.container{
+.container {
     display: flex;
     border: 1px solid black;
     height: 90vh;
 
 }
 
-.left-panel{
+.left-panel {
     border: 1px solid black;
     height: 100%;
     width: 25%;
@@ -14,8 +14,9 @@
     align-items: center;
     gap: 20px;
 }
-.top-info{
-    
+
+.top-info {
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -26,29 +27,31 @@
     margin: 0px;
 }
 
-.top-info p{
-    margin: 5px; /* Remove default margins */
+.top-info p {
+    margin: 5px;
+    /* Remove default margins */
     color: grey;
 }
-.link-info{
+
+.link-info {
     width: 90%;
     display: flex;
-    flex-direction: column ;
+    flex-direction: column;
     align-items: self-start;
     background-color: white;
-    
+
 }
 
-.image{
+.image {
     margin-top: 20px;
     margin-bottom: 10px;
     width: 25%;
     height: auto;
     border-radius: 50%;
-    }
+}
 
-.profile-content{
-    border:1px solid rgb(128, 1, 1);
+.profile-content {
+    border: 1px solid rgb(128, 1, 1);
     height: 100%;
     width: 75%;
 
@@ -56,6 +59,7 @@
     flex-direction: column;
     align-items: center;
 }
-.profile-content h1{
+
+.profile-content h1 {
     margin-top: 10px;
 }

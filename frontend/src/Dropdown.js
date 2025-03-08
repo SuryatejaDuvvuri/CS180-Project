@@ -25,7 +25,7 @@ function Dropdown({ title, arr, onSelect,addChosenElem, removeChosenElem}) {
     }
 
     const handleSelect = (major) => {
-        onSelect(major);  
+        onSelect(major);
         setIsOpen(false);
     };
 

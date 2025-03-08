@@ -117,6 +117,7 @@ CMakeLists.txt.user*
 *.dll
 *.exe
 
+.venv
 frontend/.env
 backend/collabhub-28a6c-firebase-adminsdk-fbsvc-7bf7d23b3d.json
 backend/firebase.py

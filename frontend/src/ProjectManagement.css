@@ -14,7 +14,7 @@
     border-radius: 8px;
     padding: 15px;
     background-color: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .project-actions {
@@ -23,7 +23,8 @@
     margin-top: 15px;
 }
 
-.update, .delete {
+.update,
+.delete {
     padding: 8px 16px;
     border: none;
     border-radius: 4px;

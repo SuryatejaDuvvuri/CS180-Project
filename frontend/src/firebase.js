@@ -1,14 +1,14 @@
 import { initializeApp } from "firebase/app";
-import { 
-    getAuth, 
-    signInWithEmailAndPassword, 
-    onAuthStateChanged, 
-    signInWithPopup, 
-    GoogleAuthProvider, 
-    setPersistence, 
-    browserLocalPersistence, 
-    createUserWithEmailAndPassword,
-    signOut
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithPopup,
+  GoogleAuthProvider,
+  setPersistence,
+  browserLocalPersistence,
+  createUserWithEmailAndPassword,
+  signOut
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -30,9 +30,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 setPersistence(auth, browserLocalPersistence).then(() => {
-    console.log("Firebase auth persistence set to local");
+  console.log("Firebase auth persistence set to local");
 }).catch((error) => {
-    console.error("Error setting persistence:", error);
+  console.error("Error setting persistence:", error);
 });
 
 const googleProvider = new GoogleAuthProvider();
