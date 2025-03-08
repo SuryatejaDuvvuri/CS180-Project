@@ -23,21 +23,16 @@ import Dashboard from "./pages/Dashboard.js";
 import ProtectedRoute from "./ProtectedRoute.js";
 //jsx
 import NoteCards from "./NoteCards.js";
-import Apply from "./apply.jsx";
-import NavBar from './NavBar.jsx';
 import Note from './Note.jsx';
 import { auth, monitorAuthState } from "./firebase.js";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import {Navigate} from "react-router-dom"
 
 function App() {
-  // const [isLight, setMode] = React.useState(true);
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const [token, setTokenState] = useState(localStorage.getItem('authToken'));
   const [selectedMajor, setSelectedMajor] = useState("All");
   const [user, setUser] = useState(null);
-  // Triggers whenever the light/dark mode button is pressed
-  // Switches the App's className
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
 
   useEffect(() => {

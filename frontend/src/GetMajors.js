@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 
-// Function to fetch data from the file
 const getData = async (apiUrl) => {
     try {
         const response = await fetch(apiUrl);
@@ -12,7 +11,6 @@ const getData = async (apiUrl) => {
     }
 };
 
-// Custom Hook to get majors
 export function useMajors() {
     const [majors, setMajors] = useState([]);
 
@@ -28,7 +26,6 @@ export function useMajors() {
     return majors;
 }
 
-// Function that returns majors
 export async function GetMajors()
 {
     const fileContents = await getData("/Major-Categories.txt");

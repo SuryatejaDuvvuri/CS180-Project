@@ -24,7 +24,6 @@ urlpatterns = [
     
     path("api/projects/<str:project_id>/feedback/",FeedBackViewSet.as_view({"get": "list", "post": "create"}),name="get_feedback"),
     path("api/users/<str:email>/projects/<str:project_id>/applicants/", ApplicantViewSet.as_view({"get": "list", "delete": "delete"}), name="get_applicants"),
-    # path("api/applicants/<str:applicant_id>/", ApplicantViewSet.as_view({"get": "list", "post": "create", "delete": "delete"}), name="get_delete_project"),
     path("api/projects/<str:project_id>/apply/", ApplicantViewSet.as_view({"post":"apply_to_project"}), name="apply_to_project"),
     path("api/projects/<str:project_id>/applicants/<str:applicant_email>/", ApplicantViewSet.as_view({"put":"modify"})),
     path("api/projects/", ProjectViewSet.as_view({"get": "list", "post": "create"}), name="list_create_projects"),

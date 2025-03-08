@@ -22,9 +22,6 @@ module.exports = {
         gradientLeftDark: "rgb(0, 115, 255)",
         gradientRightDark: "rgb(74, 204, 255)",
       },
-      // animation: {
-      //   'spin-slow': 'spin 20s linear infinite',
-      // },
     },
     },
     plugins: [],

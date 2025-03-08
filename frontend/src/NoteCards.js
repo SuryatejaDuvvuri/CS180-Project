@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './css/NoteCards.css';
 import Note from './Note';
@@ -43,15 +43,15 @@ function NoteCards({darkMode, toggleDarkMode, items = [], category }) {
 
 
                     <div className="flex overflow-x-auto space-x-8 p-4 snap-x scroll-smooth">
-                        {projects.slice(scrollIndex, scrollIndex + maxVisible).map((item) => (
+                        {projects.slice(scrollIndex, scrollIndex + maxVisible).map((item, index) => (
                             <div
-                                key={item.id}
-                                className={`rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden ${
-                                    darkMode === "dark" ? "bg-gray-800 text-gray-200" : "bg-white"
+                                key={item.id || index}
+                                className={`rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden transition-colors duration-300 ease-in-out ${
+                                    !item.color ? (darkMode === "dark" ? "bg-gray-800" : "bg-white") : ""
                                 }`}
-                                style={{
-                                    backgroundColor: item.color,
-                                }}
+                                style={item.color ? { backgroundColor: item.color } : {}}
+                                
+                                
                             >
 
                                 {item.image_url || item.image ? (
@@ -81,7 +81,6 @@ function NoteCards({darkMode, toggleDarkMode, items = [], category }) {
                                     <div className={`flex flex-col gap-2 text-sm ${
                                         darkMode === "dark" ? "text-gray-200" : "text-gray-500"
                                     }`}>
-                                        {/* <span>Summary: {item.summary}</span> */}
                                         <span>Category: {item.category}</span>
                                         <span>Looking for: {item.looking_for}</span>
                                         <span>Team size: {item.number_of_people}</span>
@@ -115,7 +114,6 @@ function NoteCards({darkMode, toggleDarkMode, items = [], category }) {
                 </div>
             </div>
 
-            {/* Modal for Selected Project */}
             {selectedProject && (
                 <Note darkMode = {darkMode} toggleDarkMode = {toggleDarkMode} selectedProject={selectedProject} setSelectedProject={setSelectedProject} />
             )}

@@ -93,7 +93,6 @@ export default function UserProfile({darkMode, toggleDarkMode})
                 joinedProjs.some(proj2 => proj.id === proj2.id)
             );
             setIsOwner(isUserOwner);
-            console.log(isOwner);
             setIsMember(isUserMember);
     
            
